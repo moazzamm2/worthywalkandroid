@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+    <item
+        android:id="@+id/foodtab"
+        android:icon="@drawable/ic_dish"
+        android:title="Food"
+        />
+
+
+    <item
+        android:id="@+id/clothingtab"
+        android:icon="@drawable/ic_clothes"
+        android:title="CLOTHING"
+        />
+
+    <item
+        android:id="@+id/healthTab"
+        android:icon="@drawable/ic_first_aid_kit"
+        android:title="Health"
+        />
+    <item
+        android:id="@+id/salonTab"
+        android:icon="@drawable/ic_bowling_pins"
+        android:title="Fun"
+        />
+    <item
+        android:id="@+id/gymtab"
+        android:icon="@drawable/ic_gym"
+        android:title="GYM"
+        />
+</menu>

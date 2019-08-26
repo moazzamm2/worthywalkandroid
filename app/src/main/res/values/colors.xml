@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#00A99D</color>
+    <color name="colorPrimaryDark">#30312F</color>
+    <color name="colorAccent">#30312F</color>
+    <color name="colorhealth">#0097e6</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorAmber">#f3c300</color>
+
+    <color name="prog1">#E90024</color>
+    <color name="prog2">#2E6DB4</color>
+    <color name="prog3">#00AC9F</color>
+    <color name="prog4">#F3C300</color>
+    <color name="yellow">#F3FFEB3B</color>
+    <color name="green">#8BC34A</color>
+    <color name="grey">#EEEEEE</color>
+    <color name="red">#E90024</color>
+
+    <color name="cycle">#7BADB3</color>
+    <color name="walk">#CCC06A</color>
+    <color name="treadmill">#8BB84D</color>
+</resources>

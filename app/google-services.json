@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "800733116102",
+    "firebase_url": "https://worthywalk-6b82e.firebaseio.com",
+    "project_id": "worthywalk-6b82e",
+    "storage_bucket": "worthywalk-6b82e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:800733116102:android:95d53ce1bc89564d",
+        "android_client_info": {
+          "package_name": "com.example.worthywalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "800733116102-5k8gcn9nb0pfng0jvkc7rp0776ss6i3e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKURTu7mMpNXbGKxj9XxuLEB6lQn9vV3g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "800733116102-5k8gcn9nb0pfng0jvkc7rp0776ss6i3e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "800733116102-vt3osoh94mik00bq7ecnmsvc7o1j139o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.worthywalk"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:800733116102:android:5972e1c51cc6a4d7",
+        "android_client_info": {
+          "package_name": "worthywalk.example.com.worthywalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "800733116102-5k8gcn9nb0pfng0jvkc7rp0776ss6i3e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKURTu7mMpNXbGKxj9XxuLEB6lQn9vV3g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "800733116102-5k8gcn9nb0pfng0jvkc7rp0776ss6i3e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "800733116102-vt3osoh94mik00bq7ecnmsvc7o1j139o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.worthywalk"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

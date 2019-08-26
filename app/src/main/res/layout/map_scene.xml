@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mapbox="http://schemas.android.com/tools"
+    android:id="@+id/scene_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<include layout="@layout/aboutustb"
+        android:id="@+id/toolbar"/>
+
+        <com.mapbox.mapboxsdk.maps.MapView
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:id="@+id/container"
+            mapbox:mapbox_cameraZoom="13"
+            android:layout_below="@+id/toolbar"
+            />
+
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/container"
+            android:id="@+id/progressBar">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector"
+            android:layout_marginLeft="5dp"
+            android:padding="5dp"
+            android:backgroundTint="@color/colorWhite"
+            android:drawableTint="@color/colorPrimary"
+            android:elevation="6dp"
+            android:textSize="12sp"
+            android:textColor="@color/colorPrimary"
+            android:drawableLeft="@drawable/ic_running"
+            android:text="Walk"
+
+            android:id="@+id/walk"
+ />
+        <Button
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector"
+            android:layout_marginLeft="5dp"
+            android:padding="2dp"
+            android:backgroundTint="@color/colorWhite"
+            android:drawableTint="@color/colorPrimary"
+            android:elevation="6dp"
+            android:textSize="12sp"
+            android:textColor="@color/colorPrimary"
+            android:drawableLeft="@drawable/ic_treadmill"
+            android:text="Treadmill"
+android:id="@+id/treadmill"
+            />
+
+        <Button
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector"
+            android:layout_marginLeft="5dp"
+            android:textSize="12sp"
+            android:padding="5dp"
+            android:backgroundTint="@color/colorWhite"
+            android:drawableTint="@color/colorPrimary"
+            android:elevation="6dp"
+            android:textColor="@color/colorPrimary"
+            android:textAlignment="viewEnd"
+            android:drawableLeft="@drawable/ic_man_cycling"
+            android:text="Cycling"
+android:id="@+id/cycle"
+            />
+
+
+        <Button
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector"
+            android:layout_marginLeft="5dp"
+            android:textSize="12sp"
+            android:padding="5dp"
+            android:backgroundTint="@color/colorWhite"
+            android:drawableTint="@color/colorPrimary"
+            android:elevation="6dp"
+            android:textColor="@color/colorPrimary"
+            android:textAlignment="viewEnd"
+
+            android:text="Promocode"
+            android:id="@+id/fabbtn"
+            />
+
+
+    </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/TimerID"
+            android:layout_height="wrap_content"
+            android:text="00:00:00"
+
+            android:textSize="30sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="50dp"
+            android:layout_centerHorizontal="true"
+          />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/TimerID"
+            android:layout_marginTop="-30dp">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginTop="5dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/Stepcounter"
+                            android:text="0"
+                            android:textSize="20sp"
+                            android:layout_centerHorizontal="true"/>
+
+
+                        <LinearLayout
+                            android:id="@+id/stepc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_below="@id/Stepcounter"
+                            android:layout_centerHorizontal="true">
+
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:tint="#634016"
+                                    android:src="@drawable/ic_steps"
+
+                                    />
+
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Steps"
+                                    android:textSize="15sp"
+
+
+                                    android:layout_marginLeft="4dp"/>
+
+                        </LinearLayout>
+                </RelativeLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/timelinear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/TimerID"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:tint="#477c18"
+                    android:src="@drawable/ic_access_alarm_black_24dp"/>
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Duration"
+                    android:textSize="15sp"
+
+                    android:layout_marginLeft="4dp"/>/>
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/spdrel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/TimerID"
+            android:layout_marginTop="-25dp"
+            android:layout_alignLeft="@+id/timelinear"
+
+            >
+
+                <RelativeLayout
+                    android:id="@+id/pointrel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/Pointcounter"
+                            android:text="00"
+                            android:textSize="20sp"
+                            android:layout_centerHorizontal="true"/>
+
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/Pointcounter"
+                            android:orientation="horizontal"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="10dp">
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_knub_flat"/>
+
+                                <TextView
+                                    android:id="@+id/textView7"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Points"
+                                    android:textSize="15sp"
+                                    android:layout_marginLeft="4dp"/>
+
+                        </LinearLayout>
+                </RelativeLayout>
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="26dp"
+            android:layout_below="@+id/timelinear"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/DistID"
+                    android:text="0 "
+                    android:layout_centerHorizontal="true"
+                    android:textSize="20sp"
+                    />
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="26dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerHorizontal="true">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:tint="@color/colorAccent"
+                            android:src="@drawable/ic_distance_to_travel_between_two_points"/>
+                        <TextView
+                            android:id="@+id/distag"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="5dp"
+                            android:text="KM"
+                            android:textSize="10sp"/>
+                </LinearLayout>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/calrel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:layout_below="@+id/timelinear"
+            android:layout_centerHorizontal="true"
+            >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Calcounter"
+                    android:text="500 "
+                    android:layout_centerHorizontal="true"
+                    android:textSize="20sp"
+                    />
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="26dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerHorizontal="true">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:tint="#f2460a"
+                            android:src="@drawable/ic_fire"/>
+                        <TextView
+                            android:id="@+id/caltag"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginLeft="5dp"
+                            android:text="CAL"
+                            android:textSize="10sp"/>
+                </LinearLayout>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/view2"
+            android:layout_toRightOf="@+id/timelinear"
+            android:layout_toEndOf="@+id/timelinear"
+            android:layout_marginLeft="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/speedcount"
+                    android:text="2.00"
+                    android:textSize="20sp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="20dp"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/speedcount"
+                    android:orientation="horizontal"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp">
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:padding="2dp"
+                            android:tint="@color/colorPrimary"
+                            android:src="@drawable/ic_running"/>
+
+                        <TextView
+                            android:id="@+id/speedtag"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="km/h"
+                            android:textSize="10sp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginLeft="4dp"/>
+
+                </LinearLayout>
+
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="25dp"
+            android:layout_below="@+id/calrel"
+            android:background="@color/colorPrimary"
+            android:id="@+id/view2" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+
+            android:id="@+id/music"
+            android:layout_alignParentBottom="true">
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="#114919"
+                    android:id="@+id/start"
+                    android:text="Start"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="20sp"
+
+                    />
+
+
+        </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:enabled="false" android:background="@drawable/gradient"
+    android:layout_height="55dp" android:layout_width="match_parent"
+    android:elevation="10dp"
+
+    android:id="@+id/custom_actionbar_relative_layout_main" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageButton android:background="@android:color/transparent"
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:id="@+id/menu"
+        android:tint="@color/colorWhite"
+        android:textSize="18sp"
+        android:src="@drawable/ic_menu_black_24dp"
+        android:textColor="@android:color/white" android:textAlignment="center" android:gravity="center_vertical" android:layout_centerVertical="true" android:layout_marginLeft="10dp"/>
+
+    <TextView android:background="@android:color/transparent"
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:id="@+id/title"
+        android:textSize="18sp"
+        android:text="Store"
+        android:textColor="@android:color/white"
+        android:textAlignment="center"
+        android:gravity="center_vertical"
+        android:layout_centerVertical="true"
+        android:layout_centerInParent="true"/>
+
+</RelativeLayout>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+       >
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:contentScrim="?attr/colorPrimary"
+                app:expandedTitleTextAppearance="@android:color/transparent"
+                android:fitsSystemWindows="true"
+                app:title="STORE"
+
+                >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary"
+                    android:requiresFadingEdge="horizontal">
+
+               <include layout="@layout/storetb"
+                   android:id="@+id/toolbar"/>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ads"
+                        android:layout_below="@+id/toolbar">
+
+                        <androidx.viewpager.widget.ViewPager
+                            android:id="@+id/pager"
+                            android:layout_marginTop="2dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="130dp"
+                            android:layout_marginBottom="8dp"/>
+
+                    </RelativeLayout>
+
+
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/t1img"
+                        android:layout_marginTop="0dp"
+                        android:padding="20dp"
+                        android:layout_below="@+id/ads"
+                        android:alpha="1"
+                        android:background="@drawable/gradient1"
+
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ammar Rizwan"
+                            android:textSize="25dp"
+                            android:id="@+id/t1name"
+                            android:textColor="#ffffff"/>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_below="@+id/t1name"
+                            >
+                            <TextView
+                                android:id="@+id/t1points"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="15000"
+                                android:layout_below="@+id/t1name"
+                                android:textSize="25dp"
+                                android:textColor="@color/colorAmber"/>
+                            <TextView
+                                android:id="@+id/pts"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="points"
+                                android:layout_below="@+id/t1name"
+                                android:textSize="25dp"
+                                android:layout_marginLeft="10dp"
+                                android:textColor="@color/colorAmber"/>
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+
+
+
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                >
+
+                <com.google.android.material.bottomnavigation.BottomNavigationView
+                    android:id="@+id/navigationView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:attr/windowBackground"
+                    android:layout_below="@id/navigationView"
+                    app:itemBackground="@color/colorPrimary"
+                    app:itemIconTint="@android:color/white"
+                    app:itemTextColor="#ffffff"
+                    app:menu="@menu/store"
+                    />
+
+
+                <FrameLayout
+                    android:id="@+id/container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/navigationView"
+                                        ></FrameLayout>
+
+
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+

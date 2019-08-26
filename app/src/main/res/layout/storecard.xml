@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    xmlns:xmls="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:padding="100dp"
+        android:layout_margin="10dp"
+        xmls:cardCornerRadius="15dp"
+        android:layout_height="210dp"
+        xmls:cardElevation="20dp"
+        xmls:cardMaxElevation="20dp"
+        android:elevation="20dp"
+        >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:id="@+id/img12">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+                <com.makeramen.roundedimageview.RoundedImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/img"
+                    android:src="@drawable/burger"
+                    app:riv_corner_radius="15dp"
+                    android:scaleType="fitCenter"
+                    android:layout_margin="10dp"
+                    android:layout_height="200dp"
+                    android:layout_width="match_parent"/>
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/ig"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/gradient1"
+                    android:alpha="0.3"
+                    android:scaleType="fitCenter"
+                    android:layout_height="200dp"
+                    android:layout_width="match_parent"/>
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="25dp"
+                    android:background="@drawable/shape2"
+                    android:padding="8dp"
+                    android:elevation="5dp">
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:scaleType="fitCenter"
+                        android:id="@+id/img1"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/burger"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/Resturant"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Burger King"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:elevation="4dp"
+                        android:layout_alignLeft="@+id/img1"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="9dp"/>
+                </LinearLayout>
+
+            </RelativeLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/shape2"
+                android:padding="5dp"
+                android:layout_centerHorizontal="true"
+
+                android:layout_marginTop="170dp">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_knub_flat"
+                     />
+
+                <TextView
+                    android:id="@+id/t1points"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:text="20000"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="20sp"
+                    android:textStyle="italic"
+                    />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
