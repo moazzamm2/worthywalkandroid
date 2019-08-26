@@ -61,7 +61,7 @@ int numsteps;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        stepListener.registerListener(this);
+
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager
                 .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -116,10 +116,6 @@ int numsteps;
 
     }
 
-    @Override
-    public void registerListener(StepCounterService stepCounterService) {
-        this.stepListener=stepCounterService;
-    }
 
     //
     private void updateAccel(long timeNs, float x, float y, float z) {

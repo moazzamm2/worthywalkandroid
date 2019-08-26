@@ -43,14 +43,8 @@ public class workoutFragment extends Fragment {
 
 //    RelativeLayout rlprog;
 //    RelativeLayout rlcenter;
-public interface MyFragmentCallback{
-    public void theMethod();
-}
-    private MyFragmentCallback callback;
-    public void onAttach(Activity activity){
-        callback = (MyFragmentCallback) activity;
-        super.onAttach(activity);
-    }
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

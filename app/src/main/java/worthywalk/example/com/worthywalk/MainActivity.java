@@ -15,7 +15,7 @@ import com.mapbox.geojson.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements workoutFragment.MyFragmentCallback {
+public class MainActivity extends AppCompatActivity  {
 boolean start=false;
     //    private PermissionsManager permissionsManager;
 //    private LocationEngine locationEngine;
@@ -90,11 +90,6 @@ void checkstart(){
 
 }
 
-    @Override
-    public void theMethod() {
-        if(start) start=false;
-        else start=true;
-    }
 //    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 //        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
 //    }

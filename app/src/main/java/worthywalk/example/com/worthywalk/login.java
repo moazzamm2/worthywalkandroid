@@ -16,18 +16,31 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class login extends AppCompatActivity {
         Button signIn;
         TextView signUp;
-        final baseAuth mAuth=new Auth();
-        @Override
+    private FirebaseAuth mAuth;
+// ...
+// Initialize Firebase Auth
+
+    @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//            requestWindowFeature(Window.FEATURE_NO_TITLE);
+//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             setContentView(R.layout.activity_login);
+            mAuth = FirebaseAuth.getInstance();
+            signUp=(TextView) findViewById(R.id.login_signup);
+            FirebaseUser user=mAuth.getCurrentUser();
+            if(user!=null){
+                Intent intent=new Intent(this,MainActivity.class);
+                startActivity(intent);
+                finish();
 
+            }
             //signIn=(Button)findViewById(R.id.btSignIn);
             signUp=(TextView)findViewById(R.id.login_signup);
             signIn = (Button)findViewById(R.id.btSignIn);
@@ -37,7 +50,7 @@ public class login extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent i=new Intent(login.this,Signup.class);
                     startActivity(i);
-                    overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+
                 }
             });
             signIn.setOnClickListener(new View.OnClickListener() {

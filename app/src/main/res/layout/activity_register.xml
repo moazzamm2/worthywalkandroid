@@ -5,6 +5,180 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".register">
+    <include layout="@layout/dashboardtb"
+        android:id="@+id/registertb"/>
 
 
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+    android:layout_centerHorizontal="true"
+
+android:layout_centerInParent="true"
+        >
+
+<EditText
+    android:layout_margin="10dp"
+android:textAlignment="center"
+    android:id="@+id/firstname"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+android:hint="Enter First Name"
+    android:inputType="text"
+android:background="@drawable/textbackground"
+    android:elevation="5dp"
+
+
+    />
+
+
+
+        <EditText
+        android:layout_margin="10dp"
+            android:textAlignment="center"
+android:id="@+id/lastname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Last Name"
+            android:inputType="text"
+            android:background="@drawable/textbackground"
+            android:elevation="5dp"
+
+
+            />
+
+
+        <EditText
+            android:layout_margin="10dp"
+            android:textAlignment="center"
+            android:id="@+id/phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:hint="Enter Phone Number"
+            android:background="@drawable/textbackground"
+            android:elevation="5dp"
+
+
+            />
+        <LinearLayout
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+
+            android:orientation="horizontal"
+            android:id="@+id/spinnerlayout"
+            android:background="@drawable/textbackground"
+
+            >
+            <TextView
+                android:id="@+id/spinnertext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:textAlignment="center"
+
+                android:hint="Choose Gender"
+                          />
+            <androidx.appcompat.widget.AppCompatSpinner
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/gender"
+
+    />
+        </LinearLayout>
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/textbackground"
+            android:elevation="5dp"
+            android:hint="Height in ft"
+            android:id="@+id/height"
+            android:textAlignment="center"
+android:inputType="numberDecimal"
+
+            />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/textbackground"
+        android:elevation="5dp"
+        android:hint="Weight in kg"
+        android:inputType="numberDecimal"
+
+android:id="@+id/weight"
+
+        />
+
+</LinearLayout>
+
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    >
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="date"
+android:hint="dd"
+        android:textAlignment="center"
+android:id="@+id/day"
+        android:layout_margin="10dp"
+
+        android:layout_weight="1"
+        android:background="@drawable/textbackground"
+        />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="mm"
+        android:inputType="date"
+
+        android:layout_weight="1"
+        android:textAlignment="center"
+android:id="@+id/month"
+        android:layout_margin="10dp"
+        android:background="@drawable/textbackground"
+        />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="yyyy"
+        android:layout_weight="3"
+        android:id="@+id/year"
+        android:inputType="date"
+
+        android:layout_margin="10dp"
+        android:background="@drawable/textbackground"
+        android:textAlignment="center"
+
+        />
+
+
+</LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+android:layout_centerInParent="true"
+        android:layout_margin="40dp"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/go"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_arrow_forward_black_24dp"
+        android:tint="@color/colorWhite"
+        android:backgroundTint="@color/colorPrimary"/>
 </RelativeLayout>
