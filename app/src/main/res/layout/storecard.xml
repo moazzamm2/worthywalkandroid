@@ -41,7 +41,7 @@
                     xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/ig"
                     android:layout_margin="10dp"
-                    android:background="@drawable/gradient1"
+
                     android:alpha="0.3"
                     android:scaleType="fitCenter"
                     android:layout_height="200dp"
@@ -54,6 +54,7 @@
                     android:orientation="horizontal"
                     android:layout_marginLeft="25dp"
                     android:background="@drawable/shape2"
+                    android:backgroundTint="@color/colorWhite"
                     android:padding="8dp"
                     android:elevation="5dp">
                     <com.makeramen.roundedimageview.RoundedImageView
@@ -88,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="@drawable/shape2"
-                android:padding="5dp"
+
                 android:layout_centerHorizontal="true"
 
                 android:layout_marginTop="170dp">
@@ -97,6 +98,8 @@
                     android:id="@+id/imageView"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
+                    android:padding="3dp"
+                    android:layout_gravity="center"
                     android:src="@drawable/ic_knub_flat"
                      />
 
@@ -105,8 +108,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
+                    android:padding="7dp"
                     android:text="20000"
-                    android:textColor="@color/colorPrimary"
+
+                    android:backgroundTint="@color/colorWhite"
+                    android:textColor="@color/colorAmber"
                     android:textSize="20sp"
                     android:textStyle="italic"
                     />

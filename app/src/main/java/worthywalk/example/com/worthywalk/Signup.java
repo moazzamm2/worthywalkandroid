@@ -14,11 +14,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class Signup extends AppCompatActivity {
     FloatingActionButton next;
     EditText emailid,password1,password2;
-    final baseAuth mAuth=new Auth();
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,7 @@ public class Signup extends AppCompatActivity {
 //        getSupportActionBar().hide();
 
         setContentView(R.layout.activity_signup);
+        mAuth=FirebaseAuth.getInstance();
 
 
 
@@ -59,10 +61,10 @@ public class Signup extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()) {
-                        Intent i=new Intent(Signup.this,MainActivity.class);
+                        Intent i=new Intent(Signup.this,register.class);
                         i.putExtra("AfterLogin","false");
                         startActivity(i);
-                        overridePendingTransition(R.anim.slide_in,R.anim.slide_out);
+//                        overridePendingTransition(R.anim.slide_in,R.anim.slide_out);
                         finish();
                     }
                     else{

@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".workoutfrag"
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/walk"
+
+
+        >
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ff000000"
+
+    android:alpha="0.4"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+
+
+    </RelativeLayout>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorWhite"
+        android:alpha="0.7"
+        android:elevation="4dp"
+
+        android:id="@+id/walkinfo"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+
+
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Calories"
+                android:textSize="25dp"
+                android:layout_gravity="center"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0"
+                android:textSize="30dp"
+                android:id="@+id/calorie"
+                android:textColor="@color/red"
+                android:layout_gravity="center"
+
+                />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Time"
+                android:textSize="30dp"
+                android:layout_gravity="center"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0:00:00"
+                android:textSize="25dp"
+                android:id="@+id/time"
+                android:textColor="@color/colorAccent"
+                android:layout_gravity="center"
+
+                />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Meter"
+                android:textSize="25dp"
+                android:layout_gravity="center"
+
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0"
+                android:textSize="30dp"
+                android:id="@+id/_kms"
+                android:textColor="@color/colorPrimary"
+                android:layout_gravity="center"
+
+                />
+
+
+        </LinearLayout>
+
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_promo"
+        android:backgroundTint="@color/colorWhite"
+        android:layout_below="@+id/walkinfo"
+        android:layout_margin="40dp"
+        android:layout_alignParentEnd="true"
+        app:backgroundTint="@color/colorAmber"
+       app:borderWidth="3dp"
+
+
+        />
+        
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/relativeprog"
+        android:alpha="0.8"
+        android:layout_centerInParent="true">
+
+        <ProgressBar
+            android:id="@+id/progressBar5"
+            style="?android:attr/progressBarStyle"
+
+            android:layout_width="245dp"
+            android:layout_height="245dp"
+            android:max="100"
+            android:progress="40"
+
+
+        android:indeterminateTint="@color/walk"
+        />
+        <RelativeLayout
+            android:layout_width="145dp"
+            android:layout_height="145dp"
+            android:layout_centerInParent="true"
+            android:id="@+id/relativeLayout"
+            android:layout_margin="25dp"
+            android:background="@drawable/walkcircle" >
+
+
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="TAP !"
+    android:id="@+id/tap"
+    android:textSize="39dp"
+    android:textColor="@color/colorWhite"
+    android:textStyle="bold"
+    android:layout_centerInParent="true"
+
+    />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:id="@+id/textlayout"
+                android:layout_centerInParent="true">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Avg pace"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="24dp"
+                    android:id="@+id/title"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.0"
+                    android:textSize="22dp"
+                    android:layout_gravity="center"
+                    android:textAlignment="center"
+                    android:id="@+id/speed"
+                    />
+            </LinearLayout>
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerInParent="true"
+                android:id="@+id/iconview"
+                android:tint="@color/colorWhite"
+
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="START"
+        android:padding="20dp"
+        android:textColor="@color/colorWhite"
+        android:id="@+id/start"
+        android:backgroundTint="@color/green"
+        />
+</RelativeLayout>
+

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#00A99D</color>
+    <color name="colorPrimary">#018D83</color>
     <color name="colorPrimaryDark">#30312F</color>
     <color name="colorAccent">#30312F</color>
     <color name="colorhealth">#0097e6</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorAmber">#f3c300</color>
+    <color name="darktint">#30312F</color>
 
     <color name="prog1">#E90024</color>
     <color name="prog2">#2E6DB4</color>

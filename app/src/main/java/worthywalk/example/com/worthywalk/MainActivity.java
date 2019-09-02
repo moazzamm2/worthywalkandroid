@@ -1,5 +1,7 @@
 package worthywalk.example.com.worthywalk;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -15,7 +17,7 @@ import com.mapbox.geojson.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity implements storefrag.Updateuser {
 boolean start=false;
     //    private PermissionsManager permissionsManager;
 //    private LocationEngine locationEngine;
@@ -32,11 +34,13 @@ boolean start=false;
     // Variables needed to listen to location updates
 //    private MainActivityLocationCallback callback = new MainActivityLocationCallback(this);
 
+    Avail avail=new Avail();
     private Toolbar toolbar;
     private TextView mTextMessage;
     private TextView title;
     String screen="Workout";
     private List<Point> routeCoordinates=new ArrayList<>();
+    User user=new User();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -44,20 +48,20 @@ boolean start=false;
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
           if(!start) {
-              Fragment selectedfragment = new homeFragment();
+              Fragment selectedfragment = new homeFragment(user);
 
               switch (item.getItemId()) {
                   case R.id.navigation_home:
                       screen = "Workout";
-                      selectedfragment = new workoutFragment();
+                      selectedfragment = new Leaderboardfrag();
                       break;
                   case R.id.navigation_dashboard:
                       screen = "Dash Board";
-                      selectedfragment = new homeFragment();
+                      selectedfragment = new homeFragment(user);
                       break;
                   case R.id.navigation_notifications:
                       screen = "Store";
-                      selectedfragment = new storefrag();
+                      selectedfragment = new storefrag(user);
                       break;
 
               }
@@ -74,10 +78,11 @@ boolean start=false;
 
         super.onCreate(savedInstanceState);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment,new homeFragment()).commit();
+        Intent intent=getIntent();
+       user= (User) intent.getExtras().getSerializable("User");
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment,new homeFragment(user)).commit();
 
-//        title=(TextView)findViewById(R.id.title);
-//        title.setText(screen);
+
         setContentView(R.layout.activity_main);
 //        getSupportActionBar().hide();
 
@@ -86,9 +91,23 @@ boolean start=false;
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
     }
-void checkstart(){
+
+
+    void checkstart(){
 
 }
+
+    @Override
+    public void updateuser(User user) {
+        this.user=user;
+        this.getSupportFragmentManager().beginTransaction().replace(R.id.fragment,new storefrag(user)).commit();
+    }
+
+//    @Override
+//    public void userupdate(User user) {
+//        this.user=user;
+//
+//    }
 
 //    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 //        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);

@@ -22,4 +22,7 @@ public class cardInfo implements Serializable{
     }
 
 
+    public cardInfo() {
+
+    }
 }

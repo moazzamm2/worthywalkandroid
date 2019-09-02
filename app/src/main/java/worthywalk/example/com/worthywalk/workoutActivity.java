@@ -29,6 +29,7 @@ import java.util.concurrent.Semaphore;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import static java.lang.Thread.sleep;
 public class workoutActivity extends AppCompatActivity implements StepListener {
@@ -119,7 +120,7 @@ public class workoutActivity extends AppCompatActivity implements StepListener {
             public void onClick(View arg0) {
                 if(start) {
 //                    sensorManager.unregisterListener(workoutActivity.this);
-                    BtnStop.setBackgroundColor(getResources().getColor(R.color.green));
+                    BtnStop.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.green));
                     BtnStop.setText("Start");
 //                    isWalking=false;
                     timeSwapbuff+=timeMiliseconds;

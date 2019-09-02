@@ -5,10 +5,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".register">
-    <include layout="@layout/dashboardtb"
-        android:id="@+id/registertb"/>
 
 
+    <RelativeLayout android:enabled="false" android:background="@drawable/gradient"
+        android:layout_height="55dp" android:layout_width="match_parent"
+        android:elevation="10dp"
+        android:id="@+id/custom_actionbar_relative_layout_main" xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+        <TextView android:background="@android:color/transparent"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:id="@+id/title"
+            android:textSize="18sp"
+
+            android:text="ENTER DETAILS"
+            android:textColor="@android:color/white"
+            android:textAlignment="center"
+            android:gravity="center_vertical"
+            android:layout_centerVertical="true"
+            android:layout_centerInParent="true"/>
+
+
+
+
+    </RelativeLayout>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="wrap_content"
@@ -74,18 +96,12 @@ android:id="@+id/lastname"
             android:background="@drawable/textbackground"
 
             >
-            <TextView
-                android:id="@+id/spinnertext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:textAlignment="center"
 
-                android:hint="Choose Gender"
-                          />
             <androidx.appcompat.widget.AppCompatSpinner
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:entries="@array/gender"
     android:id="@+id/gender"
 
     />

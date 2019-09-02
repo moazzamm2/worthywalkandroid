@@ -2,16 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="worthywalk.example.com.worthywalk">
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".Leaderboardfrag"></activity>
+        <activity android:name=".WalkActivity" />
+        <activity android:name=".Avail" />
         <activity android:name=".workoutfrag" />
-
         <activity android:name=".register" />
         <activity android:name=".Signup" />
         <activity android:name=".login" />
@@ -26,23 +31,26 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCxCcDi1OzEQggDaCGqN56KhdZB0Q7dnvw" />
-
+        <service android:name=".SensorForeground"/>
+        <receiver
+            android:name=".MyLocationService"
+            />
         <service
             android:name=".StepCounterService"
-            android:exported="false"></service>
-
+            android:exported="false" />
         <service
             android:name=".walkservice"
             android:exported="false" />
         <service android:name=".workoutActivity" />
     </application>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
