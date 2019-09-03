@@ -13,8 +13,14 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.type.LatLng;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyLocationService extends BroadcastReceiver {
+   public List<LatLng> loc=new ArrayList<LatLng>();
+
     public static final String ACTION_PROCESS_UPDATE = "com.example.forgroundapp.UPDATELOCATION";
 
     @Override
@@ -26,6 +32,9 @@ public class MyLocationService extends BroadcastReceiver {
                 LocationResult result = LocationResult.extractResult(intent);
                 if (result != null) {
                     Location location = result.getLastLocation();
+
+
+                    LatLng loc2=neLatLng(location.getLatitude(),location.getLongitude()));
                     String location_string = new StringBuilder("" + location.getLatitude())
                             .append("/")
                             .append(location.getLongitude())

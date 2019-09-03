@@ -9,15 +9,15 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="200dp"
-android:scaleType="matrix"
-        android:src="@drawable/leaderboard"
+
+        android:src="@drawable/winnercup"
         android:id="@+id/leaderimage"
         />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:text="MONTH"
+        android:background="@color/colorAmber"
+        android:text="THIS MONTHS ENDS IN 24:05:49"
         android:textColor="@color/colorWhite"
         android:textAlignment="center"
         android:padding="12dp"

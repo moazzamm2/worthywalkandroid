@@ -74,6 +74,8 @@ android:layout_margin="5dp"
             android:layout_marginTop="15dp"
             android:text="Hello "
             android:textColor="@color/colorAccent"
+            android:textStyle="bold"
+
             android:textSize="24dp" />
 
         <TextView
@@ -81,6 +83,7 @@ android:layout_margin="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/t1img"
+            android:textStyle="bold"
             android:layout_marginTop="15dp"
             android:text="Ammar Rizwan"
             android:textColor="@color/colorAccent"
@@ -126,7 +129,7 @@ android:layout_margin="5dp"
         android:id="@+id/relativeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titles">
@@ -170,7 +173,7 @@ android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="620 Cal"
+                android:text="620"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp" />
 
@@ -178,9 +181,9 @@ android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="1000 Cal goal"
+                android:text="Cal"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
 
         </LinearLayout>
@@ -229,7 +232,7 @@ android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="6200 Steps"
+                android:text="6200"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp" />
 
@@ -237,9 +240,9 @@ android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="10000 Steps goal"
+                android:text="Steps"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
 
         </LinearLayout>
@@ -285,7 +288,7 @@ android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="5 km"
+                android:text="5"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp" />
 
@@ -293,9 +296,9 @@ android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="100 km goal"
+                android:text="KM"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
 
         </LinearLayout>
@@ -343,7 +346,7 @@ android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="6200 points"
+                android:text="6200"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp" />
 
@@ -351,9 +354,9 @@ android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="10000 points goal"
+                android:text="Knubs"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
 
         </LinearLayout>

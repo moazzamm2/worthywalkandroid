@@ -5,7 +5,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -16,6 +18,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.webkit.PermissionRequest;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -25,6 +28,7 @@ import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -38,6 +42,7 @@ public class WalkActivity extends AppCompatActivity implements StepListener {
     int [] circle=new int[]{R.drawable.walkcircle,R.drawable.cyclecircle,R.drawable.treadmillcircle};
     int [] colors=new int[]{R.color.walk,R.color.cycle,R.color.treadmill};
     int steps=0;
+    Context context;
     static WalkActivity Instance;
     LocationRequest locationRequest;
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -60,6 +65,7 @@ public class WalkActivity extends AppCompatActivity implements StepListener {
     boolean start =false;
     boolean tapped=false;
     StepDetector stepDetector;
+    FloatingActionButton fabbutton;
 
 
     @Override
@@ -71,6 +77,7 @@ public class WalkActivity extends AppCompatActivity implements StepListener {
         relativeLayoutprog = (RelativeLayout) findViewById(R.id.relativeprog);
         relativeLayout=(RelativeLayout) findViewById(R.id.relativeLayout);
         tap=(TextView)findViewById(R.id.tap);
+        fabbutton=(FloatingActionButton) findViewById(R.id.promobutton) ;
     progressBar=(ProgressBar) findViewById(R.id.progressBar5);
     iconset=(ImageView)findViewById(R.id.iconview);
     calorie=(TextView)findViewById(R.id.calorie);
@@ -80,7 +87,7 @@ public class WalkActivity extends AppCompatActivity implements StepListener {
 //
         stepDetector=new StepDetector();
         stepDetector.registerListener(this);
-
+        context=this;
 
      relativeLayoutprog.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,7 +108,58 @@ public class WalkActivity extends AppCompatActivity implements StepListener {
             }
         });
 
+fabbutton.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
 
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.bonusdailog);
+        dialog.setTitle("Bonus");
+        final EditText text = (EditText) dialog.findViewById(R.id.promo);
+        Button dialogButton = (Button) dialog.findViewById(R.id.use);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String x = text.getText().toString().trim();
+
+//                        Query q=mDatabase.child("Bounus").orderByChild("Code").equalTo(x);
+
+//                        q.addChildEventListener(new ChildEventListener() {
+//                            @Override
+//                            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                                String x = dataSnapshot.getKey();
+//                                Float y = dataSnapshot.child("multiply").getValue(Float.class);
+//                                divideby= divideby/y;
+//                            }
+//
+//                            @Override
+//                            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                            }
+//                        });
+                dialog.dismiss();
+            }
+
+        });
+        dialog.show();
+    }
+
+});
 startbtn.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View view) {
@@ -210,4 +268,7 @@ startbtn.setOnClickListener(new View.OnClickListener() {
        calorie.setText(String.valueOf(steps));
 
     }
+
+
+
 }

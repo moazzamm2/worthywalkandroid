@@ -8,10 +8,16 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.type.LatLng;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import static worthywalk.example.com.worthywalk.App.CHANNEL_ID;
+
 
 public class SensorForeground extends Service {
 

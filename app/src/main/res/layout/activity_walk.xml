@@ -23,6 +23,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         >
 
 
@@ -143,6 +144,8 @@
         android:layout_alignParentEnd="true"
         app:backgroundTint="@color/colorAmber"
        app:borderWidth="3dp"
+        android:id="@+id/promobutton"
+
 
 
         />

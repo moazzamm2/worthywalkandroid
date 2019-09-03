@@ -136,5 +136,6 @@ StepDetector stepDetector;
     @Override
     public void step(long timeNs) {
         Steps++;
+        Log.d("steps", String.valueOf(Steps));
     }
 }
