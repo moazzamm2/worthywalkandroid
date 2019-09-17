@@ -3,7 +3,10 @@ package worthywalk.example.com.worthywalk;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
@@ -20,22 +23,27 @@ import static worthywalk.example.com.worthywalk.App.CHANNEL_ID;
 
 
 public class SensorForeground extends Service {
-
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    SharedPreferences sharedpreferences;
+    User user=new User();
     @Override
     public void onCreate() {
         super.onCreate();
+
     }
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
-
+        user= (User) intent.getSerializableExtra("User");
         //do heavy work on a background thread
         //stopSelf();
+        SensorHandler handlerLivingLight = new SensorHandler(this);
 
         if (intent.getAction().equals("Start")) {
             Log.i("Foreground", "Received Start Foreground Intent ");
-            SensorHandler handlerLivingLight = new SensorHandler(this);
             handlerLivingLight.start();
             String input = intent.getStringExtra("input");
             long time = intent.getLongExtra("time",0);
@@ -47,7 +55,17 @@ public class SensorForeground extends Service {
 
             WalkActivity.getInstance().UpdateSensorTV(steps);
 
+//            // Create an Intent for the activity you want to start
+//            Intent resultIntent = new Intent(this, WalkActivity.class);
+//// Create the TaskStackBuilder and add the intent, which inflates the back stack
+//            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+//            stackBuilder.addNextIntentWithParentStack(resultIntent);
+//// Get the PendingIntent containing the entire back stack
+//            PendingIntent resultPendingIntent =
+//                    stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+//
             Intent notificationIntent = new Intent(this, WalkActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(this,
                     0, notificationIntent, 0);
 
@@ -64,7 +82,8 @@ public class SensorForeground extends Service {
         else if (intent.getAction().equals( "Stop")) {
             Log.i("Foreground", "Received Stop Foreground Intent");
             //your end servce code
-            stopForeground(true);
+            handlerLivingLight.stop();
+                        stopForeground(true);
             stopSelf();
         }
         return START_STICKY;
@@ -81,4 +100,5 @@ public class SensorForeground extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
 }

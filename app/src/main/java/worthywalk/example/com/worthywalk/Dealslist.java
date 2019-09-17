@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -113,12 +114,22 @@ Dealslist(String category,User user){
                             adapter.setOnItemClickListener(new storelistadapter.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(int position) {
+
                                     cardInfo card= new cardInfo();
                                     card=data.get(position);
-                                    Intent intent =new Intent(getActivity(),Avail.class);
-                                    intent.putExtra("card",card);
-                                    intent.putExtra("user",user);
-                                    startActivityForResult(intent,1);
+                                    if(user.Knubs>Integer.parseInt(card.points)){
+                                        Intent intent =new Intent(getActivity(),Avail.class);
+                                        intent.putExtra("card",card);
+                                        intent.putExtra("user",user);
+                                        startActivityForResult(intent,1);
+                                    }else{
+
+                                        Toast.makeText(getActivity(), "You don't have enough Knubs ,Start Earning! ", Toast.LENGTH_SHORT).show();
+
+
+                                    }
+
+
 
                                 }
                             });

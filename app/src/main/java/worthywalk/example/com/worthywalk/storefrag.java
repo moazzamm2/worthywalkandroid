@@ -57,7 +57,7 @@ FirebaseFirestore db;
         View rootview = inflater.inflate(R.layout.store, container, false);
         name=(TextView) rootview.findViewById(R.id.t1name);
         knubs=(TextView) rootview.findViewById(R.id.t1points);
-        name.setText(user.Firstname+user.Lastname);
+        name.setText(user.Firstname+" "+user.Lastname);
 
         knubs.setText(String.valueOf(user.Knubs));
       final ViewPager mViewPager = (ViewPager) rootview.findViewById(R.id.pager);

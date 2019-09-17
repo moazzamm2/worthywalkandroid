@@ -17,9 +17,10 @@ public class User implements Serializable {
     public int Age;
     public Date Dob;
     public int Knubs;
+    public String imageurl;
 
 
-    public User(String firstname, String lastname, String phone, String gender, float height, float weight, int age, Date dob, int knubs) {
+    public User(String firstname, String lastname, String phone, String gender, float height, float weight, int age, Date dob, int knubs,String imageurl) {
         Firstname = firstname;
         Lastname = lastname;
         Phone = phone;
@@ -29,6 +30,7 @@ public class User implements Serializable {
         Age = age;
         Dob = dob;
         Knubs = knubs;
+        this.imageurl=imageurl;
     }
 
 

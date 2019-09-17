@@ -136,6 +136,7 @@ StepDetector stepDetector;
     @Override
     public void step(long timeNs) {
         Steps++;
+        MyLocationService.walk.setSteps(Steps);
         Log.d("steps", String.valueOf(Steps));
     }
 }

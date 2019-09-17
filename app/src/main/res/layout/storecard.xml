@@ -12,8 +12,9 @@
         android:layout_margin="10dp"
         xmls:cardCornerRadius="15dp"
         android:layout_height="210dp"
-        xmls:cardElevation="20dp"
+
         xmls:cardMaxElevation="20dp"
+
         android:elevation="20dp"
         >
 

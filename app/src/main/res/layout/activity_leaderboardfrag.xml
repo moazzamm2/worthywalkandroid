@@ -13,22 +13,42 @@
         android:src="@drawable/winnercup"
         android:id="@+id/leaderimage"
         />
-    <TextView
+    <LinearLayout
+        android:layout_below="@+id/leaderimage"
+android:padding="12dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAmber"
-        android:text="THIS MONTHS ENDS IN 24:05:49"
-        android:textColor="@color/colorWhite"
-        android:textAlignment="center"
-        android:padding="12dp"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:layout_below="@+id/leaderimage"
         android:id="@+id/monthtitle"
+        android:background="@color/colorAmber"
+
+        android:orientation="horizontal"
+        >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="This Competition ends on "
+        android:textColor="@color/colorWhite"
+
+        android:textSize="16dp"
+        android:textStyle="bold"
         />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="00:00:00:00"
+            android:textColor="@color/red"
+            android:textAlignment="center"
+           android:id="@+id/time"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            />
+
+
+    </LinearLayout>
 <androidx.recyclerview.widget.RecyclerView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:id="@+id/leaderview"
     android:layout_below="@+id/monthtitle"/>
 

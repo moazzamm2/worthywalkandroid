@@ -14,12 +14,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class homeFragment extends Fragment {
     TextView name;
     Button startactivity;
     User user;
+    LoginManager loginManager;
     public homeFragment(User user) {
     this.user=user;
     }
@@ -46,6 +48,7 @@ logout.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View view) {
         mAuth.signOut();
+        loginManager.getInstance().logOut();
         Intent intent=new Intent(getActivity(),login.class);
         startActivity(intent);
         getActivity().finish();
@@ -56,6 +59,7 @@ logout.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             Intent intent=new Intent(getActivity(),WalkActivity.class);
+            intent.putExtra("User",user);
             startActivity(intent);
         }
     });

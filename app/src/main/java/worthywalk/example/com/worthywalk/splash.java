@@ -51,6 +51,7 @@ User user;
                     Log.d("kiyayessethua",userjson);
 
                     if(fuser!=null && userjson!=null){
+
                         user=   gson.fromJson(userjson,User.class);
                         Log.d("userset",user.Firstname);
                         login=true;

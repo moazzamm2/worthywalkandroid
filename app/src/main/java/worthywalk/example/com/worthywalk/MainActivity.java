@@ -11,13 +11,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.facebook.login.LoginManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.mapbox.geojson.Point;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements storefrag.Updateuser {
+
+
 boolean start=false;
     //    private PermissionsManager permissionsManager;
 //    private LocationEngine locationEngine;
@@ -33,13 +36,12 @@ boolean start=false;
 
     // Variables needed to listen to location updates
 //    private MainActivityLocationCallback callback = new MainActivityLocationCallback(this);
-
+LoginManager loginManager;
     Avail avail=new Avail();
     private Toolbar toolbar;
     private TextView mTextMessage;
     private TextView title;
     String screen="Workout";
-    private List<Point> routeCoordinates=new ArrayList<>();
     User user=new User();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -75,7 +77,6 @@ boolean start=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 //        Mapbox.getInstance(this, "pk.eyJ1IjoibW9henphbW0yIiwiYSI6ImNqeTRud211cTFjZzgzYmxld2h1aTV0NXMifQ.mrwqGXzKmlTWKgouCjOG0A");
-
         super.onCreate(savedInstanceState);
 
         Intent intent=getIntent();

@@ -160,8 +160,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_promo" />
-                            <entry key="sourceFile" value="C:\Users\hp\Desktop\svg\promo.svg" />
+                            <entry key="outputName" value="ic_boy" />
+                            <entry key="sourceFile" value="C:\Users\hp\Downloads\boy.svg" />
                           </map>
                         </option>
                       </PersistentState>

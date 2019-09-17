@@ -11,13 +11,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.PermissionRequest;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -28,6 +35,15 @@ import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
@@ -35,9 +51,16 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.single.PermissionListener;
 
-import java.sql.Timestamp;
+import org.w3c.dom.Text;
 
-public class WalkActivity extends AppCompatActivity implements StepListener {
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.List;
+
+import static java.lang.Math.asin;
+import static java.lang.Math.sqrt;
+
+public class WalkActivity extends AppCompatActivity  {
     int [] icons=  new int[]{R.drawable.ic_runer_silhouette_running_fast,R.drawable.ic_man_cycling,R.drawable.ic_treadmill};
     int [] circle=new int[]{R.drawable.walkcircle,R.drawable.cyclecircle,R.drawable.treadmillcircle};
     int [] colors=new int[]{R.color.walk,R.color.cycle,R.color.treadmill};
@@ -49,6 +72,8 @@ public class WalkActivity extends AppCompatActivity implements StepListener {
 //    TextView textView, tv_x, tv_y, tv_z;
     SensorManager sensorManager;
     Sensor accelerometer;
+    Double _kms,cal;
+
     Button btn;
 
     public static WalkActivity getInstance() {
@@ -66,27 +91,23 @@ public class WalkActivity extends AppCompatActivity implements StepListener {
     boolean tapped=false;
     StepDetector stepDetector;
     FloatingActionButton fabbutton;
-
-
+Chronometer chronometer;
+    User user=new User();
+    LatLng point;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_walk);
         Instance = this;
+        Intent intent=getIntent();
+        user=(User) intent.getSerializableExtra("User");
         Permission();
-        relativeLayoutprog = (RelativeLayout) findViewById(R.id.relativeprog);
-        relativeLayout=(RelativeLayout) findViewById(R.id.relativeLayout);
-        tap=(TextView)findViewById(R.id.tap);
-        fabbutton=(FloatingActionButton) findViewById(R.id.promobutton) ;
-    progressBar=(ProgressBar) findViewById(R.id.progressBar5);
-    iconset=(ImageView)findViewById(R.id.iconview);
-    calorie=(TextView)findViewById(R.id.calorie);
-        distance=(TextView)findViewById(R.id._kms);
-        timer=(TextView)findViewById(R.id.time);
-       startbtn=(Button) findViewById(R.id.start);
+        setviews();
+        setbuttons();
+
+
 //
         stepDetector=new StepDetector();
-        stepDetector.registerListener(this);
         context=this;
 
      relativeLayoutprog.setOnClickListener(new View.OnClickListener() {
@@ -160,37 +181,127 @@ fabbutton.setOnClickListener(new View.OnClickListener() {
     }
 
 });
-startbtn.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View view) {
-
-       if(tapped) {
-           if (start) {
-               startbtn.setText("START");
-               startbtn.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_green_dark), PorterDuff.Mode.MULTIPLY);
-
-               Intent serviceIntent = new Intent(WalkActivity.this, SensorForeground.class);
-               serviceIntent.setAction("Stop");
-               ContextCompat.startForegroundService(WalkActivity.this, serviceIntent);
-               fusedLocationProviderClient.removeLocationUpdates(getPendingIntent());
-               start = false;
-           } else {
-               startbtn.setText("STOP");
-               startbtn.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_red_dark), PorterDuff.Mode.MULTIPLY);
-               Intent serviceIntent = new Intent(WalkActivity.this, SensorForeground.class);
-               serviceIntent.setAction("Start");
-               ContextCompat.startForegroundService(WalkActivity.this, serviceIntent);;
-               fusedLocationProviderClient.requestLocationUpdates(locationRequest, getPendingIntent());
-               start = true;
-           }
-       }
-    }
-});
 
     }
 
+    private void setbuttons() {
+
+        startbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(tapped) {
+                    if (start) {
+                        startbtn.setText("START");
+                        startbtn.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_green_dark), PorterDuff.Mode.MULTIPLY);
+                        timerstop();
+                        Intent serviceIntent = new Intent(WalkActivity.this, SensorForeground.class);
+                        serviceIntent.setAction("Stop");
+                        ContextCompat.startForegroundService(WalkActivity.this, serviceIntent);
+                        fusedLocationProviderClient.removeLocationUpdates(getPendingIntent());
+                       calculate();
 
 
+                        final Dialog dialog = new Dialog(context);
+
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        /////make map clear
+                        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+                        dialog.setContentView(R.layout.finishdilog);////your custom content
+                       TextView dialogbtn=(TextView) dialog.findViewById(R.id.finishworkout);
+                       TextView steps=(TextView) dialog.findViewById(R.id.steps);
+                       TextView discard=(TextView) dialog.findViewById(R.id.discardeddistance);
+                        MapView mMapView = (MapView) dialog.findViewById(R.id.map);
+                        discard.setText(String.format("%.2f",MyLocationService.walk.discardeddistance));
+                        steps.setText(String.valueOf(MyLocationService.walk.steps));
+
+                        dialog.show();
+
+                        MapsInitializer.initialize(context);
+
+
+                        mMapView.onCreate(dialog.onSaveInstanceState());
+                        mMapView.onResume();
+
+                        mMapView.getMapAsync(new OnMapReadyCallback() {
+                            @Override
+                            public void onMapReady(final GoogleMap googleMap) {
+                                googleMap.setMyLocationEnabled(true);
+                                if(point!=null) {
+                                    CameraPosition myPosition = new CameraPosition.Builder()
+                                            .target(point).zoom(17).bearing(90).tilt(30).build();
+
+                                    googleMap.animateCamera(
+                                            CameraUpdateFactory.newCameraPosition(myPosition));////your lat lng
+                                }
+                                googleMap.addPolyline(new PolylineOptions()
+                                        .addAll(MyLocationService.loc)
+                                        .width(5)
+                                        .color(Color.RED));
+                            }
+                        });
+
+
+//               Button dialogButton = (Button) dialog.findViewById(R.id.map);
+// if button is clicked, close the custom dialog
+                        dialogbtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        start = false;
+                    } else {
+                        timerstart();
+                        startbtn.setText("STOP");
+                        startbtn.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_red_dark), PorterDuff.Mode.MULTIPLY);
+                        Intent serviceIntent = new Intent(WalkActivity.this, SensorForeground.class);
+                        serviceIntent.putExtra("User",user);
+                        serviceIntent.setAction("Start");
+                        ContextCompat.startForegroundService(WalkActivity.this, serviceIntent);;
+                        fusedLocationProviderClient.requestLocationUpdates(locationRequest, getPendingIntent());
+                        start = true;
+                    }
+                }
+            }
+        });
+
+
+
+    }
+
+    private void calculate() {
+
+
+
+
+    }
+
+    private void setviews() {
+        relativeLayoutprog = (RelativeLayout) findViewById(R.id.relativeprog);
+        relativeLayout=(RelativeLayout) findViewById(R.id.relativeLayout);
+        tap=(TextView)findViewById(R.id.tap);
+        fabbutton=(FloatingActionButton) findViewById(R.id.promobutton) ;
+        progressBar=(ProgressBar) findViewById(R.id.progressBar5);
+        iconset=(ImageView)findViewById(R.id.iconview);
+        calorie=(TextView)findViewById(R.id.calorie);
+        distance=(TextView)findViewById(R.id._kms);
+        chronometer=(Chronometer) findViewById(R.id.time);
+        startbtn=(Button) findViewById(R.id.start);
+    }
+
+    private void timerstart() {
+        chronometer.setBase(SystemClock.elapsedRealtime());
+        chronometer.start();
+
+    }
+
+    private void timerstop(){
+        chronometer.stop();
+
+    }
     private void Permission() {
         Dexter.withActivity(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new PermissionListener() {
@@ -239,16 +350,22 @@ startbtn.setOnClickListener(new View.OnClickListener() {
 
     }
 
-    public void UpdateTextView(final String Val) {
+    public void UpdateTextView(final LatLng loc) {
         WalkActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
 //                textView.setText(Val);
                 Intent intent = new Intent(WalkActivity.this,SensorForeground.class);
-                intent.putExtra("intent",Val);
+//                intent.putExtra("intent",Val);
+                Log.d("location12",MyLocationService.loc.toString());
+                distance.setText(String.format("%.2f", MyLocationService.walk.Distance));
+
+               point=loc;
+                long elapsedMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
+//               MyLocationService.walk.caculatecalorie(55,elapsedMillis/);
             }
         });
-        Toast.makeText(getApplicationContext(),Val,Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(),loc.toString(),Toast.LENGTH_SHORT).show();
     }
 
     public void UpdateSensorTV(int steps) {
@@ -262,12 +379,7 @@ startbtn.setOnClickListener(new View.OnClickListener() {
     }
 
 
-    @Override
-    public void step(long timeNs) {
-       steps++;
-       calorie.setText(String.valueOf(steps));
 
-    }
 
 
 

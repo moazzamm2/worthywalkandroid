@@ -51,6 +51,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "800733116102-ceehjoo7av2cojaa2d2o00hf4a72t7j8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "worthywalk.example.com.worthywalk",
+            "certificate_hash": "8da86a48eadd7c6c5aad5074f88897566d7975bf"
+          }
+        },
+        {
+          "client_id": "800733116102-t02ob22o1sbbjbh2m44n6ne8echs7oun.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "worthywalk.example.com.worthywalk",
+            "certificate_hash": "b26d01784fe2e7c5e7d56dd44a5652c4239b1b96"
+          }
+        },
+        {
           "client_id": "800733116102-5k8gcn9nb0pfng0jvkc7rp0776ss6i3e.apps.googleusercontent.com",
           "client_type": 3
         }
