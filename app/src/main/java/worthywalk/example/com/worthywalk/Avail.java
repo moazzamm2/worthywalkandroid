@@ -33,7 +33,7 @@ public class Avail extends AppCompatActivity {
     cardInfo card;
     ImageView banner;
     FirebaseAuth mAuth;
-    User user=new User();
+    User user;
 
 
     StringBuilder sb=new StringBuilder();

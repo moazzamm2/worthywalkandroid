@@ -1,5 +1,4 @@
 package worthywalk.example.com.worthywalk;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,24 +8,35 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
+import android.widget.Chronometer;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.Format;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class SensorHandler implements SensorEventListener,StepListener{
-    SensorManager sensorManager;
-    Sensor accelerometer;
-    int Steps;
-    double x=0.0,y=0.0,z=0.0;
-    public boolean started = false;
-    public Handler handler = new Handler( );
-StepDetector stepDetector;
-    Context myContext;
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private static int Steps;
+    private double x=0.0,y=0.0,z=0.0;
+    private static boolean started = false;
+    private static Handler handler = new Handler( );
+    private StepDetector stepDetector;
+    private static Context myContext;
 
     public SensorHandler(Context cntxt){
         myContext=cntxt;
+
     }
 
     private Runnable runnable = new Runnable( ) {
@@ -37,16 +47,17 @@ StepDetector stepDetector;
     };
 
     public void TIMER(){
-        Sensor();
 
         if (started == true) {
             stop ( );
+            stopsensor();
+
         }
         if(started == false){
             start ();
+            Sensor();
+
         }
-
-
     }
 
     public void Sensor( ){
@@ -60,11 +71,16 @@ StepDetector stepDetector;
         sensorManager.registerListener(this,accelerometer,SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    public boolean stop() {
+    public static boolean stop() {
 
         started(false);
+
                 /*= false;*/
+
+        Log.d("unregister","listener unregistered");
         handler.removeCallbacksAndMessages(null);
+
+
         return started;
     }
 
@@ -75,21 +91,29 @@ StepDetector stepDetector;
         return check();
     }
 
-    public void started(Boolean str){
+    public boolean stopsensor(){
+
+
+        sensorManager.unregisterListener(this,accelerometer);
+        Toast.makeText(myContext,"STOP SENSOR",Toast.LENGTH_LONG).show();
+        return false;
+
+    }
+
+    public static void started(Boolean str){
 
         SharedPreferences settings = myContext.getSharedPreferences("Consumption",0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean ("stateCheck",str);
-        editor.commit();
 
-
-
+        editor.putInt(WalkActivity.SESSION_NUMBER,0);
+        editor.apply();
     }
 
     public boolean check(){
         SharedPreferences shared = myContext.getSharedPreferences("Consumption", MODE_PRIVATE);
         boolean channel = (shared.getBoolean("stateCheck", false));
-    return  channel;
+        return  channel;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -116,26 +140,23 @@ StepDetector stepDetector;
             Intent intent = new Intent(myContext, SensorForeground.class);
             intent.putExtra("time",sensorEvent.timestamp);
             intent.putExtra("x",sensorEvent.values[0]);
-                    intent.putExtra("y",sensorEvent.values[1]);
-                    intent.putExtra("z",  sensorEvent.values[2]);
-                    intent.putExtra("steps",Steps);
-//                Push(v);
+            intent.putExtra("y",sensorEvent.values[1]);
+            intent.putExtra("z",  sensorEvent.values[2]);
+            intent.putExtra("steps",Steps);
+
+            //                Push(v);
         }
-
-
-
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i)
     {
-
     }
-
 
     @Override
     public void step(long timeNs) {
         Steps++;
+        SensorForeground.steps++;
         MyLocationService.walk.setSteps(Steps);
         Log.d("steps", String.valueOf(Steps));
     }

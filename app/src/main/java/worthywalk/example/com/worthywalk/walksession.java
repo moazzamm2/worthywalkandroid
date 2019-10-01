@@ -1,15 +1,9 @@
 package worthywalk.example.com.worthywalk;
-
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.datatype.Duration;
-
-import static java.lang.Math.asin;
-import static java.lang.Math.sqrt;
 
 public class walksession implements Serializable {
 
@@ -37,11 +31,9 @@ public class walksession implements Serializable {
     public void setSteps(int steps){
         this.steps=steps;
     }
-    public void caculatecalorie(double Weight,double duration){
+    public void caculatecalorie(User user,double speed){
 
-
-
-        Calorie = 6.0 *(Weight) * (duration);
+        Calorie = (0.035 * user.Weight) + (speed / user.Height) *0.029*(user.Weight);
 
 
     }
@@ -53,9 +45,5 @@ public class walksession implements Serializable {
     public void setdiscardDistance(double totalDistance) {
         this.discardeddistance+=totalDistance;
     }
-
-
-
-
 }
 

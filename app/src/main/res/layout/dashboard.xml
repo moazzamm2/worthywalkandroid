@@ -173,7 +173,8 @@ android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="620"
+                android:id="@+id/caloriedashboard"
+                android:text="0"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp" />
 
@@ -232,7 +233,8 @@ android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="6200"
+                android:text="0"
+                android:id="@+id/stepsdashboard"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp" />
 
@@ -288,7 +290,8 @@ android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="5"
+                android:text="0"
+                android:id="@+id/distancedashboard"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp" />
 
@@ -346,7 +349,8 @@ android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="6200"
+                android:text="0"
+                android:id="@+id/knubsdashboard"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp" />
 
