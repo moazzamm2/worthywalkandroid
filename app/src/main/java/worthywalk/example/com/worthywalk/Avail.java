@@ -33,7 +33,7 @@ public class Avail extends AppCompatActivity {
     cardInfo card;
     ImageView banner;
     FirebaseAuth mAuth;
-    User user=new User();
+    User user;
 
 
     StringBuilder sb=new StringBuilder();
@@ -52,11 +52,13 @@ public class Avail extends AppCompatActivity {
         avail=(Button) findViewById(R.id.avail);
         report=(Button) findViewById(R.id.report);
         mAuth=FirebaseAuth.getInstance();
+        String passcode;
         Intent intent=getIntent();
         card= (cardInfo) intent.getSerializableExtra("card");
         user=(User) intent.getSerializableExtra("user");
         if(card!=null){
             Picasso.get().load(card.imgurl).fit().into(banner);
+            passcode=card.passcode;
         }
 
         avail.setOnClickListener(new View.OnClickListener() {

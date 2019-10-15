@@ -1,7 +1,4 @@
 package worthywalk.example.com.worthywalk;
-
-import com.google.gson.Gson;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -17,10 +14,13 @@ public class User implements Serializable {
     public int Age;
     public Date Dob;
     public int Knubs;
-    public String imageurl;
+    String  imageurl;
+    int totalknubs;
+    boolean permission;
+    String token;
 
 
-    public User(String firstname, String lastname, String phone, String gender, float height, float weight, int age, Date dob, int knubs,String imageurl) {
+    public User(String firstname, String lastname, String phone, String gender, float height, float weight, int age, Date dob, int knubs,String  imageurl,int totalknubs,boolean permission,String token) {
         Firstname = firstname;
         Lastname = lastname;
         Phone = phone;
@@ -31,6 +31,9 @@ public class User implements Serializable {
         Dob = dob;
         Knubs = knubs;
         this.imageurl=imageurl;
+        this.totalknubs=totalknubs;
+        this.permission=permission;
+        this.token=token;
     }
 
 

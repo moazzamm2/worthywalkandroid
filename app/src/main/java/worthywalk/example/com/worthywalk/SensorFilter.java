@@ -1,5 +1,4 @@
 package worthywalk.example.com.worthywalk;
-
 /**
  * Created by Mujtaba on 8/6/2018.
  */

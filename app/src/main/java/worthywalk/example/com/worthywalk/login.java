@@ -40,6 +40,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -64,6 +66,7 @@ public class login extends AppCompatActivity {
     FirebaseFirestore db;
     LoginButton loginButton;
     String id;
+
     FBuser fBuser;
     private static final String EMAIL = "email";
     // ..
@@ -86,7 +89,7 @@ public class login extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setReadPermissions(Arrays.asList(EMAIL,"public_profile"));
+        loginButton.setPermissions(Arrays.asList(EMAIL,"public_profile"));
 
 
 forgot.setOnClickListener(new View.OnClickListener() {
@@ -251,15 +254,15 @@ forgot.setOnClickListener(new View.OnClickListener() {
 
     }
 
-    void validateUser(final String id, String pass) {
-        mAuth.signInWithEmailAndPassword(id, pass).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+    void validateUser(final String emailid, String pass) {
+        mAuth.signInWithEmailAndPassword(emailid, pass).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             User user = new User();
 
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
 
-                    getdoc(id);
+                    getdoc(id=mAuth.getCurrentUser().getUid());
 
 
                 } else {
@@ -315,6 +318,7 @@ forgot.setOnClickListener(new View.OnClickListener() {
                             intent.putExtra("fbuser",fBuser);
                             startActivity(intent);
 
+
                         }
                     }
 
@@ -330,19 +334,17 @@ forgot.setOnClickListener(new View.OnClickListener() {
 
     }
     public void sendnewtoken() {
-        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-            @Override
-            public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                if (task.isSuccessful()) {
-                    token = task.getResult().getToken();
+
+
+                    token = sharedpreferences.getString("Token","");
 
 
                     if (token != null) {
 
                         Map<String, Object> doc = new HashMap<>();
-                        doc.put("token_id", token);
+                        doc.put("Token", token);
                         try {
-                            db.collection("Token").document(id).update(doc).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            db.collection("Users").document(id).update(doc).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
 
@@ -381,10 +383,9 @@ forgot.setOnClickListener(new View.OnClickListener() {
 
 
                 }
-            }
-        });
+
 
 
     }
-}
+
 

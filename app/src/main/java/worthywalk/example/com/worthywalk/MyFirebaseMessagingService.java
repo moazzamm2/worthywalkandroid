@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.util.Log;
@@ -17,9 +18,10 @@ import androidx.core.app.NotificationManagerCompat;
 
 import static worthywalk.example.com.worthywalk.App.CHANNEL_ID;
 
-class MyFirebaseMessagingService extends FirebaseMessagingService {
+public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
-
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    SharedPreferences sharedpreferences;
     private static final String TAG = "MyAndroidFCMService";
 
     @Override
@@ -35,6 +37,12 @@ class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(String token) {
         Log.d(TAG, "Refreshed token: " + token);
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+        prefsEditor.putString("Token",token);
+        prefsEditor.commit();
+
+
 
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
@@ -49,10 +57,10 @@ class MyFirebaseMessagingService extends FirebaseMessagingService {
                 PendingIntent.FLAG_ONE_SHOT);
 
         Uri notificationSoundURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder mNotificationBuilder = new NotificationCompat.Builder( this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Android Tutorial Point FCM Tutorial")
-                .setContentText(messageBody)
+        NotificationCompat.Builder mNotificationBuilder = new NotificationCompat.Builder( this,CHANNEL_ID);
+        mNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle("Android Tutorial Point FCM Tutorial")
+                 .setContentText(messageBody)
                 .setAutoCancel( true )
                 .setSound(notificationSoundURI)
                 .setContentIntent(resultIntent);

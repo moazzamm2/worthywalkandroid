@@ -12,13 +12,15 @@ public class cardInfo implements Serializable{
     String imgurl;
     String points;
     String deal_id;
+    String passcode;
 
-    public cardInfo( String logo,String imgurl,String resturant, String points,String deal_id) {
+    public cardInfo( String logo,String imgurl,String resturant, String points,String deal_id,String passcode) {
         this.logo=logo;
         this.resturant = resturant;
         this.imgurl = imgurl;
         this.points = points;
         this.deal_id=deal_id;
+        this.passcode=passcode;
     }
 
 

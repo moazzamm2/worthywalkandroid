@@ -1,7 +1,9 @@
 package worthywalk.example.com.worthywalk;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -13,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.facebook.login.LoginManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -20,7 +23,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements storefrag.Updateuser {
 
-
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    static SharedPreferences sharedpreferences;
 boolean start=false;
     //    private PermissionsManager permissionsManager;
 //    private LocationEngine locationEngine;
@@ -42,7 +46,8 @@ LoginManager loginManager;
     private TextView mTextMessage;
     private TextView title;
     String screen="Workout";
-    User user=new User();
+    static  Gson gson;
+    public static User usermain=new User();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -50,20 +55,20 @@ LoginManager loginManager;
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
           if(!start) {
-              Fragment selectedfragment = new homeFragment(user);
+              Fragment selectedfragment = new homeFragment(usermain);
 
               switch (item.getItemId()) {
                   case R.id.navigation_home:
                       screen = "Workout";
-                      selectedfragment = new Leaderboardfrag();
+                      selectedfragment = new Leaderboardfrag(usermain);
                       break;
                   case R.id.navigation_dashboard:
                       screen = "Dash Board";
-                      selectedfragment = new homeFragment(user);
+                      selectedfragment = new homeFragment(usermain);
                       break;
                   case R.id.navigation_notifications:
                       screen = "Store";
-                      selectedfragment = new storefrag(user);
+                      selectedfragment = new storefrag(usermain);
                       break;
 
               }
@@ -79,9 +84,11 @@ LoginManager loginManager;
 //        Mapbox.getInstance(this, "pk.eyJ1IjoibW9henphbW0yIiwiYSI6ImNqeTRud211cTFjZzgzYmxld2h1aTV0NXMifQ.mrwqGXzKmlTWKgouCjOG0A");
         super.onCreate(savedInstanceState);
 
+        gson=new Gson();
         Intent intent=getIntent();
-       user= (User) intent.getExtras().getSerializable("User");
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment,new homeFragment(user)).commit();
+       usermain= (User) intent.getExtras().getSerializable("User");
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment,new homeFragment(usermain)).commit();
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
 
         setContentView(R.layout.activity_main);
@@ -100,8 +107,19 @@ LoginManager loginManager;
 
     @Override
     public void updateuser(User user) {
-        this.user=user;
+        this.usermain=user;
+        String userjson=gson.toJson(user);
+        SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+        prefsEditor.putString("User",userjson);
+        prefsEditor.commit();
         this.getSupportFragmentManager().beginTransaction().replace(R.id.fragment,new storefrag(user)).commit();
+    }
+    public static void updateuserthroughactivity(User user) {
+        usermain=user;
+        String userjson=gson.toJson(user);
+        SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+        prefsEditor.putString("User",userjson);
+        prefsEditor.commit();
     }
 
 //    @Override
