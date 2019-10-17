@@ -18,7 +18,8 @@ public class CustomPagerAdapter extends PagerAdapter {
 
     public CustomPagerAdapter(Context context, String[] resources) {
         mContext = context;
-        mResources = resources;
+          mResources = resources;
+
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 

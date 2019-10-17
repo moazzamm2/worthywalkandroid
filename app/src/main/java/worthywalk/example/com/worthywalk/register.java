@@ -61,7 +61,10 @@ public class register extends AppCompatActivity implements TextWatcher {
     Context context;
     public static final String MyPREFERENCES = "MyPrefs" ;
     SharedPreferences sharedpreferences;
+<<<<<<< HEAD
     StringBuilder dateOfBirth=new StringBuilder();
+=======
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 
     String token;
     CircleImageView profile_picture;
@@ -92,6 +95,7 @@ Gson gson=new Gson();
         phone.addTextChangedListener(this);
         height.addTextChangedListener(this);
         weight.addTextChangedListener(this);
+<<<<<<< HEAD
 //        day.addTextChangedListener(this);
 //        month.addTextChangedListener(this);
 //        year.addTextChangedListener(this);
@@ -201,6 +205,11 @@ Gson gson=new Gson();
             }
         });
 
+=======
+        day.addTextChangedListener(this);
+        month.addTextChangedListener(this);
+        year.addTextChangedListener(this);
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 
         image="";
         if(fbuser!=null){
@@ -255,8 +264,15 @@ Gson gson=new Gson();
                 Date currentTime = Calendar.getInstance().getTime();
                 int age = Calendar.getInstance().get(Calendar.YEAR) - Integer.parseInt(years);
                 User user;
+<<<<<<< HEAD
                 if(fbuser!=null) user  = new User(fname, lname,phn,gend, hei, wei, age, d, 500,fbuser.imageurl);
                 else  user  = new User(fname, lname,phn,gend, hei, wei, age, d, 500,"");
+=======
+                String token=sharedpreferences.getString("Token","");
+
+                if(fbuser!=null) user  = new User(fname, lname,phn,gend, hei, wei, age, d, 500,fbuser.imageurl,500,false,token);
+                else  user  = new User(fname, lname,phn,gend, hei, wei, age, d, 500,"",500,false,token);
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
                 String userjson=gson.toJson(user);
                 SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
                 prefsEditor.putString("User",userjson);
@@ -283,6 +299,13 @@ Gson gson=new Gson();
                 docData.put("DOB", user.Dob);
                 docData.put("Knubs", 500);
                 docData.put("Profilepicture",user.imageurl);
+<<<<<<< HEAD
+=======
+                docData.put("Totalknubs",user.totalknubs);
+                docData.put("Permission",user.permission);
+                docData.put("Token",user.token);
+
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 
                 docData2.put("Totalcalorie",0.0);
                 docData2.put("Totaldistance",0.0);
@@ -291,14 +314,21 @@ Gson gson=new Gson();
 
 
 
+<<<<<<< HEAD
                 String token=sharedpreferences.getString("Token","");
                 docData3.put("Token",token);
+=======
+
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 
 
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                final DocumentReference docRef= db.collection("Users").document(uid);
+<<<<<<< HEAD
                final DocumentReference docRef3= db.collection("Users").document(uid).collection("Token").document(token);
+=======
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 
                 final DocumentReference docRef2=db.collection("Monthlywalk").document(uid);
                 db.runTransaction(new Transaction.Function<Void>() {
@@ -309,7 +339,11 @@ Gson gson=new Gson();
 
                         transaction.set(docRef,docData );
                         transaction.set(docRef2,docData2);
+<<<<<<< HEAD
                         transaction.set(docRef3,docData3);
+=======
+
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
                         return null;
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -322,7 +356,9 @@ Gson gson=new Gson();
                     public void onSuccess(Void aVoid) {
                         Intent intent = new Intent(context, MainActivity.class);
                             intent.putExtra("User",user);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
+<<<<<<< HEAD
                             finish();
                             Log.d("uploaded","done");
                     }
@@ -345,7 +381,14 @@ Gson gson=new Gson();
 //                doc.put("token_id",token);
 //
 //                db.collection("Token").document(uid).set(doc);
+=======
 
+                            Log.d("uploaded","done");
+                    }
+                });
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
+//
 
             }
         });
@@ -365,7 +408,11 @@ Gson gson=new Gson();
     public void afterTextChanged(Editable editable) {
         boolean boolphone=false;
         if(firstname.getText().toString().length()==0) firstname.setError("This field can not be empty");
+<<<<<<< HEAD
         if(lastname.getText().toString().length()==0) lastname.setError("This field can not be empty");
+=======
+
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
         boolphone=phone.getText().toString().matches("03[0-9]{9}");
 
         if(phone.getText().toString().length()<11) phone.setError("Enter 11 digit");

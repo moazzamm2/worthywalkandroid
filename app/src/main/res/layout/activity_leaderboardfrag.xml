@@ -5,7 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Leaderboardfrag">
-
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone"
+    android:id="@+id/leaderlayout">
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="200dp"
@@ -51,5 +55,53 @@ android:padding="12dp"
 
     android:id="@+id/leaderview"
     android:layout_below="@+id/monthtitle"/>
+</RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/winnercup"
+        android:id="@+id/permissionlayout"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Do you want to compete globally for exciting prizes ?"
+            android:textColor="@color/colorPrimary"
+            android:textSize="28dp"
+            android:layout_centerInParent="true"
+            android:id="@+id/textview"
+            android:textAlignment="center"
+            android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textview"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="YES"
+                android:textStyle="bold"
+                android:background="@color/green"
+                android:layout_weight="1"
+                android:id="@+id/yesbtn"
+                />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NO"
+                android:id="@+id/nobtn"
+                android:textStyle="bold"
+                android:background="@color/red"
+                android:layout_weight="1"
+                />
+        </LinearLayout>
+    </RelativeLayout>
+
 
 </RelativeLayout>

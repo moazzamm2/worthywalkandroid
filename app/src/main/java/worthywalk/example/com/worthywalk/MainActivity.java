@@ -60,7 +60,7 @@ LoginManager loginManager;
               switch (item.getItemId()) {
                   case R.id.navigation_home:
                       screen = "Workout";
-                      selectedfragment = new Leaderboardfrag();
+                      selectedfragment = new Leaderboardfrag(usermain);
                       break;
                   case R.id.navigation_dashboard:
                       screen = "Dash Board";

@@ -16,7 +16,7 @@ import com.google.gson.Gson;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class splash extends AppCompatActivity {
-     final baseAuth baseauth= new Auth();
+
     private final int SPLASH_DISPLAY_LENGTH = 2000;
     public static final String MyPREFERENCES = "MyPrefs" ;
 User user;
@@ -46,19 +46,26 @@ User user;
         new Handler().postDelayed(new Runnable(){
                 @Override
             public void run() {
-                    String userjson=sharedPreferences.getString("User","");
+                    String userjson=sharedPreferences.getString("User","a");
                     Gson gson = new Gson();
                     Log.d("kiyayessethua",userjson);
 
-                    if(fuser!=null && userjson!=null){
+                    if(fuser!=null && userjson!="a" && userjson!=null){
 
                         user=   gson.fromJson(userjson,User.class);
                         Log.d("userset",user.Firstname);
                         login=true;
 
+                    }else {
+                        Intent mainIntent = new Intent(splash.this,login.class);
+                        splash.this.startActivity(mainIntent);
+//                }
+
+                        splash.this.finish();
                     }
 
                     if(login){
+                        Log.d("login","how did this got true ");
                         Intent mainIntent = new Intent(splash.this,MainActivity.class);
                         mainIntent.putExtra("User",user);
                         splash.this.startActivity(mainIntent);

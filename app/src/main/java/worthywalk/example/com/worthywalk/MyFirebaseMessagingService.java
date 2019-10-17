@@ -18,7 +18,11 @@ import androidx.core.app.NotificationManagerCompat;
 
 import static worthywalk.example.com.worthywalk.App.CHANNEL_ID;
 
+<<<<<<< HEAD
 class MyFirebaseMessagingService extends FirebaseMessagingService {
+=======
+public class MyFirebaseMessagingService extends FirebaseMessagingService {
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 
     public static final String MyPREFERENCES = "MyPrefs" ;
     SharedPreferences sharedpreferences;

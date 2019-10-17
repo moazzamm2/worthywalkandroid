@@ -17,6 +17,7 @@ public class walksession implements Serializable {
 
 
 
+
     public walksession(int steps, int time, Double calorie, Double distance, int knubs) {
         this.steps = steps;
         this.StoppedMilliseconds = time;

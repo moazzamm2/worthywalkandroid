@@ -254,15 +254,15 @@ forgot.setOnClickListener(new View.OnClickListener() {
 
     }
 
-    void validateUser(final String id, String pass) {
-        mAuth.signInWithEmailAndPassword(id, pass).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+    void validateUser(final String emailid, String pass) {
+        mAuth.signInWithEmailAndPassword(emailid, pass).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             User user = new User();
 
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
 
-                    getdoc(id);
+                    getdoc(id=mAuth.getCurrentUser().getUid());
 
 
                 } else {
@@ -318,6 +318,7 @@ forgot.setOnClickListener(new View.OnClickListener() {
                             intent.putExtra("fbuser",fBuser);
                             startActivity(intent);
 
+
                         }
                     }
 
@@ -343,7 +344,11 @@ forgot.setOnClickListener(new View.OnClickListener() {
                         Map<String, Object> doc = new HashMap<>();
                         doc.put("Token", token);
                         try {
+<<<<<<< HEAD
                             db.collection("Users").document(id).collection("Token").document(token).set(doc).addOnCompleteListener(new OnCompleteListener<Void>() {
+=======
+                            db.collection("Users").document(id).update(doc).addOnCompleteListener(new OnCompleteListener<Void>() {
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
 

@@ -1,7 +1,13 @@
 package worthywalk.example.com.worthywalk;
 
 import android.app.Activity;
+<<<<<<< HEAD
 import android.content.Context;
+=======
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,6 +25,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.facebook.login.LoginManager;
@@ -30,6 +37,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Transaction;
+<<<<<<< HEAD
+=======
+
+import java.util.HashMap;
+import java.util.Map;
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 
 public class homeFragment extends Fragment {
     TextView name,totaldistance,totalcalorie,totalsteps,totalknubs;
@@ -75,12 +88,45 @@ FirebaseAuth mAuth;
 logout.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View view) {
+<<<<<<< HEAD
         mAuth.signOut();
         loginManager.getInstance().logOut();
         Intent intent=new Intent(getActivity(),login.class);
         startActivity(intent);
         sharedpreferences.edit().remove("User").commit();
         getActivity().finish();
+=======
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        alertDialogBuilder.setTitle("Logout");
+        alertDialogBuilder.setMessage("Are you sure you want to Logout ? ");
+        alertDialogBuilder.setPositiveButton("yes",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        mAuth.signOut();
+
+                        sharedpreferences.edit().remove("User").commit();
+
+                        loginManager.getInstance().logOut();
+
+                        Intent intent=new Intent(getActivity(),login.class);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }
+                });
+
+        alertDialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                getActivity().finish();
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
     }
 });
 

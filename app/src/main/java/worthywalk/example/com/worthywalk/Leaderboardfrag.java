@@ -7,26 +7,38 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
-import com.google.firebase.database.Transaction;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Transaction;
+import com.google.gson.Gson;
 
 import org.w3c.dom.Text;
 
@@ -50,19 +62,36 @@ leaderadapter adapter;
 Date endingtime;
 TextView time;
 CountDownTimer cTimer = null;
+Gson gson;
 long milliseconds;
+Button yes,no;
 FirebaseFirestore db;
+RelativeLayout permission,leader;
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    SharedPreferences sharedpreferences;
     long milli=0;
+User user;
     Map<Integer,String> month=new HashMap();
+    FirebaseAuth mAuth;
 
+    public Leaderboardfrag(User usermain) {
+        user=usermain;
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.activity_leaderboardfrag,container,false);
         db=FirebaseFirestore.getInstance();
+        mAuth=FirebaseAuth.getInstance();
         recyclerView =(RecyclerView) view.findViewById(R.id.leaderview);
         time=(TextView) view.findViewById(R.id.time);
+        yes=(Button) view.findViewById(R.id.yesbtn);
+        leader=(RelativeLayout) view.findViewById(R.id.leaderlayout);
+        permission=(RelativeLayout) view.findViewById(R.id.permissionlayout);
+        gson=new Gson();
+        no=(Button) view.findViewById(R.id.nobtn);
+        sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         month.put(1,"Jan");
         month.put(2,"Feb");
         month.put(3,"Mar");
@@ -75,17 +104,83 @@ FirebaseFirestore db;
         month.put(10,"Oct");
         month.put(11,"Nov");
         month.put(12,"Dec");
+        checkuser();
+        yes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-//data.add(new leaderinfo("Moazzam Maqsood","3000","abc"));
-        loadtime();
-        loaddata();
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+                    alertDialogBuilder.setMessage("Are you sure, You wanted to make decision , Everyone can see your score !");
+                            alertDialogBuilder.setPositiveButton("yes",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface arg0, int arg1) {
+                                            Toast.makeText(getActivity(),"You clicked yes button",Toast.LENGTH_LONG).show();
+                                            final DocumentReference docRef=db.collection("Users").document(mAuth.getUid());
+                                            final Map<String, Object> docData = new HashMap<>();
+
+                                            docData.put("Permission",true);
+                                            db.runTransaction(new Transaction.Function<Void>() {
+                                                @Nullable
+                                                @Override
+                                                public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                                                        transaction.update(docRef,docData);
+                                                            return null;
+                                                }
+                                            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    user.permission=true;
+                                                    leader.setVisibility(View.VISIBLE);
+                                                    permission.setVisibility(View.GONE);
+                                                    String userjson=gson.toJson(user);
+                                                    SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+                                                    prefsEditor.putString("User",userjson);
+                                                    prefsEditor.commit();
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+
+                                                    Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+                                                }
+                                            });
+
+                                        }
+                                    });
+
+                    alertDialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                        getActivity().finish();
+                        }
+                    });
+
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                }
+
+        });
+
         RecyclerView.LayoutManager layout = new LinearLayoutManager(getActivity());
+
+
         recyclerView.setLayoutManager(layout);
 
 
         return view;
     }
 
+    private void checkuser() {
+
+        if(user.permission){
+            loadtime();
+            loaddata();
+            leader.setVisibility(View.VISIBLE);
+            permission.setVisibility(View.GONE);
+        }
+
+    }
 
 
     private void loadtime() {
@@ -122,15 +217,16 @@ FirebaseFirestore db;
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         final CollectionReference leader = db.collection("Users");
-        leader.orderBy("Knubs", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        leader.orderBy("Totalknubs", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
                 if(task.isSuccessful()){
 
                     for(QueryDocumentSnapshot doc:task.getResult()){
                         String name=doc.getString("Firstname")+" "+doc.getString("Lastname");
                         String id=doc.getId();
-                        String knubs=String.valueOf(doc.get("Knubs"));
+                        String knubs=String.valueOf(doc.get("Totalknubs"));
                         if(doc.getString("Firstname")!=null)  data.add(new leaderinfo(name,knubs,id));
                         Log.d("infoo",name);
                     }

@@ -8,12 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -29,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class Dealslist extends Fragment {
 
+    TextView tv;
     RecyclerView rev;
     List<cardInfo> data = new ArrayList<>();
     private int dotscount;
@@ -46,7 +50,7 @@ Dealslist(String category,User user){
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootview = inflater.inflate(R.layout.storerecycle, container, false);
         rev = (RecyclerView) rootview.findViewById(R.id.recyclerView);
-
+        tv=(TextView) rootview.findViewById(R.id.comingsoon);
         load();
 
         RecyclerView.LayoutManager layout = new LinearLayoutManager(getActivity());
@@ -73,27 +77,6 @@ Dealslist(String category,User user){
     private void loadstore() {
         load();
 
-//        rev.addOnItemTouchListener(
-//                new RecyclerItemClickListener(getContext(), rev, new RecyclerItemClickListener.OnItemClickListener() {
-//                    @Override
-//                    public void onItemClick(View view, int position) {
-//                        // do whatever
-//                        cardInfo a = data.get(position);
-//                        Intent display = new Intent(getContext(), storecard.class);
-//                        display.putExtra("sellectedoffer", a);
-//                        startActivity(display);
-//
-//                    }
-//
-//                    @Override
-//                    public void onLongItemClick(View view, int position) {
-                        // do whatever
-
-//                    }
-//                })
-//        );
-
-//        storelistadapter
 
     }
 
@@ -106,9 +89,22 @@ Dealslist(String category,User user){
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot doc : task.getResult()) {
-                                String id=doc.getId();
-                                data.add(new cardInfo("https://i.pinimg.com/736x/35/39/88/3539889f8d4988d18a53801882e39090.jpg", doc.getString("Image"), doc.getString("Brandid"),  String.valueOf(doc.get("Knubs")), id));
+                            tv.setVisibility(View.GONE);
+                            rev.setVisibility(View.VISIBLE);
+                            QuerySnapshot documentSnapshot=task.getResult();
+                            if(documentSnapshot.isEmpty()){
+                                rev.setVisibility(View.GONE);
+                                tv.setVisibility(View.VISIBLE);
+                                Log.d("gone","coming soon ka on scene");
+
+                            }else{
+
+                                for (QueryDocumentSnapshot doc : task.getResult()) {
+                                    String id = doc.getId();
+                                    data.add(new cardInfo("https://i.pinimg.com/736x/35/39/88/3539889f8d4988d18a53801882e39090.jpg", doc.getString("Image"), doc.getString("Brandid"), String.valueOf(doc.get("Knubs")), id,String.valueOf(doc.get("Passcode"))));
+
+
+                                }
                             }
                             adapter = new storelistadapter(data, getContext());
                             adapter.setOnItemClickListener(new storelistadapter.OnItemClickListener() {

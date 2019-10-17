@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">worthywalk</string>
+    <string name="app_name">Worthy Walk</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name='user_location_permission_explanation'>Open up the locaition</string>

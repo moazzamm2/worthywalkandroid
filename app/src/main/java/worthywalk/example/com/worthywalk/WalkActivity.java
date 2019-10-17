@@ -11,6 +11,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+<<<<<<< HEAD
+=======
+import android.location.Location;
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -57,6 +61,10 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.text.DecimalFormat;
+<<<<<<< HEAD
+=======
+import java.util.ArrayList;
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,19 +92,31 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     int knubsmon;
     float caloriemon;
     int  stepsmon;
+<<<<<<< HEAD
+=======
+    double discardeddistance;
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
     public static WalkActivity getInstance() {
         return Instance;
     }
     ImageView iconset;
     TextView calorie,distance;
+<<<<<<< HEAD
     int index=0;
+=======
+    int index;
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
     TextView tap;
     Button startbtn;
     RelativeLayout relativeLayout;
     RelativeLayout relativeLayoutprog;
     ProgressBar progressBar;
     boolean start =false;
+<<<<<<< HEAD
     boolean tapped=false,saved=true;
+=======
+    boolean tapped=false,saved;
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
     StepDetector stepDetector;
     FloatingActionButton fabbutton;
     public static Chronometer chronometer;
@@ -116,10 +136,19 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     public static final String MyPREFERENCES = "MyPrefs" ;
     LocationManager lm;
     SharedPreferences sharedpreferences;
+<<<<<<< HEAD
 
     boolean gps_enabled;
     TextView testingDistance;
     Session session;
+=======
+    Gson gson;
+    boolean gps_enabled;
+    TextView testingDistance;
+    double discarddistance;
+    Session session;
+
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
     private static DecimalFormat df2 = new DecimalFormat("#.##");
 
     @Override
@@ -133,21 +162,39 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
         gps_enabled = false;
         setviews();
 
+<<<<<<< HEAD
 
         isServiceRunning = SensorForeground.isServiceRunning;
         indexOfImage = SensorForeground.index;
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         boolean saved=sharedpreferences.getBoolean("Saved",true);
+=======
+        isServiceRunning = SensorForeground.isServiceRunning;
+//        indexOfImage = SensorForeground.index;
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+         saved=sharedpreferences.getBoolean("Saved",true);
+
+        String userjson=sharedpreferences.getString("User","a");
+        gson = new Gson();
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 
         if(!saved){
         Log.d("checking","SAVE ChecK");
            String info= sharedpreferences.getString("Session","");
+<<<<<<< HEAD
             Gson gson=new Gson();
+=======
+
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
             session=gson.fromJson(info,Session.class);
 
 
 
         }
+<<<<<<< HEAD
+=======
+        indexOfImage=sharedpreferences.getInt("Index",0)-1;
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 
         if(isServiceRunning){
             start = true;
@@ -174,7 +221,13 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
         Instance = this;
         Intent intent=getIntent();
         user=(User) intent.getSerializableExtra("User");
+<<<<<<< HEAD
 
+=======
+        if(user==null){
+            user=gson.fromJson(userjson,User.class);
+        }
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
         Permission();
         setbuttons();
 
@@ -249,6 +302,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
 
     }
 
+
     private void setbuttons() {
 
         startbtn.setOnClickListener(new View.OnClickListener() {
@@ -276,6 +330,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
 
                                 calculateknubs();
 
+<<<<<<< HEAD
                                 saveSessionDetails();
 
                                 chronometer.stop();
@@ -287,11 +342,27 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
                                 serviceIntent.setAction(STOP);
                                 serviceIntent.putExtra(INDEX, index);
 
+=======
+                                calculateknubs();
+
+                                saveSessionDetails();
+
+                                chronometer.stop();
+                                UpdateTextViews();
+
+                                startbtn.setText("START");
+                                startbtn.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_green_dark), PorterDuff.Mode.MULTIPLY);
+                                Intent serviceIntent = new Intent(WalkActivity.this, SensorForeground.class);
+                                serviceIntent.setAction(STOP);
+                                serviceIntent.putExtra(INDEX, index);
+
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
                                 final Dialog dialog = new Dialog(context);
 
                                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                                 /////make map clear
                                 dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+<<<<<<< HEAD
 
                                 dialog.setContentView(R.layout.finishdilog);////your custom content
                                 TextView dialogbtn = dialog.findViewById(R.id.finishworkout);
@@ -317,6 +388,33 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
                                 discardDialog.setText(String.valueOf(discarddistance));
                                 knubsDialog.setText(String.valueOf(newknubs));
 
+=======
+
+                                dialog.setContentView(R.layout.finishdilog);////your custom content
+                                TextView dialogbtn = dialog.findViewById(R.id.finishworkout);
+                                stepsDialog = dialog.findViewById(R.id.stepsdialog);
+                                caloriesDialog = dialog.findViewById(R.id.coloriedialog);
+                                distanceDialog = dialog.findViewById(R.id.distancedialog);
+                                discardDialog = dialog.findViewById(R.id.discardeddistance);
+                                knubsDialog = dialog.findViewById(R.id.knubsdialog);
+
+                                MapView mMapView = dialog.findViewById(R.id.map);
+
+                                stepsDialog.setText(String.valueOf(SensorForeground.getStepCount()));
+                                // Values based on STEPS
+                                //caloriesDialog.setText(String.valueOf(SensorForeground.getCaloriesBurnt()));
+                                //distanceDialog.setText(df2.format(SensorForeground.getDistance()));
+
+                                // Values based on POINTS on Map
+                                distanceOnMap = MyLocationService.getDistance(SensorForeground.loc) - calculatediscardeddistance();
+                                double discarddistanced = calculatediscardeddistance();
+                                distanceDialog.setText(String.valueOf(distanceOnMap));
+                                caloriesDialog.setText(String.valueOf(MyLocationService.getCalories(distanceOnMap)));
+
+                                discardDialog.setText(String.valueOf(discarddistanced));
+                                knubsDialog.setText(String.valueOf(newknubs));
+
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
                                 dialog.show();
 
                                 MapsInitializer.initialize(context);
@@ -364,7 +462,13 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
 
                             } else {
                                 if (!isServiceRunning) {
+<<<<<<< HEAD
 
+=======
+                                    SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+                                    prefsEditor.putInt("Index",index);
+                                    prefsEditor.commit();
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
                                     startbtn.setText("STOP");
                                     startbtn.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_red_dark), PorterDuff.Mode.MULTIPLY);
                                     Intent serviceIntent = new Intent(WalkActivity.this, SensorForeground.class);
@@ -468,6 +572,45 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
 
     }
 
+    private double calculatediscardeddistance(){
+        double TotalDistance=0;
+        List<LatLng> points=new ArrayList<LatLng>();
+      points = SensorForeground.loc;
+        if(points.size()>1){
+
+            float[] results = new float[1];
+            for(int i = 0 ; i < points.size()-2 ; i++) {
+
+                Location.distanceBetween(
+                        points.get(i).latitude,
+                        points.get(i).longitude,
+                        points.get(i + 1).latitude,
+                        points.get(i + 1).longitude,
+                        results
+                );
+                if(indexOfImage==0){
+
+                    if (results[0] > 10)         TotalDistance += results[0];
+                } else if(indexOfImage==1){
+                    if (results[0] > 20)         TotalDistance += results[0];
+
+else {
+                        if (results[0] > 5)         TotalDistance += results[0];
+
+                    }
+                }
+            }
+      discarddistance=TotalDistance;
+
+        }
+        // Divide TotalDistance by 2 to get the accurate result
+        return Double.parseDouble(df2.format(discarddistance/2));
+
+
+
+
+    }
+
     private void UpdateLocation() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -545,12 +688,20 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
         if(!saved){
            distanceCovered = session.distance;
             caloriesBurnt = session.caloriesburnt;
+<<<<<<< HEAD
              timeSpent = session.timespent;
+=======
+            timeSpent = session.timespent;
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
             knubs=session.Knubs;
             pathCoordinates = session.pathCoordinates;
 
         }else {
+<<<<<<< HEAD
              distanceCovered = Double.parseDouble(df2.format(MyLocationService.getDistance(SensorForeground.loc)-MyLocationService.getDiscardDistance(SensorForeground.loc)));
+=======
+             distanceCovered = Double.parseDouble(df2.format(MyLocationService.getDistance(SensorForeground.loc)-calculatediscardeddistance()));
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
              caloriesBurnt = SensorForeground.getCaloriesBurnt();
              timeSpent = SensorForeground.getTime();
              pathCoordinates = SensorForeground.loc;
@@ -582,20 +733,45 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
                         "\ntimeSpent : "+ timeSpent+
                         "\ncoordinatesCount : " + pathCoordinates.size());
         final SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+<<<<<<< HEAD
         saveinpreferences(distanceCovered,caloriesBurnt);
 
         docData3.put("Totalcalorie",caloriemon);
         docData3.put("Totaldistance",distancemon);
         docData3.put("Totalsteps",stepsmon);
         docData3.put("Totalknubs" ,knubsmon);
+=======
+//        saveinpreferences(distanceCovered,caloriesBurnt);
+
+
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
     db.runTransaction(new Transaction.Function<Void>() {
             @Nullable
             @Override
             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
 
+<<<<<<< HEAD
 //                DocumentSnapshot snapshot = transaction.get(docRef);
 
                     transaction.update(docRef, "Knubs", user.Knubs+knubs);
+=======
+                DocumentSnapshot snapshot = transaction.get(docRef);
+                DocumentSnapshot snapshot2 = transaction.get(docRef3);
+                knubsmon=Integer.parseInt(String.valueOf(snapshot2.get("Totalknubs")))+knubs;
+                distancemon=Float.parseFloat(String.valueOf(snapshot2.get("Totaldistance")))+(float)distanceCovered;
+                caloriemon=Float.parseFloat(String.valueOf(snapshot2.get("Totalcalorie")))+(float)caloriesBurnt;
+                stepsmon=Integer.parseInt(String.valueOf(snapshot2.get("Totalsteps")))+SensorForeground.steps;
+
+                docData3.put("Totalcalorie",caloriemon);
+                docData3.put("Totaldistance",distancemon);
+                docData3.put("Totalsteps",stepsmon);
+                docData3.put("Totalknubs" ,knubsmon);
+
+                    int allknubs=Integer.parseInt(String.valueOf(snapshot.get("Totalknubs")))+knubs;
+
+                    transaction.update(docRef, "Knubs", user.Knubs+knubs);
+                    transaction.update(docRef,"Totalknubs",allknubs);
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
                     transaction.set(docRef2,docData );
                     transaction.update(docRef3,docData3);
 
@@ -617,32 +793,61 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
              saved=false;
              prefsEditor.putString("Session",info);
              prefsEditor.putBoolean("Saved",false);
+<<<<<<< HEAD
              prefsEditor.apply();
 
              Toast.makeText(getApplicationContext(),"Session Not Saved",
+=======
+             prefsEditor.commit();
+
+             Toast.makeText(getApplicationContext(),e.getMessage(),
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
                      Toast.LENGTH_SHORT).show();
          }
      }).addOnSuccessListener(new OnSuccessListener() {
          @Override
          public void onSuccess(Object o) {
+<<<<<<< HEAD
              sharedpreferences.edit().remove("Session").apply();
 
              user.Knubs=knubs+user.Knubs;
              MainActivity.updateuserthroughactivity(user);
+=======
+
+            user.Knubs=user.Knubs+knubs;
+             MainActivity.updateuserthroughactivity(user);
+             String userjson=gson.toJson(user);
+             SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+             prefsEditor.putString("User",userjson);
+             prefsEditor.commit();
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
              saved=true;
                  prefsEditor.putBoolean("Saved", true);
                  prefsEditor.putFloat("Totaldistance", distancemon);
                  prefsEditor.putFloat("Totalcalorie", caloriemon);
                  prefsEditor.putInt("Totalknubs", knubsmon);
                  prefsEditor.putInt("Totalsteps", stepsmon);
+<<<<<<< HEAD
                  prefsEditor.apply();
              Toast.makeText(getApplicationContext(),"Session Saved Succesfully",
                      Toast.LENGTH_SHORT).show();
+=======
+                 prefsEditor.commit();
+             Toast.makeText(getApplicationContext(),"Session Saved Succesfully",
+                     Toast.LENGTH_SHORT).show();
+             sharedpreferences.edit().remove("Session").commit();
+
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
          }
      });
 
 
         //TODO Save above detail in database
+<<<<<<< HEAD
+    }
+
+    private void saveinpreferences(double distanceCovered,double caloriesBurnt) {
+=======
     }
 
     private void saveinpreferences(double distanceCovered,double caloriesBurnt) {
@@ -660,8 +865,32 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     }
 
     private void startNewSession(){
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 
+        distancemon=sharedpreferences.getFloat("Totaldistance",0);
+        knubsmon=sharedpreferences.getInt("Totalknubs",0);
+        caloriemon=sharedpreferences.getFloat("Totalcalorie",0);
+        stepsmon=sharedpreferences.getInt("Totalsteps",0);
 
+        knubsmon=knubsmon+newknubs;
+        distancemon=distancemon+(float)distanceCovered;
+        caloriemon=caloriemon+(float)caloriesBurnt;
+        stepsmon=stepsmon+SensorForeground.steps;
+
+    }
+
+<<<<<<< HEAD
+    private void startNewSession(){
+=======
+        resetSession();
+    }
+
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
+    @Override
+    public void onChronometerTick(Chronometer chronometer) {
+
+<<<<<<< HEAD
         resetSession();
     }
 
@@ -669,6 +898,8 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     @Override
     public void onChronometerTick(Chronometer chronometer) {
 
+=======
+>>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
         //This will update the TextViews every second
         UpdateTextViews();
     }
