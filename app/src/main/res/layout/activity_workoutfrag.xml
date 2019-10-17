@@ -4,21 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".workoutfrag"
-    >
+    tools:context=".workoutfrag">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/walk"
         android:foregroundTintMode="src_atop"
         android:foregroundTint="@color/colorPrimaryDark"
-
-        android:alpha="0.5"
-        />
+        android:alpha="0.5"/>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
 
 

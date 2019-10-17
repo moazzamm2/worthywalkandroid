@@ -32,6 +32,7 @@ import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Year;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,7 +45,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class register extends AppCompatActivity implements TextWatcher {
     String fname, lname, phn, gend, days, months, years,image;
-    ;
     float hei, wei;
 
     FirebaseAuth mAuth;
@@ -61,6 +61,7 @@ public class register extends AppCompatActivity implements TextWatcher {
     Context context;
     public static final String MyPREFERENCES = "MyPrefs" ;
     SharedPreferences sharedpreferences;
+    StringBuilder dateOfBirth=new StringBuilder();
 
     String token;
     CircleImageView profile_picture;
@@ -91,9 +92,115 @@ Gson gson=new Gson();
         phone.addTextChangedListener(this);
         height.addTextChangedListener(this);
         weight.addTextChangedListener(this);
-        day.addTextChangedListener(this);
-        month.addTextChangedListener(this);
-        year.addTextChangedListener(this);
+//        day.addTextChangedListener(this);
+//        month.addTextChangedListener(this);
+//        year.addTextChangedListener(this);
+        day.addTextChangedListener(new TextWatcher(){
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // TODO Auto-generated method stub
+                if(dateOfBirth.length()==0&day.length()==2)
+                {
+                    dateOfBirth.append(s);
+                    day.clearFocus();
+                    month.requestFocus();
+                    month.setCursorVisible(true);
+
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+
+                if(dateOfBirth.length()==2)
+                {
+
+                    dateOfBirth.deleteCharAt(0);
+                    dateOfBirth.deleteCharAt(1);
+
+                }
+
+            }
+
+            public void afterTextChanged(Editable s) {
+                if(dateOfBirth.length()==0)
+                {
+
+                    day.requestFocus();
+                }
+
+            }
+        });
+        month.addTextChangedListener(new TextWatcher(){
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // TODO Auto-generated method stub
+                if(month.length()==2)
+                {
+                    dateOfBirth.append(s);
+                    month.clearFocus();
+                    year.requestFocus();
+                    year.setCursorVisible(true);
+
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+
+                if(dateOfBirth.length()==2)
+                {
+
+                    dateOfBirth.deleteCharAt(0);
+//                    dateOfBirth.deleteCharAt(1);
+
+                }
+
+            }
+
+            public void afterTextChanged(Editable s) {
+                if(dateOfBirth.length()==0)
+                {
+
+                    month.requestFocus();
+                }
+
+            }
+        });
+        year.addTextChangedListener(new TextWatcher(){
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // TODO Auto-generated method stub
+                if(year.length()==4)
+                {
+                    dateOfBirth.append(s);
+                    month.clearFocus();
+                    year.requestFocus();
+                    year.setCursorVisible(true);
+
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+
+                if(dateOfBirth.length()==2)
+                {
+
+                    dateOfBirth.deleteCharAt(0);
+//                    dateOfBirth.deleteCharAt(1);
+
+                }
+
+            }
+
+            public void afterTextChanged(Editable s) {
+                if(dateOfBirth.length()==0)
+                {
+
+                    month.requestFocus();
+                }
+
+            }
+        });
+
 
         image="";
         if(fbuser!=null){
@@ -129,6 +236,7 @@ Gson gson=new Gson();
                 lname= lname.substring(0,1).toUpperCase()+lname.substring(1);
 
                 phn = phone.getText().toString();
+                phn = "+92"+phn;
                 hei = Float.parseFloat(height.getText().toString());
                 wei = Float.parseFloat(weight.getText().toString());
                 days = day.getText().toString();
