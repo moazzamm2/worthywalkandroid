@@ -23,6 +23,8 @@ import com.google.android.gms.stats.WakeLock;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import static worthywalk.example.com.worthywalk.App.CHANNEL_ID;
+
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
@@ -94,7 +96,7 @@ int numsteps;
     private void showNotification() {
         final NotificationManager mgr = (NotificationManager) this
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder note = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder note = new NotificationCompat.Builder(this,CHANNEL_ID);
         note.setContentTitle("Device Accelerometer Notification");
         note.setTicker("New Message Alert!");
         note.setAutoCancel(true);
@@ -104,7 +106,7 @@ int numsteps;
         note.setSmallIcon(R.mipmap.ic_launcher);
         // This pending intent will open after notification click
         PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this,
-               workoutActivity.class), 0);
+               WalkActivity.class), 0);
         // set pending intent to notification builder
         note.setContentIntent(pi);
         mgr.notify(101, note.build());

@@ -4,118 +4,123 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-       >
 
-        <com.google.android.material.appbar.AppBarLayout
+
+    >
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
+
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fitsSystemWindows="true">
+            android:layout_height="320dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:contentScrim="?attr/colorPrimary"
+            android:fitsSystemWindows="true"
+            app:titleEnabled="false"
 
-            <com.google.android.material.appbar.CollapsingToolbarLayout
+            >
+            <include layout="@layout/storetb"
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed"
-                app:contentScrim="?attr/colorPrimary"
-                app:expandedTitleTextAppearance="@android:color/transparent"
-                android:fitsSystemWindows="true"
-                app:title="STORE"
+                app:layout_collapseMode="pin"
+                android:layout_height="?attr/actionBarSize"
 
-                >
+                android:layout_gravity="top"
+                />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorWhite"
+                android:layout_marginTop="?attr/actionBarSize"
+
+                android:requiresFadingEdge="horizontal">
+
+
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/colorWhite"
-                    android:requiresFadingEdge="horizontal">
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/t1img"
+                    android:layout_below="@+id/ads"
+                    >
 
-               <include layout="@layout/storetb"
-                   android:id="@+id/toolbar"/>
-
-                    <RelativeLayout
+                    <androidx.viewpager.widget.ViewPager
+                        android:id="@+id/pager"
+                        android:background="@color/colorPrimary"
                         android:layout_width="match_parent"
+                        android:layout_height="150dp" />
+
+                                    </RelativeLayout>
+
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+
+                    android:id="@+id/ads"
+                    android:layout_marginTop="0dp"
+                    android:padding="20dp"
+                    android:alpha="1"
+                    android:background="@drawable/gradient1"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignTop="@+id/t1img"
-                        android:layout_below="@+id/ads"
-                       >
-
-                        <androidx.viewpager.widget.ViewPager
-                            android:id="@+id/pager"
-                            android:layout_marginTop="2dp"
-                            android:layout_width="match_parent"
-                            android:layout_height="130dp"
-                            android:layout_marginBottom="8dp"/>
-
-                    </RelativeLayout>
-
-
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
+                        android:text="Ammar Rizwan"
+                        android:layout_centerHorizontal="true"
+                        android:textSize="25dp"
+                        android:id="@+id/t1name"
+                        android:textColor="#ffffff"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/toolbar"
-                        android:id="@+id/ads"
-
-                        android:layout_marginTop="0dp"
-                        android:padding="20dp"
-
-                        android:alpha="1"
-                        android:background="@drawable/gradient1"
-
+                       android:layout_centerHorizontal="true"
+                        android:orientation="horizontal"
+                        android:layout_below="@+id/t1name"
                         >
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_knub_flat"/>
                         <TextView
+                            android:id="@+id/t1points"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ammar Rizwan"
-                            android:layout_centerHorizontal="true"
-                            android:textSize="25dp"
-                            android:id="@+id/t1name"
-                            android:textColor="#ffffff"/>
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-
-                            android:orientation="horizontal"
+                            android:layout_marginLeft="5dp"
+                            android:text="15000"
                             android:layout_below="@+id/t1name"
-                            >
-                            <ImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
+                           android:textSize="25dp"
+                            android:textColor="@color/colorAmber"/>
+                        <TextView
+                            android:id="@+id/pts"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="KNUBS"
+                            android:layout_below="@+id/t1name"
+                            android:textSize="25dp"
+                            android:layout_marginLeft="10dp"
+                            android:textColor="@color/colorAmber"/>
 
-                                android:src="@drawable/ic_knub_flat"/>
-                            <TextView
-                                android:id="@+id/t1points"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="5dp"
-                                android:text="15000"
-                                android:layout_below="@+id/t1name"
-                                android:textSize="25dp"
-                                android:textColor="@color/colorAmber"/>
-                            <TextView
-                                android:id="@+id/pts"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="KNUBS"
-                                android:layout_below="@+id/t1name"
-                                android:textSize="25dp"
-                                android:layout_marginLeft="10dp"
-                                android:textColor="@color/colorAmber"/>
-
-                        </LinearLayout>
-
-                    </RelativeLayout>
-
+                    </LinearLayout>
                 </RelativeLayout>
+            </RelativeLayout>
+
+
+
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
 
 
 
 
 
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-
-        </com.google.android.material.appbar.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"

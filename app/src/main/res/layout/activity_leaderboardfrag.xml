@@ -8,12 +8,33 @@
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:visibility="gone"
+android:visibility="gone"
     android:id="@+id/leaderlayout">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/colorAmber"
+        android:id="@+id/sponsor">
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="SPONSORED BY WORTHY WALK"
+            android:textAlignment="center"
+            android:textColor="@color/colorWhite"
+            android:layout_centerInParent="true"
+
+
+            />
+
+    </RelativeLayout>
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="200dp"
-
+android:layout_below="@+id/sponsor"
         android:src="@drawable/winnercup"
         android:id="@+id/leaderimage"
         />
@@ -40,7 +61,7 @@ android:padding="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="00:00:00:00"
-            android:textColor="@color/red"
+            android:textColor="@color/colorWhite"
             android:textAlignment="center"
            android:id="@+id/time"
             android:textSize="20dp"

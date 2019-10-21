@@ -24,7 +24,8 @@ User user;
     FirebaseUser fuser;
     Handler dataloadhandler=new Handler();
     FirebaseAuth mAuth;
-    boolean login=false;
+    boolean login=false,data=false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,13 +53,29 @@ User user;
 
                     if(fuser!=null && userjson!="a" && userjson!=null){
 
-                        user=   gson.fromJson(userjson,User.class);
-                        Log.d("userset",user.Firstname);
-                        login=true;
 
-                    }else {
+                            user=   gson.fromJson(userjson,User.class);
+                            Log.d("userset",user.Firstname);
+                            if(user!=null) {
+                                login = true;
+                                data = true;
+                            }
+
+
+
+                    }else if(userjson=="a") {
+                                data=false;
+                                Intent mainIntent = new Intent(splash.this,register.class);
+                                splash.this.startActivity(mainIntent);
+                                splash.this.finish();
+                    }
+                    else{
+                        Log.d("login","how did this got true ");
+
                         Intent mainIntent = new Intent(splash.this,login.class);
                         splash.this.startActivity(mainIntent);
+
+
 //                }
 
                         splash.this.finish();
@@ -74,7 +91,9 @@ User user;
                         splash.this.finish();
                         dataloadhandler.removeCallbacks(this);
 
-                    }else {
+                    }else if(data) {
+                        Log.d("logins","how did this got true  ");
+
                         Intent mainIntent = new Intent(splash.this,login.class);
                         splash.this.startActivity(mainIntent);
 //                }

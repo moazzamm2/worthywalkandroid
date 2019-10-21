@@ -86,7 +86,7 @@ public void setOnItemClickListener(OnItemClickListener listener){
             final cardInfo a =data.get(position);
             Picasso.get().load(a.logo).fit().into(logo);
             Picasso.get().load(a.imgurl).fit().into(banner);
-            resturant.setText(a.resturant);
+            resturant.setText(a.Name);
             points.setText(a.points);
         }
         @Override

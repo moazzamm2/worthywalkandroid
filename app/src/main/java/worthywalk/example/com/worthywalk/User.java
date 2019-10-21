@@ -15,18 +15,14 @@ public class User implements Serializable {
     public Date Dob;
     public int Knubs;
     String  imageurl;
-<<<<<<< HEAD
 
-
-    public User(String firstname, String lastname, String phone, String gender, float height, float weight, int age, Date dob, int knubs,String  imageurl) {
-=======
     int totalknubs;
     boolean permission;
     String token;
 
 
     public User(String firstname, String lastname, String phone, String gender, float height, float weight, int age, Date dob, int knubs,String  imageurl,int totalknubs,boolean permission,String token) {
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
         Firstname = firstname;
         Lastname = lastname;
         Phone = phone;
@@ -37,13 +33,10 @@ public class User implements Serializable {
         Dob = dob;
         Knubs = knubs;
         this.imageurl=imageurl;
-<<<<<<< HEAD
-
-=======
         this.totalknubs=totalknubs;
         this.permission=permission;
         this.token=token;
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
     }
 
 

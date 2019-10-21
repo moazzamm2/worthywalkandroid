@@ -80,6 +80,7 @@ public class login extends AppCompatActivity {
 //            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
 
+
         callbackManager = CallbackManager.Factory.create();
         forgot=(TextView) findViewById(R.id.forgot);
         email = (EditText) findViewById(R.id.emailAddress);
@@ -114,6 +115,9 @@ forgot.setOnClickListener(new View.OnClickListener() {
                     });
         }else {
             Toast.makeText(getApplicationContext(),"Enter correct email address",Toast.LENGTH_LONG).show();
+            Intent mainIntent = new Intent(login.this,register.class);
+            startActivity(mainIntent);
+
         }
     }
 });
@@ -145,7 +149,9 @@ forgot.setOnClickListener(new View.OnClickListener() {
         FirebaseUser user = mAuth.getCurrentUser();
 
         if (user != null) {
+
             Intent intent = new Intent(this, MainActivity.class);
+            getdoc(user.getUid());
             startActivity(intent);
             finish();
 
@@ -168,7 +174,8 @@ forgot.setOnClickListener(new View.OnClickListener() {
 
                 String emailid = email.getText().toString().trim();
                 String pass = password.getText().toString().trim();
-                if (!emailid.isEmpty() && !pass.isEmpty()) validateUser(emailid, pass);
+
+                    if (!emailid.isEmpty() && !pass.isEmpty()) validateUser(emailid, pass);
 
             }
         });
@@ -187,7 +194,7 @@ forgot.setOnClickListener(new View.OnClickListener() {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            getdoc(user.getUid());
+                            getdoc(id=user.getUid());
 //                            loaduserprofile(token);
 
                         } else {
@@ -344,11 +351,9 @@ forgot.setOnClickListener(new View.OnClickListener() {
                         Map<String, Object> doc = new HashMap<>();
                         doc.put("Token", token);
                         try {
-<<<<<<< HEAD
-                            db.collection("Users").document(id).collection("Token").document(token).set(doc).addOnCompleteListener(new OnCompleteListener<Void>() {
-=======
+
                             db.collection("Users").document(id).update(doc).addOnCompleteListener(new OnCompleteListener<Void>() {
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
 
@@ -366,7 +371,7 @@ forgot.setOnClickListener(new View.OnClickListener() {
 
                             });
                         }catch (Exception e){
-                            Log.d("error",e.getMessage());
+                            Log.d("errortoken",e.getMessage());
                             Intent intent = new Intent(login.this, MainActivity.class);
                             intent.putExtra("User", user);
 

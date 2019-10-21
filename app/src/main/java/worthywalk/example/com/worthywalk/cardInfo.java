@@ -8,19 +8,26 @@ import java.io.Serializable;
 
 public class cardInfo implements Serializable{
     String logo;
-    String resturant;
+    String Name;
     String imgurl;
     String points;
     String deal_id;
     String passcode;
+    String Website;
+    String Fb;
 
-    public cardInfo( String logo,String imgurl,String resturant, String points,String deal_id,String passcode) {
+    Boolean online;
+
+    public cardInfo( String logo,String imgurl,String Name, String points,String deal_id,String passcode,boolean online,String Website,String Fb) {
         this.logo=logo;
-        this.resturant = resturant;
+        this.Name = Name;
         this.imgurl = imgurl;
         this.points = points;
         this.deal_id=deal_id;
         this.passcode=passcode;
+        this.online=online;
+        this.Website=Website;
+        this.Fb=Fb;
     }
 
 

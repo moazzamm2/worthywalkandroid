@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,8 +35,10 @@ public class Avail extends AppCompatActivity {
     ImageView banner;
     FirebaseAuth mAuth;
     User user;
-
-
+    String pass;
+    String passcode;
+    String message;
+        TextView text;
     StringBuilder sb=new StringBuilder();
 
     @Override
@@ -49,23 +52,44 @@ public class Avail extends AppCompatActivity {
         e3=(EditText) findViewById(R.id.edit3);
         e4=(EditText) findViewById(R.id.edit4);
         e5=(EditText) findViewById(R.id.edit5);
+        text=(TextView) findViewById(R.id.text5);
+
+
         avail=(Button) findViewById(R.id.avail);
         report=(Button) findViewById(R.id.report);
         mAuth=FirebaseAuth.getInstance();
-        String passcode;
+
         Intent intent=getIntent();
+
         card= (cardInfo) intent.getSerializableExtra("card");
+        if(card.online){
+            e5.setVisibility(View.GONE);
+            text.setVisibility(View.VISIBLE);
+
+        }else {
+            e5.setVisibility(View.VISIBLE);
+            text.setVisibility(View.GONE);
+
+        }
         user=(User) intent.getSerializableExtra("user");
         if(card!=null){
             Picasso.get().load(card.imgurl).fit().into(banner);
             passcode=card.passcode;
         }
 
+        if(card.Fb.length()>0) {
+            message = "Get this Passcode from the Brands Fb page here is their username " + card.Fb;
+            text.setText(message);
+        }
         avail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-          transaction();
+                if(e1.getText().toString().length()>0 || +e2.getText().toString().length()>0 ||+e3.getText().toString().length()>0 ||+e4.getText().toString().length()>0) {
+                    pass=e1.getText().toString()+e2.getText().toString()+e3.getText().toString()+e4.getText().toString();
+                    if(pass.equals(passcode))                   transaction();
+                    else Toast.makeText(getApplicationContext(),"Type Valid Passcode",Toast.LENGTH_LONG).show();
+                }                    else Toast.makeText(getApplicationContext(),"Enter Passcode",Toast.LENGTH_LONG).show();
 
             }
         });
@@ -210,7 +234,6 @@ public class Avail extends AppCompatActivity {
 
             }
         });
-
 
 
 

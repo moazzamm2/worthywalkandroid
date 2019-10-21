@@ -18,11 +18,9 @@ import androidx.core.app.NotificationManagerCompat;
 
 import static worthywalk.example.com.worthywalk.App.CHANNEL_ID;
 
-<<<<<<< HEAD
-class MyFirebaseMessagingService extends FirebaseMessagingService {
-=======
+
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
 
     public static final String MyPREFERENCES = "MyPrefs" ;
     SharedPreferences sharedpreferences;
@@ -33,7 +31,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(TAG, "From: " + remoteMessage.getFrom());
         Log.d(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
         //create notification
-        createNotification(remoteMessage.getNotification().getBody());
+        createNotification(remoteMessage);
 
 
         //check for the data/notification entry from the payload
@@ -54,7 +52,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     }
 
-    private void createNotification( String messageBody) {
+    private void createNotification( RemoteMessage remoteMessage) {
         Intent intent = new Intent( this , MainActivity. class );
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent resultIntent = PendingIntent.getActivity( this , 0, intent,
@@ -63,8 +61,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Uri notificationSoundURI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder mNotificationBuilder = new NotificationCompat.Builder( this,CHANNEL_ID);
         mNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle("Android Tutorial Point FCM Tutorial")
-                 .setContentText(messageBody)
+            .setContentTitle(remoteMessage.getNotification().getTitle())
+                 .setContentText(remoteMessage.getNotification().getBody())
                 .setAutoCancel( true )
                 .setSound(notificationSoundURI)
                 .setContentIntent(resultIntent);

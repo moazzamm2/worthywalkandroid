@@ -61,10 +61,11 @@ public class register extends AppCompatActivity implements TextWatcher {
     Context context;
     public static final String MyPREFERENCES = "MyPrefs" ;
     SharedPreferences sharedpreferences;
-<<<<<<< HEAD
+    boolean fn,ln,pn,gn,ht,wt,dy,mn,yr;
+
+
     StringBuilder dateOfBirth=new StringBuilder();
-=======
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
 
     String token;
     CircleImageView profile_picture;
@@ -95,7 +96,7 @@ Gson gson=new Gson();
         phone.addTextChangedListener(this);
         height.addTextChangedListener(this);
         weight.addTextChangedListener(this);
-<<<<<<< HEAD
+
 //        day.addTextChangedListener(this);
 //        month.addTextChangedListener(this);
 //        year.addTextChangedListener(this);
@@ -205,11 +206,10 @@ Gson gson=new Gson();
             }
         });
 
-=======
+
         day.addTextChangedListener(this);
         month.addTextChangedListener(this);
         year.addTextChangedListener(this);
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 
         image="";
         if(fbuser!=null){
@@ -238,46 +238,50 @@ Gson gson=new Gson();
         go.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (pn && ht && wt && dy && mn && yr) {
+                    fname = firstname.getText().toString();
+                    fname = fname.substring(0, 1).toUpperCase() + fname.substring(1);
+                    lname = lastname.getText().toString();
+                    lname = lname.substring(0, 1).toUpperCase() + lname.substring(1);
 
-                fname = firstname.getText().toString();
-                fname= fname.substring(0,1).toUpperCase()+fname.substring(1);
-                lname = lastname.getText().toString();
-                lname= lname.substring(0,1).toUpperCase()+lname.substring(1);
-
-                phn = phone.getText().toString();
-                phn = "+92"+phn;
-                hei = Float.parseFloat(height.getText().toString());
-                wei = Float.parseFloat(weight.getText().toString());
-                days = day.getText().toString();
-                months = month.getText().toString();
-                years = year.getText().toString();
+                    phn = phone.getText().toString();
+                    phn = "+92" + phn;
+                    hei = Float.parseFloat(height.getText().toString());
+                    wei = Float.parseFloat(weight.getText().toString());
+                    days = day.getText().toString();
+                    months = month.getText().toString();
+                    years = year.getText().toString();
 
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-                String dob = years + months + days;
-                Date d = null;
-                try {
-                    d = sdf.parse(dob);
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+                    String dob = years + months + days;
+                    Date d = null;
+                    try {
+                        d = sdf.parse(dob);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    Date currentTime = Calendar.getInstance().getTime();
+                    int age = Calendar.getInstance().get(Calendar.YEAR) - Integer.parseInt(years);
+                    User user;
+
+                    String token = sharedpreferences.getString("Token", "");
+
+                    if (fbuser != null)
+                        user = new User(fname, lname, phn, gend, hei, wei, age, d, 500, fbuser.imageurl, 500, false, token);
+                    else
+                        user = new User(fname, lname, phn, gend, hei, wei, age, d, 500, "", 500, false, token);
+
+                    String userjson = gson.toJson(user);
+                    SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+                    prefsEditor.putString("User", userjson);
+                    prefsEditor.commit();
+                    sendata(user, users.getUid());
                 }
-                Date currentTime = Calendar.getInstance().getTime();
-                int age = Calendar.getInstance().get(Calendar.YEAR) - Integer.parseInt(years);
-                User user;
-<<<<<<< HEAD
-                if(fbuser!=null) user  = new User(fname, lname,phn,gend, hei, wei, age, d, 500,fbuser.imageurl);
-                else  user  = new User(fname, lname,phn,gend, hei, wei, age, d, 500,"");
-=======
-                String token=sharedpreferences.getString("Token","");
+                else {
+                    Toast.makeText(getApplicationContext(),"Form Validation failed , please provide the correct Information !",Toast.LENGTH_LONG).show();
 
-                if(fbuser!=null) user  = new User(fname, lname,phn,gend, hei, wei, age, d, 500,fbuser.imageurl,500,false,token);
-                else  user  = new User(fname, lname,phn,gend, hei, wei, age, d, 500,"",500,false,token);
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
-                String userjson=gson.toJson(user);
-                SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
-                prefsEditor.putString("User",userjson);
-                prefsEditor.commit();
-                sendata(user, users.getUid());
+                }
             }
 
             private void validate(){
@@ -299,13 +303,11 @@ Gson gson=new Gson();
                 docData.put("DOB", user.Dob);
                 docData.put("Knubs", 500);
                 docData.put("Profilepicture",user.imageurl);
-<<<<<<< HEAD
-=======
                 docData.put("Totalknubs",user.totalknubs);
                 docData.put("Permission",user.permission);
                 docData.put("Token",user.token);
 
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
 
                 docData2.put("Totalcalorie",0.0);
                 docData2.put("Totaldistance",0.0);
@@ -314,21 +316,10 @@ Gson gson=new Gson();
 
 
 
-<<<<<<< HEAD
-                String token=sharedpreferences.getString("Token","");
-                docData3.put("Token",token);
-=======
-
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
-
-
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                final DocumentReference docRef= db.collection("Users").document(uid);
-<<<<<<< HEAD
-               final DocumentReference docRef3= db.collection("Users").document(uid).collection("Token").document(token);
-=======
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
 
                 final DocumentReference docRef2=db.collection("Monthlywalk").document(uid);
                 db.runTransaction(new Transaction.Function<Void>() {
@@ -339,11 +330,7 @@ Gson gson=new Gson();
 
                         transaction.set(docRef,docData );
                         transaction.set(docRef2,docData2);
-<<<<<<< HEAD
-                        transaction.set(docRef3,docData3);
-=======
 
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
                         return null;
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -356,37 +343,15 @@ Gson gson=new Gson();
                     public void onSuccess(Void aVoid) {
                         Intent intent = new Intent(context, MainActivity.class);
                             intent.putExtra("User",user);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
                             startActivity(intent);
-<<<<<<< HEAD
+
+                            Log.d("uploaded","done");
                             finish();
-                            Log.d("uploaded","done");
                     }
                 });
 
-//                db.collection("Users").document(uid).set(docData).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        if (task.isSuccessful()) {
-//                            Intent intent = new Intent(context, MainActivity.class);
-//                            intent.putExtra("User",user);
-//                            startActivity(intent);
-//                            finish();
-//                            Log.d("uploaded","done");
-//
-//                        }
-//                    }
-//                });
-//                final Map<String, Object> doc = new HashMap<>();
-//                doc.put("token_id",token);
-//
-//                db.collection("Token").document(uid).set(doc);
-=======
-
-                            Log.d("uploaded","done");
-                    }
-                });
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 
 //
 
@@ -408,33 +373,73 @@ Gson gson=new Gson();
     public void afterTextChanged(Editable editable) {
         boolean boolphone=false;
         if(firstname.getText().toString().length()==0) firstname.setError("This field can not be empty");
-<<<<<<< HEAD
-        if(lastname.getText().toString().length()==0) lastname.setError("This field can not be empty");
-=======
-
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
-        boolphone=phone.getText().toString().matches("03[0-9]{9}");
-
-        if(phone.getText().toString().length()<11) phone.setError("Enter 11 digit");
-        else if(boolphone) boolphone=true ;
-        else phone.setError("03XXXXXXXXX");
-
-        if(day.getText().toString().length()==0)day.setError("can not be empty");
-
-        else if(Integer.parseInt(day.getText().toString())>31) day.setError("Enter valid date");
-
-        if(month.getText().toString().length()==0)month.setError("can not be empty");
-        else if(Integer.parseInt(month.getText().toString())>12) month.setError("Enter valid month");
-
-        if(year.getText().toString().length()==0)year.setError("can not be empty");
-        else if(Integer.parseInt(year.getText().toString())<1940 || Integer.parseInt(year.getText().toString())>2019) year.setError("Not a valid year");
-        if(day.getText().toString().length()==0)day.setError("can not be empty");
 
 
-        if(height.getText().toString().length()==0)height.setError("can not be empty");
-        else if(Float.parseFloat(height.getText().toString())<3.0 ||Float.parseFloat(height.getText().toString())>14.0) height.setError("enter valid Height");
-        if(weight.getText().toString().length()==0)weight.setError("can not be empty");
-       else if(Float.parseFloat(weight.getText().toString())<20 || Float.parseFloat(weight.getText().toString())>600) weight.setError("Enter valid Weight");
+        boolphone=phone.getText().toString().matches("3[0-9]{9}");
+
+        if(phone.getText().toString().length()<10) phone.setError("Enter 10 digit");
+        else if(boolphone) pn=true ;
+        else phone.setError("3XXXXXXXXX");
+
+        if(day.getText().toString().length()==0){
+            dy=false;
+            day.setError("can not be empty");
+        }
+
+        else if(Integer.parseInt(day.getText().toString())>31){
+            day.setError("Enter valid day");
+              dy=false;
+        }
+        else{
+            dy=true;
+        }
+
+        if(month.getText().toString().length()==0){
+            mn=false;
+            month.setError("can not be empty");
+        }
+        else if(Integer.parseInt(month.getText().toString())>12){
+            mn=false;
+
+            month.setError("Enter valid month");
+        }else {
+            mn=true;
+
+        }
+
+        if(year.getText().toString().length()==0){
+            year.setError("can not be empty");
+        yr=false;
+        }
+        else if(Integer.parseInt(year.getText().toString())<1940 || Integer.parseInt(year.getText().toString())>2019){
+            year.setError("Not a valid year");
+            yr=false;
+
+        }
+        else yr=true;
+
+
+
+
+        if(height.getText().toString().length()==0){
+            ht=false;
+            height.setError("can not be empty");
+        }
+        else if(Float.parseFloat(height.getText().toString())<3.0 ||Float.parseFloat(height.getText().toString())>14.0) {
+            height.setError("enter valid Height");
+            ht=false;
+        }else  ht=true;
+
+        if(weight.getText().toString().length()==0){
+            ht=false;
+            weight.setError("can not be empty");
+        }
+       else if(Float.parseFloat(weight.getText().toString())<20 || Float.parseFloat(weight.getText().toString())>600){
+           wt=false;
+           weight.setError("Enter valid Weight");
+        }else{
+           wt=true;
+        }
 
 
 

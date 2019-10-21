@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item
+        android:id="@+id/clothingtab"
+        android:icon="@drawable/ic_clothes"
+        android:title="FASHION"
+        />
 
 
     <item
         android:id="@+id/foodtab"
         android:icon="@drawable/ic_dish"
-        android:title="Food"
-        />
-
-
-    <item
-        android:id="@+id/clothingtab"
-        android:icon="@drawable/ic_clothes"
-        android:title="CLOTHING"
+        android:title="FOOD"
         />
 
     <item
-        android:id="@+id/healthTab"
-        android:icon="@drawable/ic_first_aid_kit"
-        android:title="Health"
-        />
-    <item
-        android:id="@+id/salonTab"
+        android:id="@+id/funtab"
         android:icon="@drawable/ic_bowling_pins"
-        android:title="Fun"
+        android:title="ENTERTAINMENT"
         />
     <item
-        android:id="@+id/gymtab"
-        android:icon="@drawable/ic_gym"
-        android:title="GYM"
+    android:id="@+id/healthTab"
+    android:icon="@drawable/ic_first_aid_kit"
+    android:title="HEALTH"
+    />
+    <item
+        android:id="@+id/otherTab"
+        android:icon="@drawable/ic_shop"
+        android:title="OTHERS"
         />
 </menu>

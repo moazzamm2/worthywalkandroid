@@ -11,13 +11,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-<<<<<<< HEAD
-=======
+
 import android.location.Location;
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -42,6 +41,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -52,6 +52,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
@@ -60,11 +63,12 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import org.w3c.dom.Document;
+
 import java.text.DecimalFormat;
-<<<<<<< HEAD
-=======
+
 import java.util.ArrayList;
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +87,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     public static WalkActivity Instance;
     LocationRequest locationRequest;
     FusedLocationProviderClient fusedLocationProviderClient;
+    boolean multiplyer=false;
 
     public static final String START = "Start";
     public static final String STOP = "Stop";
@@ -92,31 +97,27 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     int knubsmon;
     float caloriemon;
     int  stepsmon;
-<<<<<<< HEAD
-=======
+
     double discardeddistance;
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
     public static WalkActivity getInstance() {
         return Instance;
     }
     ImageView iconset;
     TextView calorie,distance;
-<<<<<<< HEAD
-    int index=0;
-=======
+    FirebaseFirestore db;
+
     int index;
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
     TextView tap;
     Button startbtn;
     RelativeLayout relativeLayout;
     RelativeLayout relativeLayoutprog;
     ProgressBar progressBar;
     boolean start =false;
-<<<<<<< HEAD
-    boolean tapped=false,saved=true;
-=======
+
     boolean tapped=false,saved;
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
     StepDetector stepDetector;
     FloatingActionButton fabbutton;
     public static Chronometer chronometer;
@@ -136,19 +137,14 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     public static final String MyPREFERENCES = "MyPrefs" ;
     LocationManager lm;
     SharedPreferences sharedpreferences;
-<<<<<<< HEAD
 
-    boolean gps_enabled;
-    TextView testingDistance;
-    Session session;
-=======
     Gson gson;
     boolean gps_enabled;
     TextView testingDistance;
     double discarddistance;
     Session session;
 
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
     private static DecimalFormat df2 = new DecimalFormat("#.##");
 
     @Override
@@ -156,45 +152,35 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_walk);
         context=this;
-
+        db=FirebaseFirestore.getInstance();
         useruid=FirebaseAuth.getInstance().getUid();
                 lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
         gps_enabled = false;
         setviews();
 
-<<<<<<< HEAD
 
-        isServiceRunning = SensorForeground.isServiceRunning;
-        indexOfImage = SensorForeground.index;
-        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        boolean saved=sharedpreferences.getBoolean("Saved",true);
-=======
         isServiceRunning = SensorForeground.isServiceRunning;
 //        indexOfImage = SensorForeground.index;
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
          saved=sharedpreferences.getBoolean("Saved",true);
-
+         multiplyer=sharedpreferences.getBoolean("Multiplier",false);
         String userjson=sharedpreferences.getString("User","a");
         gson = new Gson();
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
 
         if(!saved){
         Log.d("checking","SAVE ChecK");
            String info= sharedpreferences.getString("Session","");
-<<<<<<< HEAD
-            Gson gson=new Gson();
-=======
 
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
             session=gson.fromJson(info,Session.class);
 
 
 
         }
-<<<<<<< HEAD
-=======
+
         indexOfImage=sharedpreferences.getInt("Index",0)-1;
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
 
         if(isServiceRunning){
             start = true;
@@ -221,13 +207,11 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
         Instance = this;
         Intent intent=getIntent();
         user=(User) intent.getSerializableExtra("User");
-<<<<<<< HEAD
 
-=======
         if(user==null){
             user=gson.fromJson(userjson,User.class);
         }
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
         Permission();
         setbuttons();
 
@@ -257,51 +241,91 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
             dialog.setTitle("Bonus");
             final EditText text = (EditText) dialog.findViewById(R.id.promo);
             Button dialogButton = (Button) dialog.findViewById(R.id.use);
+
             dialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String x = text.getText().toString().trim();
+              final  String x = text.getText().toString().trim();
+                if(x.length()>0){
+                    Log.d("promocheckx",x);
+                    db.collection("Multiplyer").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful()){
 
-//                        Query q=mDatabase.child("Bounus").orderByChild("Code").equalTo(x);
 
-//                        q.addChildEventListener(new ChildEventListener() {
-//                            @Override
-//                            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                                String x = dataSnapshot.getKey();
-//                                Float y = dataSnapshot.child("multiply").getValue(Float.class);
-//                                divideby= divideby/y;
-//                            }
-//
-//                            @Override
-//                            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//                            }
-//
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                            }
-//                        });
+                                for(QueryDocumentSnapshot doc: task.getResult()){
+                                    Log.d("promocheckp",doc.getString("Promo"));
+
+                                    if(doc.getString("Promo").equals(x)){
+                                        Log.d("promocheckp",doc.getString("Promo"));
+
+                                     multiplyer=true;
+
+                                    }
+                                }
+                                if(multiplyer){
+                                    Toast.makeText(getApplicationContext(),"PromocodeActivated",Toast.LENGTH_LONG).show();
+
+                                    SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+                                    prefsEditor.putBoolean("Multiplier",multiplyer);
+                                    prefsEditor.commit();
+                                }else{
+                                    Toast.makeText(getApplicationContext(),"Invalid Promocode",Toast.LENGTH_LONG).show();
+
+
+                                }
+
+                            }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }else{
+                    Toast.makeText(getApplicationContext(),"Enter Promocode",Toast.LENGTH_LONG).show();
+                }
                 dialog.dismiss();
+
             }
 
+//
+
+
+
         });
+
         dialog.show();
+
     }
+
 });
 
     }
 
+
+    private boolean validity(){
+        double dist=MyLocationService.getDistance(SensorForeground.loc);
+        int stepss=SensorForeground.steps;
+        double stepdistratio= SensorForeground.steps/MyLocationService.getDistance(SensorForeground.loc);
+        long elapsedMillis = SystemClock.elapsedRealtime() - SensorForeground.getTime();
+        double timedistratio= (elapsedMillis/1000)/dist;
+        Log.d("Timecheck",String.valueOf(elapsedMillis));
+        if(SensorForeground.steps==0 && dist>5){
+            return false;
+        }else if(stepdistratio<0.8){
+            return  false;
+        }else if(timedistratio<0.8){
+            return false;
+        }else if(indexOfImage<=1 && stepss>30 && dist<3) return false;
+        else{
+            return true;
+        }
+
+
+    }
 
     private void setbuttons() {
 
@@ -330,22 +354,9 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
 
                                 calculateknubs();
 
-<<<<<<< HEAD
-                                saveSessionDetails();
 
-                                chronometer.stop();
-                                UpdateTextViews();
-
-                                startbtn.setText("START");
-                                startbtn.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_green_dark), PorterDuff.Mode.MULTIPLY);
-                                Intent serviceIntent = new Intent(WalkActivity.this, SensorForeground.class);
-                                serviceIntent.setAction(STOP);
-                                serviceIntent.putExtra(INDEX, index);
-
-=======
                                 calculateknubs();
 
-                                saveSessionDetails();
 
                                 chronometer.stop();
                                 UpdateTextViews();
@@ -356,39 +367,16 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
                                 serviceIntent.setAction(STOP);
                                 serviceIntent.putExtra(INDEX, index);
 
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+                                if (validity()) {
+                                    saveSessionDetails();
+
+
                                 final Dialog dialog = new Dialog(context);
 
                                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                                 /////make map clear
                                 dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-<<<<<<< HEAD
 
-                                dialog.setContentView(R.layout.finishdilog);////your custom content
-                                TextView dialogbtn = dialog.findViewById(R.id.finishworkout);
-                                stepsDialog = dialog.findViewById(R.id.stepsdialog);
-                                caloriesDialog = dialog.findViewById(R.id.coloriedialog);
-                                distanceDialog = dialog.findViewById(R.id.distancedialog);
-                                discardDialog = dialog.findViewById(R.id.discardeddistance);
-                                knubsDialog = dialog.findViewById(R.id.knubsdialog);
-
-                                MapView mMapView = dialog.findViewById(R.id.map);
-
-                                stepsDialog.setText(String.valueOf(SensorForeground.getStepCount()));
-                                // Values based on STEPS
-                                //caloriesDialog.setText(String.valueOf(SensorForeground.getCaloriesBurnt()));
-                                //distanceDialog.setText(df2.format(SensorForeground.getDistance()));
-
-                                // Values based on POINTS on Map
-                                distanceOnMap = MyLocationService.getDistance(SensorForeground.loc) - MyLocationService.getDiscardDistance(SensorForeground.loc);
-                                double discarddistance = MyLocationService.getDiscardDistance(SensorForeground.loc);
-                                distanceDialog.setText(String.valueOf(distanceOnMap));
-                                caloriesDialog.setText(String.valueOf(MyLocationService.getCalories(distanceOnMap)));
-
-                                discardDialog.setText(String.valueOf(discarddistance));
-                                knubsDialog.setText(String.valueOf(newknubs));
-
-=======
 
                                 dialog.setContentView(R.layout.finishdilog);////your custom content
                                 TextView dialogbtn = dialog.findViewById(R.id.finishworkout);
@@ -414,7 +402,6 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
                                 discardDialog.setText(String.valueOf(discarddistanced));
                                 knubsDialog.setText(String.valueOf(newknubs));
 
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
                                 dialog.show();
 
                                 MapsInitializer.initialize(context);
@@ -459,16 +446,38 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
                                 fusedLocationProviderClient.removeLocationUpdates(getPendingIntent());
                                 start = false;
 
+                            }else{
+                                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(WalkActivity.this);
+                                    alertDialogBuilder.setMessage("Invalid Walk !");
+                                    alertDialogBuilder.setPositiveButton("Ok",
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface arg0, int arg1) {
+
+                                                   resetSession();
+
+                                                }
+                                            });
+
+
+
+                                    AlertDialog alertDialog = alertDialogBuilder.create();
+                                    alertDialog.show();
+
+
+                                }
+
+
+
+
 
                             } else {
                                 if (!isServiceRunning) {
-<<<<<<< HEAD
 
-=======
                                     SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
                                     prefsEditor.putInt("Index",index);
                                     prefsEditor.commit();
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
                                     startbtn.setText("STOP");
                                     startbtn.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_red_dark), PorterDuff.Mode.MULTIPLY);
                                     Intent serviceIntent = new Intent(WalkActivity.this, SensorForeground.class);
@@ -688,27 +697,23 @@ else {
         if(!saved){
            distanceCovered = session.distance;
             caloriesBurnt = session.caloriesburnt;
-<<<<<<< HEAD
-             timeSpent = session.timespent;
-=======
+
             timeSpent = session.timespent;
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
             knubs=session.Knubs;
             pathCoordinates = session.pathCoordinates;
 
         }else {
-<<<<<<< HEAD
-             distanceCovered = Double.parseDouble(df2.format(MyLocationService.getDistance(SensorForeground.loc)-MyLocationService.getDiscardDistance(SensorForeground.loc)));
-=======
+
              distanceCovered = Double.parseDouble(df2.format(MyLocationService.getDistance(SensorForeground.loc)-calculatediscardeddistance()));
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
              caloriesBurnt = SensorForeground.getCaloriesBurnt();
              timeSpent = SensorForeground.getTime();
              pathCoordinates = SensorForeground.loc;
              knubs=newknubs;
 
         }
-        FirebaseFirestore db=FirebaseFirestore.getInstance();
+
         final DocumentReference docRef=db.collection("Users").document(useruid);
         final DocumentReference docRef2=db.collection("Session").document();
         final DocumentReference docRef3=db.collection("Monthlywalk").document(useruid);
@@ -733,28 +738,15 @@ else {
                         "\ntimeSpent : "+ timeSpent+
                         "\ncoordinatesCount : " + pathCoordinates.size());
         final SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
-<<<<<<< HEAD
-        saveinpreferences(distanceCovered,caloriesBurnt);
-
-        docData3.put("Totalcalorie",caloriemon);
-        docData3.put("Totaldistance",distancemon);
-        docData3.put("Totalsteps",stepsmon);
-        docData3.put("Totalknubs" ,knubsmon);
-=======
-//        saveinpreferences(distanceCovered,caloriesBurnt);
+      saveinpreferences(distanceCovered,caloriesBurnt);
 
 
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
     db.runTransaction(new Transaction.Function<Void>() {
             @Nullable
             @Override
             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
 
-<<<<<<< HEAD
-//                DocumentSnapshot snapshot = transaction.get(docRef);
-
-                    transaction.update(docRef, "Knubs", user.Knubs+knubs);
-=======
                 DocumentSnapshot snapshot = transaction.get(docRef);
                 DocumentSnapshot snapshot2 = transaction.get(docRef3);
                 knubsmon=Integer.parseInt(String.valueOf(snapshot2.get("Totalknubs")))+knubs;
@@ -771,7 +763,7 @@ else {
 
                     transaction.update(docRef, "Knubs", user.Knubs+knubs);
                     transaction.update(docRef,"Totalknubs",allknubs);
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
                     transaction.set(docRef2,docData );
                     transaction.update(docRef3,docData3);
 
@@ -793,61 +785,47 @@ else {
              saved=false;
              prefsEditor.putString("Session",info);
              prefsEditor.putBoolean("Saved",false);
-<<<<<<< HEAD
-             prefsEditor.apply();
 
-             Toast.makeText(getApplicationContext(),"Session Not Saved",
-=======
+
              prefsEditor.commit();
 
              Toast.makeText(getApplicationContext(),e.getMessage(),
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
                      Toast.LENGTH_SHORT).show();
          }
      }).addOnSuccessListener(new OnSuccessListener() {
          @Override
          public void onSuccess(Object o) {
-<<<<<<< HEAD
-             sharedpreferences.edit().remove("Session").apply();
 
-             user.Knubs=knubs+user.Knubs;
-             MainActivity.updateuserthroughactivity(user);
-=======
 
             user.Knubs=user.Knubs+knubs;
              MainActivity.updateuserthroughactivity(user);
              String userjson=gson.toJson(user);
              SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
              prefsEditor.putString("User",userjson);
-             prefsEditor.commit();
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
+
+
+
              saved=true;
                  prefsEditor.putBoolean("Saved", true);
                  prefsEditor.putFloat("Totaldistance", distancemon);
                  prefsEditor.putFloat("Totalcalorie", caloriemon);
                  prefsEditor.putInt("Totalknubs", knubsmon);
                  prefsEditor.putInt("Totalsteps", stepsmon);
-<<<<<<< HEAD
-                 prefsEditor.apply();
-             Toast.makeText(getApplicationContext(),"Session Saved Succesfully",
-                     Toast.LENGTH_SHORT).show();
-=======
                  prefsEditor.commit();
              Toast.makeText(getApplicationContext(),"Session Saved Succesfully",
                      Toast.LENGTH_SHORT).show();
+             sharedpreferences.edit().remove("Multiplier").commit();
              sharedpreferences.edit().remove("Session").commit();
 
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
          }
      });
 
 
         //TODO Save above detail in database
-<<<<<<< HEAD
-    }
 
-    private void saveinpreferences(double distanceCovered,double caloriesBurnt) {
-=======
     }
 
     private void saveinpreferences(double distanceCovered,double caloriesBurnt) {
@@ -865,32 +843,16 @@ else {
     }
 
     private void startNewSession(){
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
 
         distancemon=sharedpreferences.getFloat("Totaldistance",0);
         knubsmon=sharedpreferences.getInt("Totalknubs",0);
         caloriemon=sharedpreferences.getFloat("Totalcalorie",0);
         stepsmon=sharedpreferences.getInt("Totalsteps",0);
 
-        knubsmon=knubsmon+newknubs;
-        distancemon=distancemon+(float)distanceCovered;
-        caloriemon=caloriemon+(float)caloriesBurnt;
-        stepsmon=stepsmon+SensorForeground.steps;
 
-    }
 
-<<<<<<< HEAD
-    private void startNewSession(){
-=======
-        resetSession();
-    }
 
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
-
-    @Override
-    public void onChronometerTick(Chronometer chronometer) {
-
-<<<<<<< HEAD
         resetSession();
     }
 
@@ -898,8 +860,7 @@ else {
     @Override
     public void onChronometerTick(Chronometer chronometer) {
 
-=======
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
         //This will update the TextViews every second
         UpdateTextViews();
     }

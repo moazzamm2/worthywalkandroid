@@ -1,28 +1,31 @@
 package worthywalk.example.com.worthywalk;
 
 import android.app.Activity;
-<<<<<<< HEAD
-import android.content.Context;
-=======
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,14 +40,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Transaction;
-<<<<<<< HEAD
-=======
 
 import java.util.HashMap;
 import java.util.Map;
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
 
-public class homeFragment extends Fragment {
+
+public class homeFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
     TextView name,totaldistance,totalcalorie,totalsteps,totalknubs;
     Button startactivity;
     User user;
@@ -57,16 +58,15 @@ public class homeFragment extends Fragment {
     FirebaseAuth auth=FirebaseAuth.getInstance();
     float calorie,distance;
     int knubs,steps;
-ImageButton logout;
+ImageButton setting,logout;
 FirebaseAuth mAuth;
     @Nullable
     @Override
-
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
        View view= inflater.inflate(R.layout.dashboard,container,false);
-
-       logout=(ImageButton) view.findViewById(R.id.logout);
+        setHasOptionsMenu(true);
+       setting=(ImageButton) view.findViewById(R.id.logout);
         startactivity=(Button) view.findViewById(R.id.startactivitybutton);
         name=(TextView) view.findViewById(R.id.t1name);
         totalcalorie=(TextView) view.findViewById(R.id.caloriedashboard);
@@ -84,51 +84,54 @@ FirebaseAuth mAuth;
         name.setText(fullname);
         setdetails();
     }
-
-logout.setOnClickListener(new View.OnClickListener() {
+setting.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View view) {
-<<<<<<< HEAD
-        mAuth.signOut();
-        loginManager.getInstance().logOut();
-        Intent intent=new Intent(getActivity(),login.class);
-        startActivity(intent);
-        sharedpreferences.edit().remove("User").commit();
-        getActivity().finish();
-=======
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-        alertDialogBuilder.setTitle("Logout");
-        alertDialogBuilder.setMessage("Are you sure you want to Logout ? ");
-        alertDialogBuilder.setPositiveButton("yes",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        mAuth.signOut();
-
-                        sharedpreferences.edit().remove("User").commit();
-
-                        loginManager.getInstance().logOut();
-
-                        Intent intent=new Intent(getActivity(),login.class);
-                        startActivity(intent);
-                        getActivity().finish();
-                    }
-                });
-
-        alertDialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                getActivity().finish();
-            }
-        });
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-
->>>>>>> 154b1189317702729c2efc3a5975026cb8c951bc
+        popup(view);
     }
 });
+//logout.setOnClickListener(new View.OnClickListener() {
+//    @Override
+//    public void onClick(View view) {
+//
+//        mAuth.signOut();
+//        loginManager.getInstance().logOut();
+//        Intent intent=new Intent(getActivity(),login.class);
+//        startActivity(intent);
+//        sharedpreferences.edit().remove("User").commit();
+//        getActivity().finish();
+//        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+//        alertDialogBuilder.setTitle("Logout");
+//        alertDialogBuilder.setMessage("Are you sure you want to Logout ? ");
+//        alertDialogBuilder.setPositiveButton("yes",
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface arg0, int arg1) {
+//                        mAuth.signOut();
+//
+//                        sharedpreferences.edit().remove("User").commit();
+//
+//                        loginManager.getInstance().logOut();
+//
+//                        Intent intent=new Intent(getActivity(),login.class);
+//                        startActivity(intent);
+//                        getActivity().finish();
+//                    }
+//                });
+//
+//        alertDialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                getActivity().finish();
+//            }
+//        });
+//
+//        AlertDialog alertDialog = alertDialogBuilder.create();
+//        alertDialog.show();
+//
+//
+//    }
+//});
 
     startactivity.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -140,6 +143,21 @@ logout.setOnClickListener(new View.OnClickListener() {
     });
 
     return view;
+    }
+
+    public void popup(View v){
+        PopupMenu popupMenu=new PopupMenu(getActivity(),v);
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.inflate(R.menu.setting);
+        popupMenu.show();
+
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.setting,menu);
+        MenuItem item = menu.findItem(R.id.logout);
+
     }
 
     private void setdetails() {
@@ -194,5 +212,56 @@ logout.setOnClickListener(new View.OnClickListener() {
 
            }
        });
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        switch (menuItem.getItemId()){
+            case R.id.logout:
+                logoutfunc();
+                return true;
+
+            case R.id.settings:
+                Intent intent=new Intent(getActivity(),Settings.class);
+                getActivity().startActivity(intent);
+
+        }
+return true;
+    }
+
+    private void logoutfunc() {
+
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        alertDialogBuilder.setTitle("Logout");
+        alertDialogBuilder.setMessage("Are you sure you want to Logout ? ");
+        alertDialogBuilder.setPositiveButton("yes",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                        sharedpreferences.edit().remove("User").commit();
+                        mAuth.signOut();
+
+                        loginManager.getInstance().logOut();
+
+                        Intent intent=new Intent(getActivity(),login.class);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }
+                });
+
+        alertDialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                getActivity().finish();
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+
+
     }
 }

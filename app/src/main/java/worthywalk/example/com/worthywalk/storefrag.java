@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -79,57 +80,86 @@ Context context;
 
         BottomNavigationView bnv = (BottomNavigationView) rootview.findViewById(R.id.navigationView);
         bnv.setOnNavigationItemSelectedListener(navlistner);
-        getChildFragmentManager().beginTransaction().replace(R.id.container, new Dealslist("food",user)).commit();
+        getChildFragmentManager().beginTransaction().replace(R.id.container, new Dealslist("Fashion",user)).commit();
 
     return rootview;
     }
 
     private void getbanners(final ViewPager mViewPager) {
      FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CustomPagerAdapter mCustomPagerAdapter = new CustomPagerAdapter(getContext(), mresources);
 
 
-        final Handler handler = new Handler();
 
-        final Runnable Update = new Runnable() {
-            public void run() {
-                int NUM_PAGES = mresources.length;
-                if (currentPage == NUM_PAGES) {
-                    currentPage = 0;
+
+//
+        db.collection("StoreAds").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        @Override
+        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+            int i = 0;
+            for (Iterator<QueryDocumentSnapshot> it = queryDocumentSnapshots.iterator(); it.hasNext(); ) {
+                QueryDocumentSnapshot doc = it.next();
+
+                mresources[i] = doc.getString("Banner");
+                i++;
+
+            }
+
+            CustomPagerAdapter mCustomPagerAdapter = new CustomPagerAdapter(getContext(), mresources);
+            final Handler handler = new Handler();
+
+            final Runnable Update = new Runnable() {
+                public void run() {
+                    int NUM_PAGES = mresources.length;
+                    if (currentPage == NUM_PAGES) {
+                        currentPage = 0;
+                    }
+                    mViewPager.setCurrentItem(currentPage++, true);
                 }
-                mViewPager.setCurrentItem(currentPage++, true);
-            }
-        };
+            };
 
-        timer = new Timer(); // This will create a new Thread
-        timer.schedule(new TimerTask() { // task to be scheduled
+            timer = new Timer(); // This will create a new Thread
+            timer.schedule(new TimerTask() { // task to be scheduled
+                @Override
+                public void run() {
+                    handler.post(Update);
+                }
+            }, DELAY_MS, PERIOD_MS);
+            mViewPager.setAdapter(mCustomPagerAdapter);
+
+//
+//
+
+//
+        }
+
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void run() {
-                handler.post(Update);
-            }
-        }, DELAY_MS, PERIOD_MS);
-        mViewPager.setAdapter(mCustomPagerAdapter);
+            public void onFailure(@NonNull Exception e) {
+                CustomPagerAdapter mCustomPagerAdapter = new CustomPagerAdapter(getContext(), mresources);
+                final Handler handler = new Handler();
 
-//
-//        db.collection("StoreAds").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//        @Override
-//        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//    {
-//        int i =0;
-//        for (Iterator<QueryDocumentSnapshot> it = queryDocumentSnapshots.iterator(); it.hasNext(); ) {
-//            QueryDocumentSnapshot doc = it.next();
-//
-//            mresources[i]=doc.getString("Banner");
-//            i++;
-//
-//        }
-//
-//
-//            }
-//
-//        }
-//
-//        });
+                final Runnable Update = new Runnable() {
+                    public void run() {
+                        int NUM_PAGES = mresources.length;
+                        if (currentPage == NUM_PAGES) {
+                            currentPage = 0;
+                        }
+                        mViewPager.setCurrentItem(currentPage++, true);
+                    }
+                };
+
+                timer = new Timer(); // This will create a new Thread
+                timer.schedule(new TimerTask() { // task to be scheduled
+                    @Override
+                    public void run() {
+                        handler.post(Update);
+                    }
+                }, DELAY_MS, PERIOD_MS);
+                mViewPager.setAdapter(mCustomPagerAdapter);
+
+            }
+        });
 
     }
 
@@ -138,7 +168,7 @@ Context context;
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference orders = db.collection("Deal");
-                db.collection("Deal").whereEqualTo("Category","food")
+                db.collection("Deal").whereEqualTo("Category","Fashion")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -146,7 +176,7 @@ Context context;
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot doc : task.getResult()) {
                                 String id=doc.getId();
-                                fooddata.add(new cardInfo("https://i.pinimg.com/736x/35/39/88/3539889f8d4988d18a53801882e39090.jpg", doc.getString("Image"), doc.getString("Brandid"),  String.valueOf(doc.get("Knubs")), id,String.valueOf(doc.get("Passcode"))));
+                                clothedata.add(new cardInfo(doc.getString("Logo"), doc.getString("Banner"), doc.getString("Brandname"),  String.valueOf(doc.get("Knubs")), id,String.valueOf(doc.get("Passcode")),doc.getBoolean("Online"),"",String.valueOf(doc.get("Fb"))));
                             }
 
                         } else {
@@ -156,7 +186,7 @@ Context context;
 
 
                 });
-        db.collection("Deal").whereEqualTo("Category","apparel")
+        db.collection("Deal").whereEqualTo("Category","Food")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -164,7 +194,7 @@ Context context;
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot doc : task.getResult()) {
                                 String id=doc.getId();
-                                clothedata.add(new cardInfo("https://i.pinimg.com/736x/35/39/88/3539889f8d4988d18a53801882e39090.jpg", doc.getString("Image"), doc.getString("Brandid"),  String.valueOf(doc.get("Knubs")), id,String.valueOf(doc.get("Passcode"))));
+                                fooddata.add(new cardInfo(doc.getString("Logo"), doc.getString("Banner"), doc.getString("Brandname"),  String.valueOf(doc.get("Knubs")), id,String.valueOf(doc.get("Passcode")),doc.getBoolean("Online"),"",String.valueOf(doc.get("Fb"))));
                             }
 
 
@@ -183,7 +213,7 @@ Context context;
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot doc : task.getResult()) {
                                 String id=doc.getId();
-                                salondata.add(new cardInfo("https://i.pinimg.com/736x/35/39/88/3539889f8d4988d18a53801882e39090.jpg", doc.getString("Image"), doc.getString("Brandid"),  String.valueOf(doc.get("Knubs")), id,String.valueOf(doc.get("Passcode"))));
+                                salondata.add(new cardInfo(doc.getString("Logo"), doc.getString("Banner"), doc.getString("Brandname"),  String.valueOf(doc.get("Knubs")), id,String.valueOf(doc.get("Passcode")),doc.getBoolean("Online"),"",String.valueOf(doc.get("Fb"))));
                             }
 
 
@@ -203,8 +233,7 @@ Context context;
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot doc : task.getResult()) {
                                 String id=doc.getId();
-                                healthdata.add(new cardInfo("https://i.pinimg.com/736x/35/39/88/3539889f8d4988d18a53801882e39090.jpg", doc.getString("Image"), doc.getString("Brandid"),  String.valueOf(doc.get("Knubs")), id,String.valueOf(doc.get("Passcode"))));
-                            }
+                                healthdata.add(new cardInfo(doc.getString("Logo"), doc.getString("Banner"), doc.getString("Brandname"),  String.valueOf(doc.get("Knubs")), id,String.valueOf(doc.get("Passcode")),doc.getBoolean("Online"),"",String.valueOf(doc.get("Fb"))));                            }
 
 
                         } else {
@@ -223,8 +252,7 @@ Context context;
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot doc : task.getResult()) {
                                 String id=doc.getId();
-                                fundata.add(new cardInfo("https://i.pinimg.com/736x/35/39/88/3539889f8d4988d18a53801882e39090.jpg", doc.getString("Image"), doc.getString("Brandid"),  String.valueOf(doc.get("Knubs")), id,String.valueOf(doc.get("Passcode"))));
-                            }
+                                fundata.add(new cardInfo(doc.getString("Logo"), doc.getString("Banner"), doc.getString("Brandname"),  String.valueOf(doc.get("Knubs")), id,String.valueOf(doc.get("Passcode")),doc.getBoolean("Online"),"",String.valueOf(doc.get("Fb"))));                            }
 
 
                         } else {
@@ -248,32 +276,34 @@ Context context;
                     Fragment selected = null;
 
                     if (item.getItemId() == R.id.foodtab) {
-                        selected = new Dealslist("food",user);
+                        selected = new Dealslist("Food",user);
                     } else if (item.getItemId() == R.id.clothingtab) {
                         Bundle b = new Bundle();
-                        b.putString("type", "clothing");
-                        selected = new Dealslist("apparel",user);
+                        b.putString("type", "Fashion");
+                        selected = new Dealslist("Fashion",user);
                         ;
                         selected.setArguments(b);
                     } else if (item.getItemId() == R.id.healthTab) {
                         Bundle b = new Bundle();
-                        b.putString("type", "health");
-                        selected = new Dealslist("gym",user);
+                        b.putString("type", "Health");
+                        selected = new Dealslist("Health",user);
                         ;
                         selected.setArguments(b);
-                    } else if (item.getItemId() == R.id.salonTab) {
+                    } else if (item.getItemId() == R.id.funtab) {
                         Bundle b = new Bundle();
-                        b.putString("type", "salon");
+                        b.putString("type", "Entertainment");
 //                        selected = new food_deals("health")
 
-                        selected=new Dealslist("gym",user);
+                        selected=new Dealslist("Entertainment",user);
                         selected.setArguments(b);
-                    } else if (item.getItemId() == R.id.gymtab) {
-                        Bundle b = new Bundle();
-                        b.putString("type", "gym");
-                        selected = new Dealslist("fun",user) ;
-                        selected.setArguments(b);
-                    }
+                    } else if (item.getItemId() == R.id.otherTab) {
+                    Bundle b = new Bundle();
+                    b.putString("type", "Other");
+//                        selected = new food_deals("health")
+
+                    selected=new Dealslist("Other",user);
+                    selected.setArguments(b);
+                }
                     getChildFragmentManager().beginTransaction().replace(R.id.container, selected).commit();
                     return true;
                 }

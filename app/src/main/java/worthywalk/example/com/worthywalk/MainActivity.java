@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
@@ -86,7 +87,13 @@ LoginManager loginManager;
 
         gson=new Gson();
         Intent intent=getIntent();
-       usermain= (User) intent.getExtras().getSerializable("User");
+        try {
+            usermain= (User) intent.getExtras().getSerializable("User");
+
+        }catch (Error r){
+            Toast.makeText(getApplicationContext(),"Login Error !",Toast.LENGTH_LONG).show();
+
+        }
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment,new homeFragment(usermain)).commit();
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 

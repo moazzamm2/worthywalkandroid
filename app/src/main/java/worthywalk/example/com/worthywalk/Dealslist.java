@@ -101,7 +101,8 @@ Dealslist(String category,User user){
 
                                 for (QueryDocumentSnapshot doc : task.getResult()) {
                                     String id = doc.getId();
-                                    data.add(new cardInfo("https://i.pinimg.com/736x/35/39/88/3539889f8d4988d18a53801882e39090.jpg", doc.getString("Image"), doc.getString("Brandid"), String.valueOf(doc.get("Knubs")), id,String.valueOf(doc.get("Passcode"))));
+                                    data.add(new cardInfo(doc.getString("Logo"), doc.getString("Banner"), doc.getString("Brandname"),  String.valueOf(doc.get("Knubs")), id,String.valueOf(doc.get("Passcode")),doc.getBoolean("Online"),"",String.valueOf(doc.get("Fb"))));
+
 
 
                                 }

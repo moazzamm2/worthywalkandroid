@@ -90,6 +90,8 @@ User user;
         leader=(RelativeLayout) view.findViewById(R.id.leaderlayout);
         permission=(RelativeLayout) view.findViewById(R.id.permissionlayout);
         gson=new Gson();
+        loaddata();
+
         no=(Button) view.findViewById(R.id.nobtn);
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         month.put(1,"Jan");
@@ -110,7 +112,7 @@ User user;
             public void onClick(View view) {
 
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-                    alertDialogBuilder.setMessage("Are you sure, You wanted to make decision , Everyone can see your score !");
+                    alertDialogBuilder.setMessage("Do you want to compete in Leaderboard for exciting prizes, Everyone can see your score !");
                             alertDialogBuilder.setPositiveButton("yes",
                                     new DialogInterface.OnClickListener() {
                                         @Override
@@ -175,7 +177,6 @@ User user;
 
         if(user.permission){
             loadtime();
-            loaddata();
             leader.setVisibility(View.VISIBLE);
             permission.setVisibility(View.GONE);
         }
@@ -224,12 +225,15 @@ User user;
                 if(task.isSuccessful()){
 
                     for(QueryDocumentSnapshot doc:task.getResult()){
-                        String name=doc.getString("Firstname")+" "+doc.getString("Lastname");
-                        String id=doc.getId();
-                        String knubs=String.valueOf(doc.get("Totalknubs"));
-                        if(doc.getString("Firstname")!=null)  data.add(new leaderinfo(name,knubs,id));
-                        Log.d("infoo",name);
-                    }
+                        if(doc.getBoolean("Permission")){
+                            String name=doc.getString("Firstname")+" "+doc.getString("Lastname");
+                            String id=doc.getId();
+                            String knubs=String.valueOf(doc.get("Totalknubs"));
+                            if(doc.getString("Firstname")!=null)  data.add(new leaderinfo(name,knubs,id));
+                            Log.d("infoo",name);
+
+                        }
+                         }
                     adapter=new leaderadapter(data,getContext());
                     recyclerView.setAdapter(adapter);
                 }else {
