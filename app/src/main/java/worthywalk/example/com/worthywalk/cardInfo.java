@@ -12,13 +12,15 @@ public class cardInfo implements Serializable{
     String imgurl;
     String points;
     String deal_id;
+    String Brand_id;
+
     String passcode;
     String Website;
     String Fb;
 
     Boolean online;
 
-    public cardInfo( String logo,String imgurl,String Name, String points,String deal_id,String passcode,boolean online,String Website,String Fb) {
+    public cardInfo( String logo,String imgurl,String Name, String points,String deal_id,String passcode,boolean online,String Website,String Fb,String Brand_id) {
         this.logo=logo;
         this.Name = Name;
         this.imgurl = imgurl;
@@ -28,6 +30,7 @@ public class cardInfo implements Serializable{
         this.online=online;
         this.Website=Website;
         this.Fb=Fb;
+        this.Brand_id=Brand_id;
     }
 
 

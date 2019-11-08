@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -62,11 +64,12 @@ public class register extends AppCompatActivity implements TextWatcher {
     public static final String MyPREFERENCES = "MyPrefs" ;
     SharedPreferences sharedpreferences;
     boolean fn,ln,pn,gn,ht,wt,dy,mn,yr;
-
+    User updateuser;
+    boolean update=false;
 
     StringBuilder dateOfBirth=new StringBuilder();
 
-
+    ProgressBar pbloading;
     String token;
     CircleImageView profile_picture;
     FBuser fbuser;
@@ -79,7 +82,7 @@ Gson gson=new Gson();
         lastname = (EditText) findViewById(R.id.lastname);
         phone = (EditText) findViewById(R.id.phone);
         profile_picture=(CircleImageView)findViewById(R.id.profile_image);
-
+        pbloading=(ProgressBar) findViewById(R.id.pbLoading);
         height = (EditText) findViewById(R.id.height);
         weight = (EditText) findViewById(R.id.weight);
         day = (EditText) findViewById(R.id.day);
@@ -97,6 +100,19 @@ Gson gson=new Gson();
         height.addTextChangedListener(this);
         weight.addTextChangedListener(this);
 
+
+        String userss=sharedpreferences.getString("User","a");
+        if(!userss.equals("a")){
+            update=true;
+            updateuser= gson.fromJson(userss,User.class);
+            firstname.setText(updateuser.Firstname);
+            lastname.setText(updateuser.Lastname);
+            height.setText(String.valueOf(updateuser.Height));
+            weight.setText(String.valueOf(updateuser.Weight));
+            String phnses=updateuser.Phone.toString().substring(3);
+
+            phone.setText(phnses);
+        }
 //        day.addTextChangedListener(this);
 //        month.addTextChangedListener(this);
 //        year.addTextChangedListener(this);
@@ -213,6 +229,7 @@ Gson gson=new Gson();
 
         image="";
         if(fbuser!=null){
+
             firstname.setText(fbuser.firstname);
             lastname.setText(fbuser.secondname);
             Picasso.get().load(fbuser.imageurl).fit().into(profile_picture);
@@ -238,7 +255,9 @@ Gson gson=new Gson();
         go.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if (pn && ht && wt && dy && mn && yr) {
+                    pbloading.setVisibility(View.VISIBLE);
                     fname = firstname.getText().toString();
                     fname = fname.substring(0, 1).toUpperCase() + fname.substring(1);
                     lname = lastname.getText().toString();
@@ -269,14 +288,32 @@ Gson gson=new Gson();
 
                     if (fbuser != null)
                         user = new User(fname, lname, phn, gend, hei, wei, age, d, 500, fbuser.imageurl, 500, false, token);
-                    else
+                    else if(update){
+
+                        user = new User(fname, lname, phn, gend, hei, wei, age, d, updateuser.Knubs, "", updateuser.totalknubs, false, token);
+                    }else
                         user = new User(fname, lname, phn, gend, hei, wei, age, d, 500, "", 500, false, token);
 
                     String userjson = gson.toJson(user);
                     SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+                    prefsEditor.putBoolean("Newuser",true);
                     prefsEditor.putString("User", userjson);
+
+                    if(!update){
+                        prefsEditor.putFloat("Totaldistance", 0);
+                        prefsEditor.putFloat("Totalcalorie", 0);
+                        prefsEditor.putInt("Totalknubs", 0);
+                        prefsEditor.putInt("Totalsteps", 0);
+
+                    }
                     prefsEditor.commit();
-                    sendata(user, users.getUid());
+                    if(update){
+                        updatedata(user, users.getUid());
+
+                    }else {
+                        sendata(user, users.getUid());
+
+                    }
                 }
                 else {
                     Toast.makeText(getApplicationContext(),"Form Validation failed , please provide the correct Information !",Toast.LENGTH_LONG).show();
@@ -291,7 +328,6 @@ Gson gson=new Gson();
                 final Map<String, Object> docData = new HashMap<>();
                 final Map<String, Object> docData2 = new HashMap<>();
                 final Map<String, Object> docData3 = new HashMap<>();
-
 
                 docData.put("Firstname", user.Firstname);
                 docData.put("Lastname", user.Lastname);
@@ -328,14 +364,18 @@ Gson gson=new Gson();
                     public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
 
 
-                        transaction.set(docRef,docData );
-                        transaction.set(docRef2,docData2);
+
+                            transaction.set(docRef,docData );
+                            transaction.set(docRef2,docData2);
+
+
 
                         return null;
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        pbloading.setVisibility(View.GONE);
                         Toast.makeText(getApplicationContext(), e.getMessage() , Toast.LENGTH_SHORT).show();
                     }
                 }).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -343,7 +383,7 @@ Gson gson=new Gson();
                     public void onSuccess(Void aVoid) {
                         Intent intent = new Intent(context, MainActivity.class);
                             intent.putExtra("User",user);
-//                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
                             startActivity(intent);
 
@@ -358,6 +398,70 @@ Gson gson=new Gson();
             }
         });
     }
+    private void updatedata(final User user, String uid) {
+        final Map<String, Object> docData = new HashMap<>();
+
+
+        docData.put("Firstname", user.Firstname);
+        docData.put("Lastname", user.Lastname);
+        docData.put("Phone", user.Phone);
+        docData.put("Gender", user.Gender);
+        docData.put("Height", user.Height);
+        docData.put("Weight", user.Weight);
+        docData.put("Age", user.Age);
+        docData.put("DOB", user.Dob);
+        docData.put("Knubs",user.Knubs );
+        docData.put("Profilepicture",user.imageurl);
+        docData.put("Totalknubs",user.totalknubs);
+        docData.put("Permission",user.permission);
+        docData.put("Token",user.token);
+
+
+
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        final DocumentReference docRef= db.collection("Users").document(uid);
+
+
+        final DocumentReference docRef2=db.collection("Monthlywalk").document(uid);
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+
+
+
+
+                    transaction.set(docRef,docData );
+
+
+                return null;
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                pbloading.setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(), e.getMessage() , Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.putExtra("User",user);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                startActivity(intent);
+
+                Log.d("uploaded","done");
+                finish();
+            }
+        });
+
+
+//
+
+        }
 
     @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -372,7 +476,13 @@ Gson gson=new Gson();
     @Override
     public void afterTextChanged(Editable editable) {
         boolean boolphone=false;
-        if(firstname.getText().toString().length()==0) firstname.setError("This field can not be empty");
+        if(firstname.getText().toString().length()==0) {
+
+            firstname.setError("This field can not be empty");
+            fn=false;
+        }else {
+            fn=true;
+        }
 
 
         boolphone=phone.getText().toString().matches("3[0-9]{9}");

@@ -4,69 +4,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout android:enabled="false"
-        android:background="@drawable/gradient"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_height="55dp"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/startactivitybutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/green"
         android:elevation="10dp"
-        android:id="@+id/toolbar">
-
-<!--        <ImageButton android:background="@android:color/transparent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:id="@+id/menu"-->
-<!--            android:tint="@color/colorWhite"-->
-<!--            android:textSize="18sp"-->
-<!--            android:src="@drawable/ic_menu_black_24dp"-->
-<!--            android:textColor="@android:color/white"-->
-<!--            android:textAlignment="center"-->
-<!--            android:gravity="center_vertical"-->
-<!--            android:layout_centerVertical="true"-->
-<!--            android:layout_marginLeft="10dp"/>-->
-
-        <TextView
-            android:background="@android:color/transparent"
-            android:layout_height="match_parent"
-            android:layout_width="wrap_content"
-            android:id="@+id/title"
-            android:textSize="18sp"
-
-            android:text="Dashboard"
-            android:textColor="@android:color/white"
-            android:textAlignment="center"
-            android:gravity="center_vertical"
-            android:layout_centerVertical="true"
-            android:layout_centerInParent="true"
-
-            />
-        <ImageButton
-
-            android:background="@android:color/transparent"
-            android:layout_margin="15dp"
-            android:id="@+id/logout"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:src="@drawable/ic_menu"
-            android:tint="@color/colorWhite"
-
-
-
-            />
-
-    </RelativeLayout>
+        android:minWidth="0dp"
+        android:paddingLeft="30dp"
+        android:paddingTop="10dp"
+        android:paddingRight="30dp"
+        android:paddingBottom="10dp"
+        android:text="START WORKOUT"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/relativeLayout" />
 
     <LinearLayout
 
         android:id="@+id/namet"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
 
         >
 
@@ -79,71 +44,38 @@
             android:layout_marginTop="15dp"
             android:text="Hello "
             android:textColor="@color/colorAccent"
-            android:textStyle="bold"
-
-            android:textSize="24dp" />
+            android:textSize="24dp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/t1name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/t1img"
-            android:textStyle="bold"
             android:layout_marginTop="15dp"
-            android:text="Ammar Rizwan"
+            android:text="Muhammad Raza Vasnani"
             android:textColor="@color/colorAccent"
-            android:textSize="24dp" />
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
 
     </LinearLayout>
-
-    <TextView
-
-        android:id="@+id/caption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/namet"
-
-        android:layout_marginLeft="24dp"
-        android:text="Fitness Stats for the Month of August "
-        android:textColor="@color/colorAccent"
-        android:textSize="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/namet" />
-
-
-    <TextView
-        android:id="@+id/titles"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/caption"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="8dp"
-        android:text="Overall Progress"
-        android:textAlignment="center"
-        android:textColor="@color/colorPrimary"
-        android:textSize="25dp"
-
-        app:layout_constraintBottom_toTopOf="@+id/relativeLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/caption" />
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titles">
+        app:layout_constraintBottom_toTopOf="@+id/startactivitybutton"
+        app:layout_constraintTop_toBottomOf="@+id/caption">
 
 
         <LinearLayout
             android:id="@+id/calori"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="0dp"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -175,10 +107,10 @@
 
 
             <TextView
+                android:id="@+id/caloriedashboard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:id="@+id/caloriedashboard"
                 android:text="0"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp" />
@@ -189,7 +121,7 @@
                 android:layout_gravity="center"
                 android:text="Cal"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="24sp" />
+                android:textSize="22sp" />
 
 
         </LinearLayout>
@@ -235,11 +167,11 @@
 
 
             <TextView
+                android:id="@+id/stepsdashboard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="0"
-                android:id="@+id/stepsdashboard"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp" />
 
@@ -249,7 +181,7 @@
                 android:layout_gravity="center"
                 android:text="Steps"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="24sp" />
+                android:textSize="22sp" />
 
 
         </LinearLayout>
@@ -292,11 +224,11 @@
 
 
             <TextView
+                android:id="@+id/distancedashboard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="0"
-                android:id="@+id/distancedashboard"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp" />
 
@@ -304,9 +236,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Kms"
+                android:text="Meters"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="24sp" />
+                android:textSize="22sp" />
 
 
         </LinearLayout>
@@ -351,11 +283,11 @@
 
 
             <TextView
+                android:id="@+id/knubsdashboard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="0"
-                android:id="@+id/knubsdashboard"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp" />
 
@@ -365,30 +297,82 @@
                 android:layout_gravity="center"
                 android:text="Knubs"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="24sp" />
+                android:textSize="22sp" />
 
 
         </LinearLayout>
 
     </RelativeLayout>
-<Button
-    android:id="@+id/startactivitybutton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:elevation="10dp"
-    app:layout_constraintTop_toBottomOf="@id/relativeLayout"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintLeft_toLeftOf="parent"
-    android:paddingRight="30dp"
-    android:textSize="25sp"
-    android:paddingLeft="30dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
-    android:text="START"
-    android:textAlignment="center"
-    android:textColor="@color/colorWhite"
-    android:textStyle="bold"
-    android:background="@color/colorPrimary"
-    />
+
+
+    <RelativeLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@drawable/gradient"
+        android:elevation="10dp"
+        android:enabled="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!--        <ImageButton android:background="@android:color/transparent"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:id="@+id/menu"-->
+        <!--            android:tint="@color/colorWhite"-->
+        <!--            android:textSize="18sp"-->
+        <!--            android:src="@drawable/ic_menu_black_24dp"-->
+        <!--            android:textColor="@android:color/white"-->
+        <!--            android:textAlignment="center"-->
+        <!--            android:gravity="center_vertical"-->
+        <!--            android:layout_centerVertical="true"-->
+        <!--            android:layout_marginLeft="10dp"/>-->
+
+        <ImageButton
+
+            android:id="@+id/logout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="15dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_menu"
+            android:tint="@color/colorWhite"
+
+
+            />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:text="Dashboard"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+
+            />
+
+    </RelativeLayout>
+
+    <TextView
+
+        android:id="@+id/caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/namet"
+        android:layout_marginLeft="24dp"
+
+        android:minWidth="0dp"
+        android:text="All truly great thoughts are conceived\nwhile walking!"
+        android:textColor="@color/colorAccent"
+        android:textSize="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/namet" />
 </androidx.constraintlayout.widget.ConstraintLayout>

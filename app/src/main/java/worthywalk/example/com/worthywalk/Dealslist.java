@@ -83,7 +83,7 @@ Dealslist(String category,User user){
     private void load() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference orders = db.collection("Deal");
-        db.collection("Deal").whereEqualTo("Category",category)
+        orders.whereEqualTo("Category",category)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -101,7 +101,7 @@ Dealslist(String category,User user){
 
                                 for (QueryDocumentSnapshot doc : task.getResult()) {
                                     String id = doc.getId();
-                                    data.add(new cardInfo(doc.getString("Logo"), doc.getString("Banner"), doc.getString("Brandname"),  String.valueOf(doc.get("Knubs")), id,String.valueOf(doc.get("Passcode")),doc.getBoolean("Online"),"",String.valueOf(doc.get("Fb"))));
+                                    data.add(new cardInfo(doc.getString("Logo"), doc.getString("Banner"), doc.getString("Brandname"),  String.valueOf(doc.get("Knubs")), id,String.valueOf(doc.get("Passcode")),doc.getBoolean("Online"),"",String.valueOf(doc.get("Fb")),doc.getString("Brandid")));
 
 
 
@@ -114,17 +114,12 @@ Dealslist(String category,User user){
 
                                     cardInfo card= new cardInfo();
                                     card=data.get(position);
-                                    if(user.Knubs>Integer.parseInt(card.points)){
+
                                         Intent intent =new Intent(getActivity(),Avail.class);
                                         intent.putExtra("card",card);
                                         intent.putExtra("user",user);
                                         startActivityForResult(intent,1);
-                                    }else{
 
-                                        Toast.makeText(getActivity(), "You don't have enough Knubs ,Start Earning! ", Toast.LENGTH_SHORT).show();
-
-
-                                    }
 
 
 

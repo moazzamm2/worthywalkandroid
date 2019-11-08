@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/ic_settings_black_24dp"
+        app:showAsAction="never"
+        android:iconTint="@color/colorWhite"
+        android:title="SETTINGS" />
 
     <item
         android:id="@+id/logout"
@@ -8,12 +14,6 @@
         android:iconTint="@color/colorWhite"
         app:showAsAction="never"
         android:title="LOGOUT" />
-    <item
-        android:id="@+id/settings"
-        android:icon="@drawable/ic_settings_black_24dp"
-        app:showAsAction="never"
-        android:iconTint="@color/colorWhite"
-        android:title="Settings" />
 
 
 </menu>

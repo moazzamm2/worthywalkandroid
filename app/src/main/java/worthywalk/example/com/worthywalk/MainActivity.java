@@ -1,10 +1,11 @@
 package worthywalk.example.com.worthywalk;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,16 +16,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.facebook.login.LoginManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
-import java.util.List;
+import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements storefrag.Updateuser {
-
+    ArrayList<String> mresources=new ArrayList<>();
     public static final String MyPREFERENCES = "MyPrefs" ;
+    String[] arr;
     static SharedPreferences sharedpreferences;
 boolean start=false;
     //    private PermissionsManager permissionsManager;
@@ -56,7 +68,9 @@ LoginManager loginManager;
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
           if(!start) {
+              screen="Dash Board";
               Fragment selectedfragment = new homeFragment(usermain);
+
 
               switch (item.getItemId()) {
                   case R.id.navigation_home:
@@ -73,6 +87,7 @@ LoginManager loginManager;
                       break;
 
               }
+
               getSupportFragmentManager().beginTransaction().replace(R.id.fragment, selectedfragment).commit();
           }
             return true;
@@ -96,7 +111,18 @@ LoginManager loginManager;
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment,new homeFragment(usermain)).commit();
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-
+        FirebaseMessaging.getInstance().subscribeToTopic("Worthywalk")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "Subscribed";
+                        if (!task.isSuccessful()) {
+                            msg ="Subscription failed";
+                        }
+                        Log.d("FCM", msg);
+//                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
 
         setContentView(R.layout.activity_main);
 //        getSupportActionBar().hide();
@@ -128,6 +154,7 @@ LoginManager loginManager;
         prefsEditor.putString("User",userjson);
         prefsEditor.commit();
     }
+
 
 //    @Override
 //    public void userupdate(User user) {

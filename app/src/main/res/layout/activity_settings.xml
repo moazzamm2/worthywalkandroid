@@ -68,12 +68,31 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Delete Account"
+            android:text="Privacy Policy"
             android:textSize="20dp"
-            android:id="@+id/deleteaccount"
+            android:id="@+id/Privacy"
             android:padding="15dp"
 
             />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_margin="15dp"
+            android:background="@color/colorPrimary"/>
+<!--        <TextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Delete Account"-->
+<!--            android:textSize="20dp"-->
+<!--            android:id="@+id/deleteaccount"-->
+<!--            android:padding="15dp"-->
+
+<!--            />-->
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="2dp"-->
+<!--            android:layout_margin="15dp"-->
+<!--            android:background="@color/colorPrimary"/>-->
         
     </LinearLayout>
 

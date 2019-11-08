@@ -3,16 +3,13 @@ package worthywalk.example.com.worthywalk;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,28 +24,28 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Transaction;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,6 +63,11 @@ public class login extends AppCompatActivity {
     FirebaseFirestore db;
     LoginButton loginButton;
     String id;
+    ProgressBar pbloading;
+    Double distancemon=0.0;
+    Double caloriemon=0.0;
+    long knubsmon=0;
+    long stepsmon=0;
 
     FBuser fBuser;
     private static final String EMAIL = "email";
@@ -80,7 +82,7 @@ public class login extends AppCompatActivity {
 //            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
 
-
+        pbloading=(ProgressBar) findViewById(R.id.pbLoading)  ;
         callbackManager = CallbackManager.Factory.create();
         forgot=(TextView) findViewById(R.id.forgot);
         email = (EditText) findViewById(R.id.emailAddress);
@@ -115,16 +117,18 @@ forgot.setOnClickListener(new View.OnClickListener() {
                     });
         }else {
             Toast.makeText(getApplicationContext(),"Enter correct email address",Toast.LENGTH_LONG).show();
-            Intent mainIntent = new Intent(login.this,register.class);
-            startActivity(mainIntent);
+
 
         }
     }
 });
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
+
+                pbloading.setVisibility(View.VISIBLE);
 
             }
 
@@ -175,7 +179,12 @@ forgot.setOnClickListener(new View.OnClickListener() {
                 String emailid = email.getText().toString().trim();
                 String pass = password.getText().toString().trim();
 
-                    if (!emailid.isEmpty() && !pass.isEmpty()) validateUser(emailid, pass);
+                    if (!emailid.isEmpty() && !pass.isEmpty()){
+                        pbloading.setVisibility(View.VISIBLE);
+
+                        validateUser(emailid, pass);
+                    }
+                    else Toast.makeText(getApplicationContext(),"Enter Email /Password ",Toast.LENGTH_LONG).show();
 
             }
         });
@@ -247,6 +256,7 @@ forgot.setOnClickListener(new View.OnClickListener() {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+
                     Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();
                 }
             }
@@ -269,11 +279,18 @@ forgot.setOnClickListener(new View.OnClickListener() {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
 
+
+
+                    pbloading.setVisibility(View.VISIBLE);
+
+
                     getdoc(id=mAuth.getCurrentUser().getUid());
 
 
                 } else {
                     Toast.makeText(login.this, "ID or Password Incorrect", Toast.LENGTH_SHORT).show();
+                    pbloading.setVisibility(View.GONE);
+
                 }
 
             }
@@ -285,6 +302,8 @@ forgot.setOnClickListener(new View.OnClickListener() {
     private void getdoc(String id) {
 
 
+
+
         db.collection("Users").document(id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -294,28 +313,15 @@ forgot.setOnClickListener(new View.OnClickListener() {
                         Log.d("document", document.getData().toString());
                         user = document.toObject(User.class);
                         Gson gson = new Gson();
+
                         Map<String, Object> usermap = new HashMap<>();
-//                                    usermap=document.getData();
-
-//                                    user.firstname= (String) usermap.get("First_name");
-//                                    user.lastname= (String) usermap.get("Last_name");
-//                                    user.knubs= (int) usermap.get("Knubs");
-//                                    user.gender= (String) usermap.get("Gender");
-//                                    user.weight= (float) usermap.get("Weight");
-//                                    user.Dob= (Date) usermap.get("DOB");
 //
-//                                    user.height= (float) usermap.get("Height");
-//                                    user.age= (int) usermap.get("Age");
-//                                    user.phone= (String) usermap.get("Phone");
-
                         Log.d("hrllp", document.toString());
 
                         String userjson = gson.toJson(user);
                         SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
                         prefsEditor.putString("User", userjson);
                         prefsEditor.commit();
-
-
                         sendnewtoken();
 
                     }else{
@@ -343,13 +349,34 @@ forgot.setOnClickListener(new View.OnClickListener() {
     public void sendnewtoken() {
 
 
+
+
                     token = sharedpreferences.getString("Token","");
+                db.collection("Monthlywalk").document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot snapshot) {
+                        distancemon= snapshot.getDouble("Totaldistance");
+                        caloriemon= snapshot.getDouble("Totalcalorie");
+                        knubsmon= snapshot.getLong("Totalknubs");
+                        stepsmon= snapshot.getLong("Totalsteps");
+                        SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+                        prefsEditor.putFloat("Totaldistance",  distancemon.floatValue());
+                        prefsEditor.putFloat("Totalcalorie", caloriemon.floatValue());
+                        prefsEditor.putInt("Totalknubs", (int)knubsmon);
+                        prefsEditor.putInt("Totalsteps", (int) stepsmon);
+                        prefsEditor.commit();
+                    }
+                });
+
+
+                        final Map<String, Object> doc = new HashMap<>();
+
+                        doc.put("Token",token);
+
 
 
                     if (token != null) {
 
-                        Map<String, Object> doc = new HashMap<>();
-                        doc.put("Token", token);
                         try {
 
                             db.collection("Users").document(id).update(doc).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -358,14 +385,15 @@ forgot.setOnClickListener(new View.OnClickListener() {
                                 public void onComplete(@NonNull Task<Void> task) {
 
                                     if (task.isSuccessful()) {
+
                                         Void document = task.getResult();
                                     }
 
-                                    Intent intent = new Intent(login.this, MainActivity.class);
-                                    intent.putExtra("User", user);
+                                Intent intent = new Intent(login.this, MainActivity.class);
+                                 intent.putExtra("User", user);
 
-                                    startActivity(intent);
-                                    finish();
+                                startActivity(intent);
+                                  finish();
 
                                 }
 

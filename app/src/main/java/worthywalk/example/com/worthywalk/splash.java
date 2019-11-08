@@ -63,7 +63,7 @@ User user;
 
 
 
-                    }else if(userjson=="a") {
+                    }else if(fuser!=null &&userjson=="a") {
                                 data=false;
                                 Intent mainIntent = new Intent(splash.this,register.class);
                                 splash.this.startActivity(mainIntent);

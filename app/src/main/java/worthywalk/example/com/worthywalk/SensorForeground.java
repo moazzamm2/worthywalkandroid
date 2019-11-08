@@ -84,7 +84,7 @@ public class SensorForeground extends Service {
             Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setContentTitle("Walk Activity")
                     .setContentIntent(pendingIntent)
-                    .setSmallIcon(R.drawable.ic_runer_silhouette_running_fast).build();
+                    .setSmallIcon(R.mipmap.ic_launcher).build();
 
             startForeground(101, notification);
 

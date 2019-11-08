@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -39,6 +40,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -61,6 +63,7 @@ List<leaderinfo> data=new ArrayList<>();
 leaderadapter adapter;
 Date endingtime;
 TextView time;
+ImageView banner;
 CountDownTimer cTimer = null;
 Gson gson;
 long milliseconds;
@@ -73,27 +76,36 @@ RelativeLayout permission,leader;
 User user;
     Map<Integer,String> month=new HashMap();
     FirebaseAuth mAuth;
-
+    String imageurl="";
     public Leaderboardfrag(User usermain) {
         user=usermain;
     }
-
+    boolean newuser=true;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.activity_leaderboardfrag,container,false);
         db=FirebaseFirestore.getInstance();
         mAuth=FirebaseAuth.getInstance();
+        banner=(ImageView) view.findViewById(R.id.leaderimage);
         recyclerView =(RecyclerView) view.findViewById(R.id.leaderview);
         time=(TextView) view.findViewById(R.id.time);
         yes=(Button) view.findViewById(R.id.yesbtn);
         leader=(RelativeLayout) view.findViewById(R.id.leaderlayout);
         permission=(RelativeLayout) view.findViewById(R.id.permissionlayout);
         gson=new Gson();
-        loaddata();
+
 
         no=(Button) view.findViewById(R.id.nobtn);
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        String userjson=sharedpreferences.getString("User","a");
+        newuser=sharedpreferences.getBoolean("Newuser",true);
+
+
+        if(!userjson.equals("a")) user=gson.fromJson(userjson,User.class);
+
+        loaddata();
+
         month.put(1,"Jan");
         month.put(2,"Feb");
         month.put(3,"Mar");
@@ -139,6 +151,9 @@ User user;
                                                     SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
                                                     prefsEditor.putString("User",userjson);
                                                     prefsEditor.commit();
+                                                    loadtime();
+                                                    newusercall();
+
                                                 }
                                             }).addOnFailureListener(new OnFailureListener() {
                                                 @Override
@@ -173,12 +188,43 @@ User user;
         return view;
     }
 
+    private void newusercall() {
+        if(newuser){
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+            alertDialogBuilder.setTitle("Did you know ! ");
+            alertDialogBuilder.setMessage("Shopping from the store doesn't deduct the knubs from your leaderboard," +
+                    " Now you can enjoy amazing discounts and compete for the prize at the same time !");
+            alertDialogBuilder.setPositiveButton("OK",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+
+                            newuser=true;
+                            String userjson=gson.toJson(user);
+                            SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+                            prefsEditor.putBoolean("Newuser",false);
+                            prefsEditor.commit();
+
+
+                        }
+                    });
+
+
+
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+        }
+    }
+
     private void checkuser() {
 
         if(user.permission){
             loadtime();
             leader.setVisibility(View.VISIBLE);
             permission.setVisibility(View.GONE);
+        }else {
+            leader.setVisibility(View.GONE);
+            permission.setVisibility(View.VISIBLE);
         }
 
     }
@@ -204,7 +250,8 @@ User user;
 //                            final long millisecond=milli-current;
                             DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(getActivity());
                             time.setText(end);
-
+                            imageurl=document.getString("Image");
+                            Picasso.get().load(imageurl).fit().into(banner);
 
                         }
                     }
@@ -216,28 +263,43 @@ User user;
     private void loaddata() {
 
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+
+
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
         final CollectionReference leader = db.collection("Users");
         leader.orderBy("Totalknubs", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
+
                 if(task.isSuccessful()){
+//                    Toast.makeText(getContext(),"Sucees",Toast.LENGTH_LONG).show();
 
                     for(QueryDocumentSnapshot doc:task.getResult()){
-                        if(doc.getBoolean("Permission")){
-                            String name=doc.getString("Firstname")+" "+doc.getString("Lastname");
-                            String id=doc.getId();
-                            String knubs=String.valueOf(doc.get("Totalknubs"));
-                            if(doc.getString("Firstname")!=null)  data.add(new leaderinfo(name,knubs,id));
-                            Log.d("infoo",name);
 
-                        }
+
+//                        String name=doc.getId();
+//                        String knubs=String.valueOf(doc.get("KnubsEarned"));
+//                        data.add(new leaderinfo(name,knubs,name));
+
+                if(doc.getBoolean("Permission")){
+                    String name=doc.getString("Firstname")+" "+doc.getString("Lastname");
+                    String id=doc.getId();
+                    String knubs=String.valueOf(doc.get("Totalknubs"));
+                    if(doc.getString("Firstname")!=null)  data.add(new leaderinfo(name,knubs,id));
+                    Log.d("infoo",name);
+
+                }
+////
+
+
                          }
                     adapter=new leaderadapter(data,getContext());
                     recyclerView.setAdapter(adapter);
                 }else {
-                    Toast.makeText(getContext(),"NO DATA FOUND",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(),task.getException().getMessage(),Toast.LENGTH_LONG).show();
                 }
             }
         });

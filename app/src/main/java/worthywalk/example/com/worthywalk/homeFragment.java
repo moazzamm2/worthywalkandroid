@@ -40,6 +40,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Transaction;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +60,7 @@ public class homeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     float calorie,distance;
     int knubs,steps;
 ImageButton setting,logout;
+Gson gson;
 FirebaseAuth mAuth;
     @Nullable
     @Override
@@ -73,14 +75,14 @@ FirebaseAuth mAuth;
         totalsteps=(TextView) view.findViewById(R.id.stepsdashboard);
         totaldistance=(TextView) view.findViewById(R.id.distancedashboard);
         totalknubs=(TextView) view.findViewById(R.id.knubsdashboard);
-
+gson=new Gson();
 
 
         mAuth=FirebaseAuth.getInstance();
         sharedpreferences = this.getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         if(user!=null){
-        String fullname=user.Firstname+" "+user.Lastname;
+        String fullname=user.Firstname+" !";
         name.setText(fullname);
         setdetails();
     }
@@ -159,6 +161,7 @@ setting.setOnClickListener(new View.OnClickListener() {
         MenuItem item = menu.findItem(R.id.logout);
 
     }
+
 
     private void setdetails() {
         FirebaseFirestore db=FirebaseFirestore.getInstance();

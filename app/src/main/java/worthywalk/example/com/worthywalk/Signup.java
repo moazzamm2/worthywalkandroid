@@ -49,15 +49,17 @@ public class Signup extends AppCompatActivity {
             public void onClick(View v) {
                 if (emailid.getText().toString().trim()==null|| password1.getText().toString()==null||password2.getText().toString()==null){
                     Toast.makeText(Signup.this, "Error Please enter the credentials", Toast.LENGTH_SHORT).show();
-                } else if(emailid.getText().toString().matches("^([a-zA-z]+)[0-9]*@[a-zA-z]+.com")) {
+                } else{
+
                     String id,p1,p2;
                     id=emailid.getText().toString().trim();
                     p1=password1.getText().toString().trim();
                     p2=password2.getText().toString().trim();
                     signUp(id,p1,p2);
-                }else {
-                    emailid.setError("Invalid email");
-                }
+
+
+                    }
+
 
 
             }

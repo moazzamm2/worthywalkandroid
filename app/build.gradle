@@ -8,13 +8,19 @@ android {
         applicationId "worthywalk.example.com.worthywalk"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 1
+        versionCode 7
         multiDexEnabled true
-        versionName "1.0"
+        versionName "1.0.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    lintOptions{
+        checkReleaseBuilds false
+    }
+
     buildTypes {
         release {
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

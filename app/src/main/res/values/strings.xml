@@ -10,6 +10,11 @@
     <string name="fb_login_protocol_scheme">fb1457513107721060</string>
     <string name="default_notification_channel_id">exampleServiceChannel</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="Gmaps">AIzaSyCxCcDi1OzEQggDaCGqN56KhdZB0Q7dnvw</string>
+    <string name="Firebase">AIzaSyCxCcDi1OzEQggDaCGqN56KhdZB0Q7dnvw</string>
+
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string-array name="gender">
         <item>Male</item>

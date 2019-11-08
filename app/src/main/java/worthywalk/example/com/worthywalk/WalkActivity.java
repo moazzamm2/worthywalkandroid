@@ -1,6 +1,7 @@
 package worthywalk.example.com.worthywalk;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
@@ -88,6 +89,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     LocationRequest locationRequest;
     FusedLocationProviderClient fusedLocationProviderClient;
     boolean multiplyer=false;
+    int bonus=1;
 
     public static final String START = "Start";
     public static final String STOP = "Stop";
@@ -97,7 +99,8 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     int knubsmon;
     float caloriemon;
     int  stepsmon;
-
+    int invalid=0;
+    int dbtotalknubs=0;
     double discardeddistance;
 
     public static WalkActivity getInstance() {
@@ -137,12 +140,17 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     public static final String MyPREFERENCES = "MyPrefs" ;
     LocationManager lm;
     SharedPreferences sharedpreferences;
+    int bool=0;
 
     Gson gson;
     boolean gps_enabled;
-    TextView testingDistance;
+
     double discarddistance;
     Session session;
+    long dbknubs;
+
+
+    double newdistance,newdiscarddistance,newcalculatedknubs, newoldknubs;
 
 
     private static DecimalFormat df2 = new DecimalFormat("#.##");
@@ -154,7 +162,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
         context=this;
         db=FirebaseFirestore.getInstance();
         useruid=FirebaseAuth.getInstance().getUid();
-                lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
         gps_enabled = false;
         setviews();
 
@@ -211,6 +219,8 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
         if(user==null){
             user=gson.fromJson(userjson,User.class);
         }
+
+        newoldknubs=user.Knubs;
 
         Permission();
         setbuttons();
@@ -307,29 +317,46 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
 
 
     private boolean validity(){
-        double dist=MyLocationService.getDistance(SensorForeground.loc);
+        double dist=MyLocationService.getDistance(SensorForeground.loc)-validdiscardeddistance();
         int stepss=SensorForeground.steps;
-        double stepdistratio= SensorForeground.steps/MyLocationService.getDistance(SensorForeground.loc);
+        double stepdistratio= SensorForeground.steps/dist;
+        double diststepsratio=dist/SensorForeground.steps;
         long elapsedMillis = SystemClock.elapsedRealtime() - SensorForeground.getTime();
         double timedistratio= (elapsedMillis/1000)/dist;
         Log.d("Timecheck",String.valueOf(elapsedMillis));
-        if(SensorForeground.steps==0 && dist>5){
-            return false;
-        }else if(stepdistratio<0.8){
-            return  false;
-        }else if(timedistratio<0.8){
-            return false;
-        }else if(indexOfImage<=1 && stepss>30 && dist<3) return false;
-        else{
-            return true;
+
+        if(stepdistratio<0.6){
+            bonus=1;
+        }
+        if(stepdistratio>=0.6 && stepdistratio<0.9){
+            bonus=2;
+        }else if(stepdistratio>=0.9 && stepdistratio<=1.6){
+            bonus=3;
+        }else if(stepdistratio>1.6){
+            bonus=1;
         }
 
 
+
+
+
+
+        if(timedistratio<0.5) {
+            bonus = 1;
+
+
+        } if(stepss>15 && dist==0){
+            invalid=3;
+            return false;
+        }
+
+return true;
     }
 
     private void setbuttons() {
 
         startbtn.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("ResourceAsColor")
             @Override
             public void onClick(View view) {
                 isServiceRunning = SensorForeground.isServiceRunning;
@@ -352,7 +379,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
                             if (start) {
 
 
-                                calculateknubs();
+
 
 
                                 calculateknubs();
@@ -363,11 +390,19 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
 
                                 startbtn.setText("START");
                                 startbtn.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_green_dark), PorterDuff.Mode.MULTIPLY);
-                                Intent serviceIntent = new Intent(WalkActivity.this, SensorForeground.class);
+                                final Intent serviceIntent = new Intent(WalkActivity.this, SensorForeground.class);
                                 serviceIntent.setAction(STOP);
                                 serviceIntent.putExtra(INDEX, index);
 
-                                if (validity()) {
+                                boolean valid;
+
+                                if(index>1){
+                                    valid=true;
+                                }else{
+                                   valid= validity();
+                                }
+
+                                if (valid) {
                                     saveSessionDetails();
 
 
@@ -380,12 +415,27 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
 
                                 dialog.setContentView(R.layout.finishdilog);////your custom content
                                 TextView dialogbtn = dialog.findViewById(R.id.finishworkout);
-                                stepsDialog = dialog.findViewById(R.id.stepsdialog);
+                                TextView errordist = dialog.findViewById(R.id.errordistance);
+
+                                    stepsDialog = dialog.findViewById(R.id.stepsdialog);
                                 caloriesDialog = dialog.findViewById(R.id.coloriedialog);
                                 distanceDialog = dialog.findViewById(R.id.distancedialog);
                                 discardDialog = dialog.findViewById(R.id.discardeddistance);
                                 knubsDialog = dialog.findViewById(R.id.knubsdialog);
+                                TextView bonustv=dialog.findViewById(R.id.bonus);
 
+
+
+                                    if(bonus==1){
+                                        bonustv.setText("Bad Walk");
+                                        bonustv.setTextColor(R.color.red);
+                                    }else if(bonus==2){
+                                        bonustv.setText("Good Walk");
+                                        bonustv.setTextColor(R.color.yellow);
+                                    }else if(bonus==3){
+                                        bonustv.setText("Perfect Walk");
+                                        bonustv.setTextColor(R.color.green);
+                                    }
                                 MapView mMapView = dialog.findViewById(R.id.map);
 
                                 stepsDialog.setText(String.valueOf(SensorForeground.getStepCount()));
@@ -401,7 +451,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
 
                                 discardDialog.setText(String.valueOf(discarddistanced));
                                 knubsDialog.setText(String.valueOf(newknubs));
-
+                                errordist.setError("These meters were discarded due to the inaccuracy of GPS .");
                                 dialog.show();
 
                                 MapsInitializer.initialize(context);
@@ -447,17 +497,33 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
                                 start = false;
 
                             }else{
+                                    ContextCompat.startForegroundService(WalkActivity.this, serviceIntent);
+
+                                    fusedLocationProviderClient.removeLocationUpdates(getPendingIntent());
+                                    start = false;
+                                    String message="";
+                                    if(invalid==1){
+                                        message="Travelling on a vehicle, Worthy walk doesn't count this as a walk !";
+                                    }else   if(invalid==2){
+                                        message="Either your Gps is not helping or you moving in Car! Just take the screenshot of this screen and message us on FB page if this was a mistake , untill we make things better. Sorry for inconviniance";
+                                    }else if(invalid==3){
+                                        message="Shaking your hand is not a good option to earn Knubs, Go out for a walk cause its Worthy";
+
+                                    }
                                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(WalkActivity.this);
-                                    alertDialogBuilder.setMessage("Invalid Walk !");
+                                    alertDialogBuilder.setTitle("Invalid Walk !");
+                                    alertDialogBuilder.setMessage(message);
                                     alertDialogBuilder.setPositiveButton("Ok",
                                             new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface arg0, int arg1) {
 
-                                                   resetSession();
+
+                                                    resetSession();
 
                                                 }
                                             });
+
 
 
 
@@ -512,10 +578,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
 
 
                                 //Uncomment the below code to Set the message and title from the strings.xml file
-                                builder.setMessage("Session not saved please save it before starting a new one") .setTitle("Session not Saved");
-
-                                //Setting message manually and performing action on button click
-                                builder.setMessage("Do you want to close this application ?")
+                                builder.setMessage("Session not saved please save it before starting a new one") .setTitle("Session not Saved")
                                         .setCancelable(false)
                                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
@@ -534,7 +597,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
                                 //Creating dialog box
                                 AlertDialog alert = builder.create();
                                 //Setting the title manually
-                                alert.setTitle("Session not Saved");
+
                                 alert.show();
 
 
@@ -581,6 +644,32 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
 
     }
 
+    private double validdiscardeddistance(){
+        double TotalDistance=0;
+        List<LatLng> points=new ArrayList<LatLng>();
+        points = SensorForeground.loc;
+        if(points.size()>1){
+
+            float[] results = new float[1];
+            for(int i = 0 ; i < points.size()-2 ; i++) {
+
+                Location.distanceBetween(
+                        points.get(i).latitude,
+                        points.get(i).longitude,
+                        points.get(i + 1).latitude,
+                        points.get(i + 1).longitude,
+                        results
+                );
+
+
+                    if (results[0] > 15 && results[0]<0)         TotalDistance += results[0];
+
+                }
+
+            }
+
+            return TotalDistance;
+        }
     private double calculatediscardeddistance(){
         double TotalDistance=0;
         List<LatLng> points=new ArrayList<LatLng>();
@@ -599,12 +688,12 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
                 );
                 if(indexOfImage==0){
 
-                    if (results[0] > 10)         TotalDistance += results[0];
+                    if (results[0] > 10 && results[0]<0)         TotalDistance += results[0];
                 } else if(indexOfImage==1){
-                    if (results[0] > 20)         TotalDistance += results[0];
+                    if (results[0] > 20 && results[0]<0)         TotalDistance += results[0];
 
 else {
-                        if (results[0] > 5)         TotalDistance += results[0];
+                        if (results[0] > 5 && results[0]<0)         TotalDistance += results[0];
 
                     }
                 }
@@ -661,11 +750,36 @@ else {
         });
     }
     public void calculateknubs(){
-            double steps= SensorForeground.steps*0.05;
-            double cal= SensorForeground.getCaloriesBurnt()*1.5;
-            double totaldistance=distanceOnMap*0.015;
 
-            newknubs=(int) Math.round(steps+cal+totaldistance);
+            if(indexOfImage>1){
+                double steps= SensorForeground.steps*0.03;
+                newknubs=(int) Math.round(steps);
+
+            }else{
+                double steps=0;
+                double cal=0;
+                double totaldistance=0;
+                if(bonus==1){
+                     steps= SensorForeground.steps*0.03;
+                     cal= SensorForeground.getCaloriesBurnt()*1.2;
+                     totaldistance=distanceOnMap*0.05;
+
+                }else if(bonus==2){
+                    steps= SensorForeground.steps*0.04;
+                    cal= SensorForeground.getCaloriesBurnt()*1.3;
+                    totaldistance=distanceOnMap*0.05;
+
+                }else if(bonus==3){
+                    steps= SensorForeground.steps*0.05;
+                    cal= SensorForeground.getCaloriesBurnt()*1.5;
+                    totaldistance=distanceOnMap*0.06;
+
+                }
+
+                if(newknubs<0) newknubs=0;
+                newknubs=(int) Math.round(steps+cal+totaldistance);
+
+            }
 
     }
     public void UpdateTextViews(){
@@ -697,16 +811,13 @@ else {
         if(!saved){
            distanceCovered = session.distance;
             caloriesBurnt = session.caloriesburnt;
-
             timeSpent = session.timespent;
-
             knubs=session.Knubs;
             pathCoordinates = session.pathCoordinates;
 
         }else {
 
              distanceCovered = Double.parseDouble(df2.format(MyLocationService.getDistance(SensorForeground.loc)-calculatediscardeddistance()));
-
              caloriesBurnt = SensorForeground.getCaloriesBurnt();
              timeSpent = SensorForeground.getTime();
              pathCoordinates = SensorForeground.loc;
@@ -725,21 +836,18 @@ else {
         docData.put("CalorieBurnt",caloriesBurnt);
         docData.put("Timespent",timeSpent);
         docData.put("PathCordinates",pathCoordinates);
-        docData.put("KnubsEarned",newknubs);
+        docData.put("KnubsEarned",knubs);
         docData.put("UserId",useruid);
 
 
          final Map<String, Object> docData3 = new HashMap<>();
+         final SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+          saveinpreferences(distanceCovered,caloriesBurnt);
 
-        Log.i("TADA",
-                ""+
-                        "\ndistanceCovered : " + distanceCovered +
-                        "\ncaloriesBurnt : "+ caloriesBurnt+
-                        "\ntimeSpent : "+ timeSpent+
-                        "\ncoordinatesCount : " + pathCoordinates.size());
-        final SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
-      saveinpreferences(distanceCovered,caloriesBurnt);
-
+          knubsmon=sharedpreferences.getInt("Totalknubs",0);
+        distancemon=sharedpreferences.getFloat("Totaldistance",0);
+          stepsmon=sharedpreferences.getInt("Totalsteps",0);
+            caloriemon=sharedpreferences.getFloat("Totalcalorie",0);
 
 
     db.runTransaction(new Transaction.Function<Void>() {
@@ -749,20 +857,31 @@ else {
 
                 DocumentSnapshot snapshot = transaction.get(docRef);
                 DocumentSnapshot snapshot2 = transaction.get(docRef3);
-                knubsmon=Integer.parseInt(String.valueOf(snapshot2.get("Totalknubs")))+knubs;
-                distancemon=Float.parseFloat(String.valueOf(snapshot2.get("Totaldistance")))+(float)distanceCovered;
-                caloriemon=Float.parseFloat(String.valueOf(snapshot2.get("Totalcalorie")))+(float)caloriesBurnt;
-                stepsmon=Integer.parseInt(String.valueOf(snapshot2.get("Totalsteps")))+SensorForeground.steps;
 
+
+                double distancemontemp=snapshot2.getDouble("Totaldistance");
+                double caloriemontemp=snapshot2.getDouble("Totalcalorie");
+                long knubsmontemp=snapshot2.getLong("Totalknubs");
+                long stepsmontemp=snapshot2.getLong("Totalsteps");
+
+
+
+
+                knubsmon=(int)knubsmontemp+knubs;
+                distancemon=(float)distancemontemp+(float)distanceCovered;
+                caloriemon=(float)caloriemontemp+(float)caloriesBurnt;
+                stepsmon=(int)stepsmontemp+SensorForeground.steps;
                 docData3.put("Totalcalorie",caloriemon);
                 docData3.put("Totaldistance",distancemon);
                 docData3.put("Totalsteps",stepsmon);
                 docData3.put("Totalknubs" ,knubsmon);
+                Log.d("totalknubs",String.valueOf(dbtotalknubs));
 
-                    int allknubs=Integer.parseInt(String.valueOf(snapshot.get("Totalknubs")))+knubs;
+                     dbtotalknubs=Integer.parseInt(String.valueOf(snapshot.get("Totalknubs")))+knubs;
 
-                    transaction.update(docRef, "Knubs", user.Knubs+knubs);
-                    transaction.update(docRef,"Totalknubs",allknubs);
+                   dbknubs=snapshot.getLong("Knubs")+knubs;
+                    transaction.update(docRef, "Knubs",dbknubs);
+                    transaction.update(docRef,"Totalknubs",dbtotalknubs);
 
                     transaction.set(docRef2,docData );
                     transaction.update(docRef3,docData3);
@@ -778,7 +897,7 @@ else {
          public void onFailure(@NonNull Exception e) {
 
 
-             session=new Session(distanceCovered,caloriesBurnt,timeSpent,pathCoordinates,newknubs);
+             session=new Session(distanceCovered,caloriesBurnt,timeSpent,pathCoordinates,knubs);
              Gson gson=new Gson();
              Log.d("Kiyascn",e.getMessage());
              String  info=gson.toJson(session);
@@ -798,7 +917,8 @@ else {
          public void onSuccess(Object o) {
 
 
-            user.Knubs=user.Knubs+knubs;
+            user.Knubs=(int)dbknubs;
+            user.totalknubs=dbtotalknubs;
              MainActivity.updateuserthroughactivity(user);
              String userjson=gson.toJson(user);
              SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
