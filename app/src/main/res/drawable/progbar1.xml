@@ -13,8 +13,7 @@
         </shape>
     </item>
     <item android:id="@android:id/progress">
-        <rotate android:fromDegrees="0"
-            android:toDegrees="360">
+
             <shape
                 android:shape="ring"
                 android:innerRadius="30dp"
@@ -26,6 +25,6 @@
                     android:type="sweep"
                     android:useLevel="false"/>
             </shape>
-        </rotate>
+
     </item>
 </layer-list>

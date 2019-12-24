@@ -91,7 +91,7 @@
                     android:layout_margin="10dp"
                     android:indeterminateDrawable="@drawable/progbar1"
                     android:max="100"
-                    android:progress="10" />
+                    android:progress="30" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="50dp"
@@ -148,7 +148,7 @@
                     android:layout_margin="10dp"
                     android:indeterminateDrawable="@drawable/progbar2"
                     android:max="100"
-                    android:progress="10" />
+                    android:progress="30" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="50dp"
@@ -207,7 +207,7 @@
                     android:layout_margin="10dp"
                     android:indeterminateDrawable="@drawable/progbar3"
                     android:max="100"
-                    android:progress="10" />
+                    android:progress="30" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="50dp"
@@ -265,7 +265,7 @@
                     android:layout_margin="10dp"
                     android:indeterminateDrawable="@drawable/progbar4"
                     android:max="100"
-                    android:progress="10" />
+                    android:progress="30" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     civ_border_color="@color/prog4"
@@ -337,7 +337,7 @@
             android:layout_alignParentEnd="true"
             android:layout_margin="15dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_menu"
+            app:srcCompat="@drawable/ic_menu"
             android:tint="@color/colorWhite"
 
 

@@ -1,15 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_marginTop="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="10dp"
+    android:elevation="2dp"
+   >
 
+
+
+
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/colorAmber"
+
+    android:id="@+id/card">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/cards"
+
         android:layout_margin="10dp"
 
-        android:id="@+id/card">
+
+      >
+<!--        <ImageView-->
+<!--            android:layout_width="60dp"-->
+<!--            android:layout_height="60dp"-->
+<!--            android:id="@+id/win"-->
+<!--            android:visibility="gone"-->
+<!--            android:src="@drawable/ic_trophy"-->
+<!--            />-->
+<!--        <ImageView-->
+<!--            android:layout_width="60dp"-->
+<!--            android:layout_height="60dp"-->
+<!--            android:id="@+id/second"-->
+<!--            android:visibility="gone"-->
+<!--            android:src="@drawable/ic_second_prize"-->
+<!--            />-->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -49,12 +81,13 @@
         />
     </LinearLayout>
 
-    <View
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/card"
-        android:layout_height="2dp"
-        android:background="@color/colorPrimary"
-        />
+<!--    <View-->
+<!--        android:layout_marginLeft="30dp"-->
+<!--        android:layout_marginRight="30dp"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_below="@+id/cards"-->
+<!--        android:layout_height="2dp"-->
+<!--        android:background="@color/colorPrimary"-->
+<!--        />-->
 </RelativeLayout>
+</androidx.cardview.widget.CardView>

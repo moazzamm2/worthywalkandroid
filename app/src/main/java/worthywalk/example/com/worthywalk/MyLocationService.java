@@ -1,29 +1,19 @@
 package worthywalk.example.com.worthywalk;
 
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.location.Location;
-import android.os.IBinder;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Math.asin;
-import static java.lang.Math.sqrt;
+import worthywalk.example.com.worthywalk.Models.User;
 
 public class MyLocationService extends BroadcastReceiver {
     User user=new User();
@@ -32,6 +22,7 @@ public class MyLocationService extends BroadcastReceiver {
 
     public static double kms=0;
     private static DecimalFormat df2 = new DecimalFormat("#.##");
+
 
     public static final String ACTION_PROCESS_UPDATE = "com.example.forgroundapp.UPDATELOCATION";
 
@@ -67,53 +58,6 @@ public class MyLocationService extends BroadcastReceiver {
             }
         }
     }
-//    public static double calculatedistance(List<LatLng> gpsList,long time){
-//        newtime=time;
-//
-//        double totalDistance = 0.0;
-//        long delay=newtime-oldtime;
-//        if(gpsList.size()>1 ) {
-//            for (int i = 0; i < gpsList.size()-1; i++) {
-//                double p = 0.017453292519943295;
-//                double cosa= Math.cos((gpsList.get(i + 1).latitude - gpsList.get(i).latitude) * p) / 2;
-//                double cosb= Math.cos(gpsList.get(i).latitude * p);
-//                double cosc= Math.cos(gpsList.get(i + 1).latitude * p);
-//                double cosd= (1 - Math.cos((gpsList.get(i + 1).longitude - gpsList.get(i).longitude) * p)) / 2;
-//                double a = 0.5 -cosa +cosb*cosc*cosd;
-//
-//
-//                double distance = 12742 * asin(sqrt(a));
-//                totalDistance += distance;
-//                kms=totalDistance;
-//                walk.setDistance(kms);
-//            }
-//
-//            Log.i("TATA", "size : "+gpsList.size() + "  distance " + totalDistance);
-//
-//
-//        }
-//
-//        if(gpsList.size()>1 ) {
-//
-//            double dist1lat = gpsList.get(gpsList.size() - 2).latitude;
-//            double dist1long = gpsList.get(gpsList.size() - 2).longitude;
-//            double dist2lat = gpsList.get(gpsList.size() - 1).latitude;
-//            double dist2long = gpsList.get(gpsList.size() - 1).longitude;
-//            double p = 0.017453292519943295;
-//            double cosa = Math.cos((dist2lat - dist1lat) * p) / 2;
-//            double cosb = Math.cos(dist1lat * p);
-//            double cosc = Math.cos(dist2lat * p);
-//            double cosd = (1 - Math.cos((dist2long - dist1long) * p)) / 2;
-//            double a = 0.5 - cosa + cosb * cosc * cosd;
-//
-//
-//            double distance = 12742 * asin(sqrt(a));
-//            totalDistance += distance;
-//            if (totalDistance > 0.0124274) walk.setdiscardDistance(totalDistance);
-//
-//        }
-//        return totalDistance;
-//    }
 
     public static double getDistance(List<LatLng> points){
 
@@ -124,6 +68,7 @@ public class MyLocationService extends BroadcastReceiver {
             float[] results = new float[1];
             for(int i = 0 ; i < points.size()-2 ; i++) {
 
+
                 Location.distanceBetween(
                         points.get(i).latitude,
                         points.get(i).longitude,
@@ -131,14 +76,14 @@ public class MyLocationService extends BroadcastReceiver {
                         points.get(i + 1).longitude,
                         results
                 );
-
                 TotalDistance += results[0];
+
             }
         }
         // Divide TotalDistance by 2 to get the accurate result
         return Double.parseDouble(df2.format(TotalDistance/2));
     }
-    public static double getDiscardDistance(List<LatLng> points){
+    public static double getDiscardDistance(List<LatLng> points,int j){
 
         Double TotalDistance = 0.0 ;
 
@@ -153,8 +98,24 @@ public class MyLocationService extends BroadcastReceiver {
                         points.get(i + 1).latitude,
                         points.get(i + 1).longitude,
                         results
-                );
-                if (results[0] > 7)         TotalDistance += results[0];
+                ); if (j == 0) {
+
+                   if (results[0]<0);
+                    else if (results[0] > 7) TotalDistance += results[0];
+
+                } else if (j == 1) {
+                    if (results[0]<0);
+
+                   else if (results[0] > 20) TotalDistance += results[0];
+
+
+
+
+//                    TotalDistance += results[0];
+                }    else {
+                    if (results[0] > 5 || results[0] < 0) TotalDistance += results[0];
+
+                }
             }
         }
         // Divide TotalDistance by 2 to get the accurate result

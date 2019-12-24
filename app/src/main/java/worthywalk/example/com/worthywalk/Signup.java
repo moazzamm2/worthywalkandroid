@@ -20,6 +20,7 @@ public class Signup extends AppCompatActivity {
     FloatingActionButton next;
     EditText emailid,password1,password2;
     FirebaseAuth mAuth;
+    String Email="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,14 +66,16 @@ public class Signup extends AppCompatActivity {
             }
         });
     }
-    public void signUp(String id,String p1,String p2){
+    public void signUp(final String id, String p1, String p2){
         if(p1.equals(p2)){
             mAuth.createUserWithEmailAndPassword(id,p1).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()) {
+                        Email=id;
                         Intent i=new Intent(Signup.this,register.class);
                         i.putExtra("AfterLogin","false");
+                        i.putExtra("Email",Email);
                         startActivity(i);
 //                        overridePendingTransition(R.anim.slide_in,R.anim.slide_out);
                         finish();

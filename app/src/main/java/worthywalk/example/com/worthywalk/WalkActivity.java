@@ -2,7 +2,7 @@ package worthywalk.example.com.worthywalk;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -48,12 +47,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
@@ -64,32 +61,36 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.single.PermissionListener;
 
-import org.w3c.dom.Document;
-
 import java.text.DecimalFormat;
-
 import java.util.ArrayList;
-
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import worthywalk.example.com.worthywalk.Models.User;
 
 public class WalkActivity extends AppCompatActivity implements Chronometer.OnChronometerTickListener {
-    int [] icons=  new int[]{R.drawable.ic_runer_silhouette_running_fast,R.drawable.ic_man_cycling,R.drawable.ic_treadmill};
-    int [] circle=new int[]{R.drawable.walkcircle,R.drawable.cyclecircle,R.drawable.treadmillcircle};
-    int [] colors=new int[]{R.color.walk,R.color.cycle,R.color.treadmill};
+    int [] icons=  new int[]{R.drawable.ic_runer_silhouette_running_fast,R.drawable.ic_man_cycling};
+    int [] circle=new int[]{R.drawable.walkcircle,R.drawable.cyclecircle};
+    int [] colors=new int[]{R.color.walk,R.color.cycle};
     Context context;
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     public static WalkActivity Instance;
     LocationRequest locationRequest;
     FusedLocationProviderClient fusedLocationProviderClient;
     boolean multiplyer=false;
     int bonus=1;
+
+    boolean gpspermission=false;
 
     public static final String START = "Start";
     public static final String STOP = "Stop";
@@ -128,9 +129,12 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     LatLng point;
     String  useruid;
     double distanceOnMap=0;
+    Map<Integer,String> month=new HashMap();
+    String str;
+
 
     private boolean isServiceRunning;
-    private int indexOfImage;
+    int indexOfImage;
     FirebaseAuth mauth;
     TextView stepsDialog,knubsDialog;
     TextView caloriesDialog;
@@ -138,8 +142,9 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     TextView distanceDialog;
     TextView discardDialog;
     public static final String MyPREFERENCES = "MyPrefs" ;
-    LocationManager lm;
     SharedPreferences sharedpreferences;
+
+    LocationManager lm;
     int bool=0;
 
     Gson gson;
@@ -165,6 +170,22 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
         lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
         gps_enabled = false;
         setviews();
+        month.put(1,"January");
+        month.put(2,"Feburary");
+        month.put(3,"March");
+        month.put(4,"April");
+        month.put(5,"May");
+        month.put(6,"June");
+        month.put(7,"July");
+        month.put(8,"August");
+        month.put(9,"September");
+        month.put(10,"October");
+        month.put(11,"November");
+        month.put(12,"December");
+        Calendar calendar = new GregorianCalendar(2008, 01, 01);
+        calendar=Calendar.getInstance();
+        int mon=calendar.get(Calendar.MONTH);
+        str= month.get(mon+1)+calendar.get(Calendar.YEAR);
 
 
         isServiceRunning = SensorForeground.isServiceRunning;
@@ -222,7 +243,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
 
         newoldknubs=user.Knubs;
 
-        Permission();
+        requestgpspermission();
         setbuttons();
 
         stepDetector=new StepDetector();
@@ -234,7 +255,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
                 if(!start){
                     tap.setVisibility(View.GONE);
                     tapped=true;
-                    index= index%3;
+                    index= index%2;
                     iconset.setBackgroundResource(icons[index]);
                     relativeLayout.setBackgroundResource(circle[index]);
                     progressBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(getApplicationContext(),colors[index]), PorterDuff.Mode.SRC_IN );;
@@ -360,9 +381,6 @@ return true;
             @Override
             public void onClick(View view) {
                 isServiceRunning = SensorForeground.isServiceRunning;
-                try {
-                    gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                } catch(Exception ex) {}
 
                 if(tapped) {
 
@@ -372,205 +390,220 @@ return true;
 
                     if(saved) {
 
+                        if(ContextCompat.checkSelfPermission(WalkActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED) {
 
-                        if (gps_enabled) {
+                            if(  ( ActivityCompat.checkSelfPermission(WalkActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)){
+                                UpdateLocation();
+                            }
+                            try {
+                                gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                            } catch(Exception ex) {}
 
-
-                            if (start) {
-
-
-
-
-
-                                calculateknubs();
-
-
-                                chronometer.stop();
-                                UpdateTextViews();
-
-                                startbtn.setText("START");
-                                startbtn.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_green_dark), PorterDuff.Mode.MULTIPLY);
-                                final Intent serviceIntent = new Intent(WalkActivity.this, SensorForeground.class);
-                                serviceIntent.setAction(STOP);
-                                serviceIntent.putExtra(INDEX, index);
-
-                                boolean valid;
-
-                                if(index>1){
-                                    valid=true;
-                                }else{
-                                   valid= validity();
-                                }
-
-                                if (valid) {
-                                    saveSessionDetails();
+                            if (gps_enabled) {
 
 
-                                final Dialog dialog = new Dialog(context);
-
-                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                                /////make map clear
-                                dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                                if (start) {
 
 
-                                dialog.setContentView(R.layout.finishdilog);////your custom content
-                                TextView dialogbtn = dialog.findViewById(R.id.finishworkout);
-                                TextView errordist = dialog.findViewById(R.id.errordistance);
+                                    distanceOnMap = MyLocationService.getDistance(SensorForeground.loc) - MyLocationService.getDiscardDistance(SensorForeground.loc, indexOfImage);
 
-                                    stepsDialog = dialog.findViewById(R.id.stepsdialog);
-                                caloriesDialog = dialog.findViewById(R.id.coloriedialog);
-                                distanceDialog = dialog.findViewById(R.id.distancedialog);
-                                discardDialog = dialog.findViewById(R.id.discardeddistance);
-                                knubsDialog = dialog.findViewById(R.id.knubsdialog);
-                                TextView bonustv=dialog.findViewById(R.id.bonus);
+                                    calculateknubs();
 
 
+                                    chronometer.stop();
+                                    UpdateTextViews();
 
-                                    if(bonus==1){
-                                        bonustv.setText("Bad Walk");
-                                        bonustv.setTextColor(R.color.red);
-                                    }else if(bonus==2){
-                                        bonustv.setText("Good Walk");
-                                        bonustv.setTextColor(R.color.yellow);
-                                    }else if(bonus==3){
-                                        bonustv.setText("Perfect Walk");
-                                        bonustv.setTextColor(R.color.green);
+                                    startbtn.setText("START");
+                                    startbtn.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_green_dark), PorterDuff.Mode.MULTIPLY);
+                                    final Intent serviceIntent = new Intent(WalkActivity.this, SensorForeground.class);
+                                    serviceIntent.setAction(STOP);
+                                    serviceIntent.putExtra(INDEX, index);
+
+                                    boolean valid;
+
+                                    if (index > 1) {
+                                        valid = true;
+                                    } else {
+                                        valid = validity();
                                     }
-                                MapView mMapView = dialog.findViewById(R.id.map);
 
-                                stepsDialog.setText(String.valueOf(SensorForeground.getStepCount()));
-                                // Values based on STEPS
-                                //caloriesDialog.setText(String.valueOf(SensorForeground.getCaloriesBurnt()));
-                                //distanceDialog.setText(df2.format(SensorForeground.getDistance()));
+                                    if (valid) {
+                                        saveSessionDetails();
 
-                                // Values based on POINTS on Map
-                                distanceOnMap = MyLocationService.getDistance(SensorForeground.loc) - calculatediscardeddistance();
-                                double discarddistanced = calculatediscardeddistance();
-                                distanceDialog.setText(String.valueOf(distanceOnMap));
-                                caloriesDialog.setText(String.valueOf(MyLocationService.getCalories(distanceOnMap)));
 
-                                discardDialog.setText(String.valueOf(discarddistanced));
-                                knubsDialog.setText(String.valueOf(newknubs));
-                                errordist.setError("These meters were discarded due to the inaccuracy of GPS .");
-                                dialog.show();
+                                        final Dialog dialog = new Dialog(context);
 
-                                MapsInitializer.initialize(context);
+                                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                        /////make map clear
+                                        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 
-                                mMapView.onCreate(dialog.onSaveInstanceState());
-                                mMapView.onResume();
-                                try {
-                                    point = SensorForeground.loc.get(SensorForeground.loc.size() - 1);
-                                } catch (Exception e) {
 
-                                }
-                                mMapView.getMapAsync(new OnMapReadyCallback() {
-                                    @Override
-                                    public void onMapReady(final GoogleMap googleMap) {
-                                        googleMap.setMyLocationEnabled(true);
-                                        if (point != null) {
-                                            CameraPosition myPosition = new CameraPosition.Builder()
-                                                    .target(point).zoom(17).bearing(90).tilt(30).build();
+                                        dialog.setContentView(R.layout.finishdilog);////your custom content
+                                        TextView dialogbtn = dialog.findViewById(R.id.finishworkout);
+                                        TextView errordist = dialog.findViewById(R.id.errordistance);
 
-                                            googleMap.animateCamera(
-                                                    CameraUpdateFactory.newCameraPosition(myPosition));////your lat lng
+                                        stepsDialog = dialog.findViewById(R.id.stepsdialog);
+                                        caloriesDialog = dialog.findViewById(R.id.coloriedialog);
+                                        distanceDialog = dialog.findViewById(R.id.distancedialog);
+                                        discardDialog = dialog.findViewById(R.id.discardeddistance);
+                                        knubsDialog = dialog.findViewById(R.id.knubsdialog);
+
+
+//
+//
+//                                    if(bonus==1){
+//                                        bonustv.setText("Bad Walk");
+//                                        bonustv.setTextColor(R.color.red);
+//                                    }else if(bonus==2){
+//                                        bonustv.setText("Good Walk");
+//                                        bonustv.setTextColor(R.color.yellow);
+//                                    }else if(bonus==3){
+//                                        bonustv.setText("Perfect Walk");
+//                                        bonustv.setTextColor(R.color.green);
+//                                    }
+                                        MapView mMapView = dialog.findViewById(R.id.map);
+
+                                        stepsDialog.setText(String.valueOf(SensorForeground.getStepCount()));
+
+                                        // Values based on STEPS
+                                        //caloriesDialog.setText(String.valueOf(SensorForeground.getCaloriesBurnt()));
+                                        //distanceDialog.setText(df2.format(SensorForeground.getDistance()));
+
+                                        // Values based on POINTS on Map
+                                        distanceOnMap = MyLocationService.getDistance(SensorForeground.loc) - MyLocationService.getDiscardDistance(SensorForeground.loc, indexOfImage);
+                                        double discarddistanced = calculatediscardeddistance();
+                                        distanceDialog.setText(String.valueOf(distanceOnMap));
+                                        caloriesDialog.setText(String.valueOf(MyLocationService.getCalories(distanceOnMap)));
+                                        discardDialog.setText(String.valueOf(MyLocationService.getDiscardDistance(SensorForeground.loc, indexOfImage)));
+
+//                                discardDialog.setText(String.valueOf(MyLocationService.getDiscardDistance(SensorForeground.loc)));
+                                        knubsDialog.setText(String.valueOf(newknubs));
+//                                errordist.setError("These meters were discarded due to the inaccuracy of GPS .");
+//                                errordist.
+                                        dialog.show();
+
+                                        MapsInitializer.initialize(context);
+
+                                        mMapView.onCreate(dialog.onSaveInstanceState());
+                                        mMapView.onResume();
+                                        try {
+                                            point = SensorForeground.loc.get(SensorForeground.loc.size() - 1);
+                                        } catch (Exception e) {
+
                                         }
-                                        googleMap.addPolyline(new PolylineOptions()
-                                                .addAll(SensorForeground.loc)
-                                                .width(5)
-                                                .color(Color.GREEN));
-                                    }
-                                });
+                                        mMapView.getMapAsync(new OnMapReadyCallback() {
+                                            @Override
+                                            public void onMapReady(final GoogleMap googleMap) {
+                                                googleMap.setMyLocationEnabled(true);
+                                                if (point != null) {
+                                                    CameraPosition myPosition = new CameraPosition.Builder()
+                                                            .target(point).zoom(17).bearing(90).tilt(30).build();
 
-
-                                //  Button dialogButton = (Button) dialog.findViewById(R.id.map);
-                                // if button is clicked, close the custom dialog
-                                dialogbtn.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        resetSession();
-
-                                        dialog.dismiss();
-                                    }
-                                });
-                                ContextCompat.startForegroundService(WalkActivity.this, serviceIntent);
-                                fusedLocationProviderClient.removeLocationUpdates(getPendingIntent());
-                                start = false;
-
-                            }else{
-                                    ContextCompat.startForegroundService(WalkActivity.this, serviceIntent);
-
-                                    fusedLocationProviderClient.removeLocationUpdates(getPendingIntent());
-                                    start = false;
-                                    String message="";
-                                    if(invalid==1){
-                                        message="Travelling on a vehicle, Worthy walk doesn't count this as a walk !";
-                                    }else   if(invalid==2){
-                                        message="Either your Gps is not helping or you moving in Car! Just take the screenshot of this screen and message us on FB page if this was a mistake , untill we make things better. Sorry for inconviniance";
-                                    }else if(invalid==3){
-                                        message="Shaking your hand is not a good option to earn Knubs, Go out for a walk cause its Worthy";
-
-                                    }
-                                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(WalkActivity.this);
-                                    alertDialogBuilder.setTitle("Invalid Walk !");
-                                    alertDialogBuilder.setMessage(message);
-                                    alertDialogBuilder.setPositiveButton("Ok",
-                                            new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface arg0, int arg1) {
-
-
-                                                    resetSession();
-
+                                                    googleMap.animateCamera(
+                                                            CameraUpdateFactory.newCameraPosition(myPosition));////your lat lng
                                                 }
-                                            });
+                                                googleMap.addPolyline(new PolylineOptions()
+                                                        .addAll(SensorForeground.loc)
+                                                        .width(5)
+                                                        .color(Color.GREEN));
+                                            }
+                                        });
 
 
+                                        //  Button dialogButton = (Button) dialog.findViewById(R.id.map);
+                                        // if button is clicked, close the custom dialog
+                                        dialogbtn.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                resetSession();
 
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        ContextCompat.startForegroundService(WalkActivity.this, serviceIntent);
+                                        fusedLocationProviderClient.removeLocationUpdates(getPendingIntent());
+                                        start = false;
 
-                                    AlertDialog alertDialog = alertDialogBuilder.create();
-                                    alertDialog.show();
+                                    } else {
+                                        ContextCompat.startForegroundService(WalkActivity.this, serviceIntent);
 
+                                        fusedLocationProviderClient.removeLocationUpdates(getPendingIntent());
+                                        start = false;
+                                        String message = "";
+                                        if (invalid == 1) {
+                                            message = "Travelling on a vehicle, Worthy walk doesn't count this as a walk !";
+                                        } else if (invalid == 2) {
+                                            message = "Either your Gps is not helping or you moving in Car! Just take the screenshot of this screen and message us on FB page if this was a mistake , untill we make things better. Sorry for inconviniance";
+                                        } else if (invalid == 3) {
+                                            message = "Shaking your hand is not a good option to earn Knubs, Go out for a walk cause its Worthy";
 
-                                }
-
-
-
-
-
-                            } else {
-                                if (!isServiceRunning) {
-
-                                    SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
-                                    prefsEditor.putInt("Index",index);
-                                    prefsEditor.commit();
-
-                                    startbtn.setText("STOP");
-                                    startbtn.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_red_dark), PorterDuff.Mode.MULTIPLY);
-                                    Intent serviceIntent = new Intent(WalkActivity.this, SensorForeground.class);
-                                    serviceIntent.putExtra("User", user);
-                                    serviceIntent.setAction(START);
-                                    ContextCompat.startForegroundService(WalkActivity.this, serviceIntent);
-                                    fusedLocationProviderClient.requestLocationUpdates(locationRequest, getPendingIntent());
-                                    start = true;
-
-                                    // This give time to other things to initialize first
-                                    Handler handler = new Handler();
-                                    handler.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            chronometer.setBase(SensorForeground.getTime());
-                                            chronometer.setOnChronometerTickListener(WalkActivity.this);
-                                            chronometer.start();
-                                            startNewSession();
-                                            UpdateTextViews();
                                         }
-                                    }, 100);
+                                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(WalkActivity.this);
+                                        alertDialogBuilder.setTitle("Invalid Walk !");
+                                        alertDialogBuilder.setMessage(message);
+                                        alertDialogBuilder.setPositiveButton("Ok",
+                                                new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface arg0, int arg1) {
+
+
+                                                        resetSession();
+
+                                                    }
+                                                });
+
+
+                                        AlertDialog alertDialog = alertDialogBuilder.create();
+                                        alertDialog.show();
+
+
+                                    }
+
+
+                                } else {
+                                    if (!isServiceRunning) {
+
+                                        SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+                                        prefsEditor.putInt("Index", index);
+                                        prefsEditor.commit();
+
+                                        startbtn.setText("STOP");
+                                        startbtn.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_red_dark), PorterDuff.Mode.MULTIPLY);
+                                        Intent serviceIntent = new Intent(WalkActivity.this, SensorForeground.class);
+                                        serviceIntent.putExtra("User", user);
+                                        serviceIntent.setAction(START);
+                                        ContextCompat.startForegroundService(WalkActivity.this, serviceIntent);
+                                        fusedLocationProviderClient.requestLocationUpdates(locationRequest, getPendingIntent());
+                                        start = true;
+
+                                        // This give time to other things to initialize first
+                                        Handler handler = new Handler();
+                                        handler.postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                chronometer.setBase(SensorForeground.getTime());
+                                                chronometer.setOnChronometerTickListener(WalkActivity.this);
+                                                chronometer.start();
+                                                startNewSession();
+                                                UpdateTextViews();
+                                            }
+                                        }, 100);
+                                    }
                                 }
+
+                            }
+
+                            else {
+                                Toast.makeText(context, "Open up your locations ! Before starting your activity", Toast.LENGTH_LONG).show();
                             }
 
 
-                        } else {
-                            Toast.makeText(context, "Open up your locations ! Before starting your activity", Toast.LENGTH_LONG).show();
+
+
+                        }  else {
+
+                            requestgpspermission();
+
                         }
                     }
                     else if(!saved) {
@@ -607,6 +640,34 @@ return true;
         });
     }
 
+    private void requestgpspermission() {
+    if(ActivityCompat.shouldShowRequestPermissionRationale(WalkActivity.this,Manifest.permission.ACCESS_FINE_LOCATION)){
+
+        new AlertDialog.Builder(this).setTitle("Permission Needed")
+                .setMessage("Location is compulsaory to track your Activity")
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ActivityCompat.requestPermissions(WalkActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MY_PERMISSIONS_REQUEST_LOCATION);
+                        UpdateLocation();
+
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        }).create().show();
+        }
+    else{
+
+        ActivityCompat.requestPermissions(this,new String[]{
+            Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION},MY_PERMISSIONS_REQUEST_LOCATION
+        );
+        }
+    }
+
     private void setviews() {
         relativeLayoutprog = (RelativeLayout) findViewById(R.id.relativeprog);
         relativeLayout=(RelativeLayout) findViewById(R.id.relativeLayout);
@@ -628,15 +689,30 @@ return true;
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         UpdateLocation();
+                        gpspermission=true;
                     }
 
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
                         Toast.makeText(getApplicationContext(), "Accept Location", Toast.LENGTH_SHORT).show();
+                        gpspermission=false;
                     }
 
                     @Override
                     public void onPermissionRationaleShouldBeShown(com.karumi.dexter.listener.PermissionRequest permission, PermissionToken token) {
+                        new AlertDialog.Builder(WalkActivity.this).setTitle("Permission Needed")
+                                .setMessage("Location is compulsaory to track your Activity")
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        ActivityCompat.requestPermissions(WalkActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MY_PERMISSIONS_REQUEST_LOCATION);
+                                    }
+                                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        }).create().show();
 
                     }
 
@@ -688,21 +764,21 @@ return true;
                 );
                 if(indexOfImage==0){
 
-                    if (results[0] > 10 && results[0]<0)         TotalDistance += results[0];
+                    if (results[0] > 7 || results[0]<0)         TotalDistance += results[0];
                 } else if(indexOfImage==1){
-                    if (results[0] > 20 && results[0]<0)         TotalDistance += results[0];
+                    if (results[0] > 20 || results[0]<0)         TotalDistance += results[0];
 
 else {
-                        if (results[0] > 5 && results[0]<0)         TotalDistance += results[0];
+                        if (results[0] > 5 || results[0]<0)         TotalDistance += results[0];
 
                     }
                 }
             }
-      discarddistance=TotalDistance;
+
 
         }
         // Divide TotalDistance by 2 to get the accurate result
-        return Double.parseDouble(df2.format(discarddistance/2));
+        return Double.parseDouble(df2.format(TotalDistance/2));
 
 
 
@@ -750,28 +826,24 @@ else {
         });
     }
     public void calculateknubs(){
+        float calories= (float) MyLocationService.getCalories(distanceOnMap);
 
-            if(indexOfImage>1){
-                double steps= SensorForeground.steps*0.03;
-                newknubs=(int) Math.round(steps);
-
-            }else{
                 double steps=0;
                 double cal=0;
                 double totaldistance=0;
                 if(bonus==1){
                      steps= SensorForeground.steps*0.03;
-                     cal= SensorForeground.getCaloriesBurnt()*1.2;
+                     cal= calories*0.2;
                      totaldistance=distanceOnMap*0.05;
 
                 }else if(bonus==2){
                     steps= SensorForeground.steps*0.04;
-                    cal= SensorForeground.getCaloriesBurnt()*1.3;
-                    totaldistance=distanceOnMap*0.05;
+                    cal= calories*0.3;
+                    totaldistance=distanceOnMap*0.06;
 
                 }else if(bonus==3){
                     steps= SensorForeground.steps*0.05;
-                    cal= SensorForeground.getCaloriesBurnt()*1.5;
+                    cal= calories*0.7;
                     totaldistance=distanceOnMap*0.06;
 
                 }
@@ -779,7 +851,7 @@ else {
                 if(newknubs<0) newknubs=0;
                 newknubs=(int) Math.round(steps+cal+totaldistance);
 
-            }
+
 
     }
     public void UpdateTextViews(){
@@ -788,6 +860,7 @@ else {
         double distanceOnMap = MyLocationService.getDistance(SensorForeground.loc);
         distance.setText(String.valueOf(distanceOnMap));
         calorie.setText(String.valueOf(MyLocationService.getCalories(distanceOnMap)));
+//        discarddistance=calculatediscardeddistance();
 
         // Values based on STEPS
         //distance.setText(df2.format(SensorForeground.getDistance()));
@@ -819,7 +892,7 @@ else {
 
              distanceCovered = Double.parseDouble(df2.format(MyLocationService.getDistance(SensorForeground.loc)-calculatediscardeddistance()));
              caloriesBurnt = SensorForeground.getCaloriesBurnt();
-             timeSpent = SensorForeground.getTime();
+             timeSpent = SensorForeground.gettimespent();
              pathCoordinates = SensorForeground.loc;
              knubs=newknubs;
 
@@ -828,15 +901,22 @@ else {
         final DocumentReference docRef=db.collection("Users").document(useruid);
         final DocumentReference docRef2=db.collection("Session").document();
         final DocumentReference docRef3=db.collection("Monthlywalk").document(useruid);
+        final DocumentReference docRef4=db.collection("Monthlywalk").document(useruid).collection(str).document(String.valueOf(Calendar.getInstance().getTime()));
+
 
 
         final Map<String, Object> docData = new HashMap<>();
+        Date c = Calendar.getInstance().getTime();
 
         docData.put("DistanceCovered",distanceCovered);
         docData.put("CalorieBurnt",caloriesBurnt);
         docData.put("Timespent",timeSpent);
         docData.put("PathCordinates",pathCoordinates);
         docData.put("KnubsEarned",knubs);
+        docData.put("Datetime",c);
+        docData.put("Steps",SensorForeground.steps);
+
+
         docData.put("UserId",useruid);
 
 
@@ -866,7 +946,6 @@ else {
 
 
 
-
                 knubsmon=(int)knubsmontemp+knubs;
                 distancemon=(float)distancemontemp+(float)distanceCovered;
                 caloriemon=(float)caloriemontemp+(float)caloriesBurnt;
@@ -885,6 +964,8 @@ else {
 
                     transaction.set(docRef2,docData );
                     transaction.update(docRef3,docData3);
+                    transaction.set(docRef4,docData );
+
 
 
 

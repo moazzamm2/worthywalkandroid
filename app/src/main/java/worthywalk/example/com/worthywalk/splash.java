@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 
 import androidx.appcompat.app.AppCompatActivity;
+import worthywalk.example.com.worthywalk.Models.User;
 
 public class splash extends AppCompatActivity {
 

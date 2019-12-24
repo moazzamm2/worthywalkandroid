@@ -1,12 +1,6 @@
 package worthywalk.example.com.worthywalk;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -16,11 +10,15 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,25 +31,32 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
-import com.google.firebase.messaging.RemoteMessage;
 import com.squareup.picasso.Picasso;
 
-import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import worthywalk.example.com.worthywalk.Models.User;
+import worthywalk.example.com.worthywalk.Models.cardInfo;
+
 import static worthywalk.example.com.worthywalk.App.CHANNEL_ID;
 
 public class Avail extends AppCompatActivity {
 
-
+//views
     EditText e1,e2,e3,e4,e5;
     Button avail ,report;
+    TextView validate,brand,description;
+    Spinner spinner;
+
     cardInfo card;
     ImageView banner;
     FirebaseAuth mAuth;
@@ -65,20 +70,32 @@ public class Avail extends AppCompatActivity {
 
     StringBuilder sb=new StringBuilder();
     String promo;
-    int month;
+    int month,year;
 
-    @Override
 
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_avail);
+    private void setviews(){
+        spinner=(Spinner) findViewById(R.id.locations);
         banner=(ImageView) findViewById(R.id.image);
         e1=(EditText) findViewById(R.id.edit1);
         e2=(EditText) findViewById(R.id.edit2);
         e3=(EditText) findViewById(R.id.edit3);
         e4=(EditText) findViewById(R.id.edit4);
         e5=(EditText) findViewById(R.id.edit5);
-        text=(TextView) findViewById(R.id.text5);
+        validate=(TextView) findViewById(R.id.validate);
+        description=(TextView) findViewById(R.id.description);
+        brand=(TextView)findViewById(R.id.brandname);
+
+    }
+
+
+
+    @Override
+
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_avail);
+        setviews();
+
         Calendar c = Calendar.getInstance();
         month = c.get(Calendar.MONTH);
         avail=(Button) findViewById(R.id.avail);
@@ -89,41 +106,87 @@ public class Avail extends AppCompatActivity {
 
         card= (cardInfo) intent.getSerializableExtra("card");
         if(card.online){
-            e5.setVisibility(View.GONE);
-            text.setVisibility(View.VISIBLE);
+            validate.setVisibility(View.VISIBLE);
+            e5.setInputType(InputType.TYPE_CLASS_TEXT);
+            e5.setHint(card.Brand_name);
+            e1.setVisibility(View.GONE);
+            e2.setVisibility(View.GONE);
+            e3.setVisibility(View.GONE);
+            e4.setVisibility(View.GONE);
+
+
+
+
 
         }else {
-            e5.setVisibility(View.VISIBLE);
-            text.setVisibility(View.GONE);
+            validate.setVisibility(View.GONE);
+
 
         }
+
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, card.location);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinner.setAdapter(spinnerArrayAdapter);
         user=(User) intent.getSerializableExtra("user");
         if(card!=null){
             Picasso.get().load(card.imgurl).fit().into(banner);
+            brand.setText(card.Brand_name);
+            Log.d("Brandname",card.Brand_name);
+            description.setText(card.description);
             passcode=card.passcode;
         }
 
-        if(card.Fb.length()>0) {
-            message = "Get this Passcode from the Brands Fb page here is their username " + card.Fb;
-            text.setText(message);
-        }
+
         avail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if(user.Knubs>=Integer.parseInt(card.points)){
-                    if(e1.getText().toString().length()>0 || +e2.getText().toString().length()>0 ||+e3.getText().toString().length()>0 ||+e4.getText().toString().length()>0) {
-                        pass=e1.getText().toString()+e2.getText().toString()+e3.getText().toString()+e4.getText().toString();
-                        if(pass.equals(passcode))                   transaction();
-                        else Toast.makeText(getApplicationContext(),"Type Valid Passcode",Toast.LENGTH_LONG).show();
-                    }                    else Toast.makeText(getApplicationContext(),"Enter Passcode",Toast.LENGTH_LONG).show();
+                String validatefrom;
+                String validateto;
+                if(e5.getText()==null && card.online) {
+                    Toast.makeText(getApplicationContext(),"Please enter the brandname",Toast.LENGTH_LONG).show();
+                   validatefrom = e5.getText().toString().toLowerCase();
 
-                }else{
-                    Toast.makeText(getApplicationContext(),"You Dont have enough knubs ! Start Earning . ",Toast.LENGTH_LONG).show();
+                }else if(e5.getText()==null && !card.online) {
+
+                    Toast.makeText(getApplicationContext(),"Please enter the Total Ammount",Toast.LENGTH_LONG).show();
+
+                }else if(card.online) {
+                    validateto=card.Brand_name.toLowerCase();
+                    validatefrom = e5.getText().toString().toLowerCase();
+
+                    if (user.Knubs >= Integer.parseInt(card.points)) {
+                        if (e1.getText().toString().length() > 0 || +e2.getText().toString().length() > 0 || +e3.getText().toString().length() > 0 || +e4.getText().toString().length() > 0) {
+                            pass = e1.getText().toString() + e2.getText().toString() + e3.getText().toString() + e4.getText().toString();
+                            if (validatefrom.equals(validateto)) transaction();
+                            else
+                                Toast.makeText(getApplicationContext(), "Type Valid BrandName", Toast.LENGTH_LONG).show();
+                        } else
+                            Toast.makeText(getApplicationContext(), "Enter Passcode", Toast.LENGTH_LONG).show();
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "You Dont have enough knubs ! Start Earning . ", Toast.LENGTH_LONG).show();
+                    }
+                }else {
+
+                    if (user.Knubs >= Integer.parseInt(card.points)) {
+                        if (e1.getText().toString().length() > 0 || +e2.getText().toString().length() > 0 || +e3.getText().toString().length() > 0 || +e4.getText().toString().length() > 0) {
+                            pass = e1.getText().toString() + e2.getText().toString() + e3.getText().toString() + e4.getText().toString();
+                            if (card.passcode.equals(pass)) transaction();
+                            else
+                                Toast.makeText(getApplicationContext(), "Type Valid passcode", Toast.LENGTH_LONG).show();
+                        } else
+                            Toast.makeText(getApplicationContext(), "Enter Passcode", Toast.LENGTH_LONG).show();
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "You Dont have enough knubs ! Start Earning . ", Toast.LENGTH_LONG).show();
+                    }
+
                 }
 
-            }
+        }
         });
+
         e1.addTextChangedListener(new TextWatcher(){
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // TODO Auto-generated method stub
@@ -303,7 +366,8 @@ public class Avail extends AppCompatActivity {
         final FirebaseFirestore db=FirebaseFirestore.getInstance();
 
 
-        if(!card.online) {
+        if(!card.online  ) {
+
             final Map<String, Object> map = new HashMap<>();
             final Map<String, Object> usermap = new HashMap<>();
 
@@ -470,7 +534,7 @@ public class Avail extends AppCompatActivity {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Avail.this);
         alertDialogBuilder.setTitle("THANKYOU");
-        alertDialogBuilder.setMessage("YOUR KNUBS ARE NOW "+String.valueOf(user.Knubs)+" !\n Your Promocode for " + card.Name+ " is \n  >>>"+ promo+"<<<  \nUse it in thier Online store while buying out remember or Screenshot it so you dont lose it . \nHAPPY SHOPPING ! " );
+        alertDialogBuilder.setMessage("YOUR KNUBS ARE NOW "+String.valueOf(user.Knubs)+" !\n Your Promocode for " + card.Brand_name+ " is \n  >>>"+ promo+"<<<  \nUse it in thier Online store while buying out remember or Screenshot it so you dont lose it . \nHAPPY SHOPPING ! " );
         alertDialogBuilder.setPositiveButton("Ok",
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -498,7 +562,7 @@ public class Avail extends AppCompatActivity {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Avail.this);
         alertDialogBuilder.setTitle("THANKYOU");
-        alertDialogBuilder.setMessage("YOUR KNUBS ARE NOW"+String.valueOf(user.Knubs)+"!\n" +" Have Fun at"+ card.Name+"!" );
+        alertDialogBuilder.setMessage("YOUR KNUBS ARE NOW"+String.valueOf(user.Knubs)+"!\n" +" Have Fun at"+ card.Brand_name+"!" );
         alertDialogBuilder.setPositiveButton("Ok",
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -522,4 +586,4 @@ public class Avail extends AppCompatActivity {
 
     }
 
-}
+    }

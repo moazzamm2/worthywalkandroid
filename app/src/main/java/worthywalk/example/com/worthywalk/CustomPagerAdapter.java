@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -18,9 +19,14 @@ public class CustomPagerAdapter extends PagerAdapter {
 
     public CustomPagerAdapter(Context context, String[] resources) {
         mContext = context;
-          mResources = resources;
+        if(resources!=null) {
+            mResources = resources;
+        }else         mResources[0]="https://firebasestorage.googleapis.com/v0/b/worthywalk-6b82e.appspot.com/o/Deals%2FEglett%2Feglettbanner.jpg?alt=media&token=c99c4fa3-e660-4825-b5eb-a3304a0252fd";
 
-        mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+
+
     }
 
     @Override

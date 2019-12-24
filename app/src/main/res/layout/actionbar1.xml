@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/custom_actionbar_relative_layout_main"
     android:layout_width="match_parent"
     android:layout_height="55dp"
@@ -16,7 +17,7 @@
         android:gravity="center_vertical"
         android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:src="@drawable/ic_arrow_back_black_24dp"
+        app:srcCompat="@drawable/ic_arrow_back_black_24dp"
         android:textSize="18sp" />
     <TextView
         android:id="@+id/textviewactivityname"

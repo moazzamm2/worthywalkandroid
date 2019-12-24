@@ -11,15 +11,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,23 +24,24 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Transaction;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Year;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
+import worthywalk.example.com.worthywalk.Models.FBuser;
+import worthywalk.example.com.worthywalk.Models.User;
 
 public class register extends AppCompatActivity implements TextWatcher {
     String fname, lname, phn, gend, days, months, years,image;
@@ -71,6 +69,7 @@ public class register extends AppCompatActivity implements TextWatcher {
 
     ProgressBar pbloading;
     String token;
+    String Email;
     CircleImageView profile_picture;
     FBuser fbuser;
 Gson gson=new Gson();
@@ -78,7 +77,7 @@ Gson gson=new Gson();
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        firstname = (EditText) findViewById(R.id.firstname);
+      ;  firstname = (EditText) findViewById(R.id.firstname);
         lastname = (EditText) findViewById(R.id.lastname);
         phone = (EditText) findViewById(R.id.phone);
         profile_picture=(CircleImageView)findViewById(R.id.profile_image);
@@ -94,11 +93,14 @@ Gson gson=new Gson();
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         Intent intent=getIntent();
         fbuser= (FBuser) intent.getSerializableExtra("fbuser");
+        Email= (String) intent.getSerializableExtra("Email");
+
         firstname.addTextChangedListener(this);
         lastname.addTextChangedListener(this);
         phone.addTextChangedListener(this);
         height.addTextChangedListener(this);
         weight.addTextChangedListener(this);
+
 
 
         String userss=sharedpreferences.getString("User","a");
@@ -263,6 +265,8 @@ Gson gson=new Gson();
                     lname = lastname.getText().toString();
                     lname = lname.substring(0, 1).toUpperCase() + lname.substring(1);
 
+
+
                     phn = phone.getText().toString();
                     phn = "+92" + phn;
                     hei = Float.parseFloat(height.getText().toString());
@@ -287,12 +291,21 @@ Gson gson=new Gson();
                     String token = sharedpreferences.getString("Token", "");
 
                     if (fbuser != null)
-                        user = new User(fname, lname, phn, gend, hei, wei, age, d, 500, fbuser.imageurl, 500, false, token);
+                        user = new User(fbuser.email,fname, lname, phn, gend, hei, wei, age, d, 500, fbuser.imageurl, 500, false, token);
                     else if(update){
+//                        String Profilepicture,
 
-                        user = new User(fname, lname, phn, gend, hei, wei, age, d, updateuser.Knubs, "", updateuser.totalknubs, false, token);
+//                        List<testuser> testuserlist=new ArrayList<>();
+//                        userlist.add(new User(Profilepicture="", Lastname=Syed, Token=dPNWuslqomQ:APA91bH4AOgoSj4KOMbP44_5usmAKiSDZq-aVOlzYm7xlCcoIc4K5Xz-1-KCiirRMFMZkLsNhjCYG1dQzjLeBrjdqq1NOm_ANqEi1uekIjrZO2wDXYecG4VHQ0hEm5XxJGs1Kb8U1i1R, Gender=Male, Weight=64.0, Firstname=Taseen, Totalknubs=500, DOB=Timestamp(seconds=876250800, nanoseconds=0), Phone=+923218923255, Knubs=500, Permission=false, Height=5.110000133514404, Age=22));
+
+//                        testuserlist.add(new testuser("","Syed", "dPNWuslqomQ:APA91bH4AOgoSj4KOMbP44_5usmAKiSDZq-aVOlzYm7xlCcoIc4K5Xz-1-KCiirRMFMZkLsNhjCYG1dQzjLeBrjdqq1NOm_ANqEi1uekIjrZO2wDXYecG4VHQ0hEm5XxJGs1Kb8U1i1R","Male", 64.0,"Taseen", 500,876250800, "+923218923255", 500, false, 5.110000133514404, 22));
+
+//                        serlist.add(new User());
+
+
+                        user = new User(updateuser.Email,fname, lname, phn, gend, hei, wei, age, d, updateuser.Knubs, "", updateuser.totalknubs, false, token);
                     }else
-                        user = new User(fname, lname, phn, gend, hei, wei, age, d, 500, "", 500, false, token);
+                        user = new User(Email,fname, lname, phn, gend, hei, wei, age, d, 500, "", 500, false, token);
 
                     String userjson = gson.toJson(user);
                     SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
@@ -325,12 +338,15 @@ Gson gson=new Gson();
 
             }
             private void sendata(final User user, String uid) {
-                final Map<String, Object> docData = new HashMap<>();
                 final Map<String, Object> docData2 = new HashMap<>();
                 final Map<String, Object> docData3 = new HashMap<>();
+                final Map<String, Object> docData = new HashMap<>();
 
                 docData.put("Firstname", user.Firstname);
                 docData.put("Lastname", user.Lastname);
+                docData.put("Email", user.Email);
+
+
                 docData.put("Phone", user.Phone);
                 docData.put("Gender", user.Gender);
                 docData.put("Height", user.Height);
@@ -406,6 +422,8 @@ Gson gson=new Gson();
         docData.put("Lastname", user.Lastname);
         docData.put("Phone", user.Phone);
         docData.put("Gender", user.Gender);
+        docData.put("Email", user.Email);
+
         docData.put("Height", user.Height);
         docData.put("Weight", user.Weight);
         docData.put("Age", user.Age);

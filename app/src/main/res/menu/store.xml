@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/alltab"
+        android:icon="@drawable/ic_select_all"
+        android:title="ALL"
+        />
+
+    <item
         android:id="@+id/clothingtab"
         android:icon="@drawable/ic_clothes"
         android:title="FASHION"
@@ -19,12 +25,7 @@
         android:icon="@drawable/ic_bowling_pins"
         android:title="ENTERTAINMENT"
         />
-    <item
-    android:id="@+id/healthTab"
-    android:icon="@drawable/ic_first_aid_kit"
-    android:title="HEALTH"
-    />
-    <item
+     <item
         android:id="@+id/otherTab"
         android:icon="@drawable/ic_shop"
         android:title="OTHERS"

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:mapbox="http://schemas.android.com/tools"
     android:id="@+id/scene_container"
     android:layout_width="match_parent"
@@ -146,7 +147,7 @@ android:id="@+id/cycle"
                                     android:layout_width="20dp"
                                     android:layout_height="20dp"
                                     android:tint="#634016"
-                                    android:src="@drawable/ic_steps"
+                                    app:srcCompat="@drawable/ic_steps"
 
                                     />
 
@@ -177,7 +178,7 @@ android:id="@+id/cycle"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:tint="#477c18"
-                    android:src="@drawable/ic_access_alarm_black_24dp"/>
+                    app:srcCompat="@drawable/ic_access_alarm_black_24dp"/>
 
                 <TextView
                     android:id="@+id/textView6"
@@ -230,7 +231,7 @@ android:id="@+id/cycle"
                                 <ImageView
                                     android:layout_width="20dp"
                                     android:layout_height="20dp"
-                                    android:src="@drawable/ic_knub_flat"/>
+                                    app:srcCompat="@drawable/ic_knub_flat"/>
 
                                 <TextView
                                     android:id="@+id/textView7"
@@ -275,7 +276,7 @@ android:id="@+id/cycle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:tint="@color/colorAccent"
-                            android:src="@drawable/ic_distance_to_travel_between_two_points"/>
+                            app:srcCompat="@drawable/ic_distance_to_travel_between_two_points"/>
                         <TextView
                             android:id="@+id/distag"
                             android:layout_width="wrap_content"
@@ -315,7 +316,7 @@ android:id="@+id/cycle"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:tint="#f2460a"
-                            android:src="@drawable/ic_fire"/>
+                            app:srcCompat="@drawable/ic_fire"/>
                         <TextView
                             android:id="@+id/caltag"
                             android:layout_width="wrap_content"
@@ -355,7 +356,7 @@ android:id="@+id/cycle"
                             android:layout_height="20dp"
                             android:padding="2dp"
                             android:tint="@color/colorPrimary"
-                            android:src="@drawable/ic_running"/>
+                            app:srcCompat="@drawable/ic_running"/>
 
                         <TextView
                             android:id="@+id/speedtag"

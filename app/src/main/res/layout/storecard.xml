@@ -8,10 +8,10 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
-        android:padding="100dp"
+        android:padding="50dp"
         android:layout_margin="10dp"
         xmls:cardCornerRadius="15dp"
-        android:layout_height="210dp"
+        android:layout_height="225dp"
 
         xmls:cardMaxElevation="20dp"
 
@@ -24,105 +24,112 @@
 
             android:id="@+id/img12">
 
-            <RelativeLayout
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+
+                android:id="@+id/brandlayout"
+                android:background="@drawable/shape2"
+                android:backgroundTint="#ffffff"
+                android:padding="2dp"
+                android:elevation="5dp">
                 <com.makeramen.roundedimageview.RoundedImageView
                     xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/img"
+                    android:scaleType="fitCenter"
+                    android:id="@+id/img1"
+                    android:layout_gravity="center"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:src="@drawable/burger"
-                    app:riv_corner_radius="15dp"
-                    android:scaleType="fitCenter"
-                    android:layout_margin="10dp"
-                    android:layout_height="200dp"
-                    android:layout_width="match_parent"/>
 
-                <com.makeramen.roundedimageview.RoundedImageView
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/ig"
-                    android:layout_margin="10dp"
-
-                    android:alpha="0.3"
-                    android:scaleType="fitCenter"
-                    android:layout_height="200dp"
-                    android:layout_width="match_parent"/>
+                    />
 
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/Resturant"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginLeft="25dp"
-                    android:background="@drawable/shape2"
-                    android:backgroundTint="@color/colorWhite"
-                    android:padding="8dp"
-                    android:elevation="5dp">
-                    <com.makeramen.roundedimageview.RoundedImageView
-                        xmlns:app="http://schemas.android.com/apk/res-auto"
-                        android:scaleType="fitCenter"
-                        android:id="@+id/img1"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/burger"
+                    android:text="Burger King"
+                    android:layout_gravity="center"
+                    android:textColor="@color/colorPrimary"
 
-                        />
+                    android:textSize="15sp"
+                    android:layout_weight="4"
+                    android:textStyle="bold"
+                    android:layout_alignLeft="@+id/img1"
+                    android:layout_marginLeft="9dp"/>
 
-                    <TextView
-                        android:id="@+id/Resturant"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Burger King"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:elevation="4dp"
-                        android:layout_alignLeft="@+id/img1"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginLeft="9dp"/>
-                </LinearLayout>
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:padding="3dp"
+                    android:layout_gravity="center"
+                    xmls:srcCompat="@drawable/ic_knub_flat"
+                    />
 
-            </RelativeLayout>
+                <TextView
+                    android:id="@+id/t1points"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
 
+                    android:padding="5dp"
 
+                    android:text="20000"
+
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="4dp"
+                    android:gravity="end"
+                    android:textColor="@color/colorAmber"
+                    android:textSize="15sp"
+                    android:textStyle="italic"
+                    />
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="@drawable/shape2"
                 android:padding="4dp"
-                android:layout_centerHorizontal="true"
-
-                android:layout_marginTop="170dp">
-
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:padding="3dp"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_knub_flat"
-                     />
-
-                <TextView
-                    android:id="@+id/t1points"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true">
 
 
-
-                    android:layout_weight="4"
-
-                    android:text="20000"
-
-                    android:backgroundTint="@color/colorWhite"
-                    android:textColor="@color/colorAmber"
-                    android:textSize="20sp"
-                    android:textStyle="italic"
-                    />
 
             </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/brandlayout"
+                >
+
+                <!--                <com.makeramen.roundedimageview.RoundedImageView-->
+<!--                    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--                    android:id="@+id/ig"-->
+<!--                    android:layout_margin="10dp"-->
+
+<!--                    android:alpha="0.3"-->
+<!--                    android:scaleType="fitCenter"-->
+<!--                    android:layout_height="200dp"-->
+<!--                    android:layout_width="match_parent"/>-->
+
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/img"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/burger"
+                    xmls:riv_corner_radius="15dp" />
+
+
+
+            </RelativeLayout>
+
+
 
         </RelativeLayout>
 

@@ -4,28 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Leaderboardfrag">
+    tools:context=".Fragments.Leaderboardfrag">
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-android:visibility="gone"
+    android:visibility="gone"
+
     android:id="@+id/leaderlayout">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
+
         android:background="@color/colorAmber"
         android:id="@+id/sponsor">
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:textSize="20dp"
+            android:textSize="15dp"
             android:textStyle="bold"
             android:text="SPONSORED BY WORTHY WALK"
             android:textAlignment="center"
             android:textColor="@color/colorWhite"
             android:layout_centerInParent="true"
-
+            android:id="@+id/sponsored"
 
             />
 
@@ -35,7 +37,7 @@ android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="200dp"
 android:layout_below="@+id/sponsor"
-        android:src="@drawable/winnercup"
+        app:srcCompat="@drawable/winnercup"
         android:id="@+id/leaderimage"
         />
     <LinearLayout
@@ -44,7 +46,7 @@ android:padding="12dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/monthtitle"
-        android:background="@color/colorAmber"
+        android:background="@color/colorPrimary"
 
         android:orientation="horizontal"
         >
@@ -83,6 +85,7 @@ android:padding="12dp"
         android:layout_height="match_parent"
         android:background="@drawable/winnercup"
         android:id="@+id/permissionlayout"
+
         >
 
         <TextView

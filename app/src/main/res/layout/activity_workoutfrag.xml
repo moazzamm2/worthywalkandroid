@@ -199,7 +199,7 @@
                 android:layout_centerInParent="true"
                 android:id="@+id/iconview"
                 android:tint="@color/colorWhite"
-                android:src="@drawable/ic_runer_silhouette_running_fast"
+                app:srcCompat="@drawable/ic_runer_silhouette_running_fast"
                 />
 
         </RelativeLayout>

@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import worthywalk.example.com.worthywalk.Models.User;
+
 public class walksession implements Serializable {
 
     int steps=0;
@@ -32,7 +34,7 @@ public class walksession implements Serializable {
     public void setSteps(int steps){
         this.steps=steps;
     }
-    public void caculatecalorie(User user,double speed){
+    public void caculatecalorie(User user, double speed){
 
         Calorie = (0.035 * user.Weight) + (speed / user.Height) *0.029*(user.Weight);
 

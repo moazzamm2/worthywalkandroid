@@ -3,6 +3,7 @@ package worthywalk.example.com.worthywalk;
 import android.content.Context;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+import worthywalk.example.com.worthywalk.Models.cardInfo;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -86,7 +87,7 @@ public void setOnItemClickListener(OnItemClickListener listener){
             final cardInfo a =data.get(position);
             Picasso.get().load(a.logo).fit().into(logo);
             Picasso.get().load(a.imgurl).fit().into(banner);
-            resturant.setText(a.Name);
+            resturant.setText(a.Brand_name);
             points.setText(a.points);
         }
         @Override

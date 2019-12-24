@@ -107,7 +107,6 @@
 
     </LinearLayout>
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:paddingLeft="15dp"
@@ -115,30 +114,12 @@
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:text="BONUS"
-            android:id="@+id/bonus"
-            android:gravity="center"
-            android:layout_weight="1"
-            android:textColor="@color/colorWhite"
-            android:padding="10dp"/>
-
-
-
-
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-
-        android:layout_height="wrap_content">
-        <TextView
+            android:textSize="10sp"
+            android:text="Error Distance"
             android:id="@+id/errordistance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            style="@android:style/Widget.EditText"
-            android:text="Error Distance "
+
             android:textAlignment="textStart"
+            android:layout_weight="1"
             android:textColor="@color/red"
             android:padding="10dp"/>
 
@@ -147,9 +128,11 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:id="@+id/discardeddistance"
+
+            android:layout_weight="1"
             android:textAlignment="center"
             android:text="0"
-            android:textColor="@color/red"
+            android:textColor="@color/colorWhite"
             android:padding="10dp"/>
 
 

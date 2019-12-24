@@ -16,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import worthywalk.example.com.worthywalk.Models.FBuser;
+import worthywalk.example.com.worthywalk.Models.User;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -24,11 +26,9 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -36,11 +36,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Transaction;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -69,6 +66,7 @@ public class login extends AppCompatActivity {
     long knubsmon=0;
     long stepsmon=0;
 
+
     FBuser fBuser;
     private static final String EMAIL = "email";
     // ..
@@ -93,6 +91,7 @@ public class login extends AppCompatActivity {
 
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setPermissions(Arrays.asList(EMAIL,"public_profile"));
+
 
 
 forgot.setOnClickListener(new View.OnClickListener() {

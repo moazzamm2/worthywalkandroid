@@ -3,6 +3,7 @@ package worthywalk.example.com.worthywalk;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import worthywalk.example.com.worthywalk.Models.User;
 
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -10,25 +10,63 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/burger"
         android:id="@+id/image"/>
-    
-    
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:elevation="5dp"
+        android:background="@drawable/shape2"
+android:backgroundTint="#ffff"
+        android:orientation="horizontal"
+
+        android:padding="10dp"
+        android:layout_alignBottom="@+id/image"
+        android:layout_alignEnd="@+id/image"
+        >
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:srcCompat="@drawable/ic_placeholder"/>
+
+<Spinner
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/locations"
+    android:entries="@array/location"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/image"
         android:orientation="vertical"
+        android:padding="10dp"
        android:layout_centerHorizontal="true"
         >
-        
         <TextView
+            android:id="@+id/brandname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Almost there !"
+            android:text="BRAND NAME"
             android:textSize="35dp"
             android:textStyle="bold"
             android:layout_gravity="center"
             />
+        <TextView
+         android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Description about the product"
+        android:textSize="15dp"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        />
+        
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -112,10 +150,18 @@
 
 
 </LinearLayout>
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Enter the brand name to validate !"
+    android:textAlignment="center"
+    android:id="@+id/validate"
 
+    android:textColor="@color/red"/>
 <EditText
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:singleLine="true"
     android:hint="Enter total bill amont"
     android:padding="25dp"        android:textAlignment="center"
 
@@ -128,17 +174,6 @@
     android:layout_gravity="center"
     />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Enter total bill amont"
-            android:text="Get this Passcode from the Brands Fb page here is the
-            username:"
-            android:textAlignment="center"
-            android:layout_margin="10dp"
-            android:id="@+id/text5"
-            android:layout_gravity="center"
-            />
 
 
 <Button
