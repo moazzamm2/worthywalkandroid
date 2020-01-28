@@ -48,7 +48,7 @@ public class Signup extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (emailid.getText().toString().trim()==null|| password1.getText().toString()==null||password2.getText().toString()==null){
+                if (emailid.getText().toString().isEmpty() || password1.getText().toString().isEmpty() || password2.getText().toString().isEmpty()){
                     Toast.makeText(Signup.this, "Error Please enter the credentials", Toast.LENGTH_SHORT).show();
                 } else{
 

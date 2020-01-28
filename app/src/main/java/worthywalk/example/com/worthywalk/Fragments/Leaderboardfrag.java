@@ -460,7 +460,7 @@ User user;
                     adapter=new leaderadapter(data,getContext());
                     recyclerView.setAdapter(adapter);
                 }else {
-                    Toast.makeText(getContext(),task.getException().getMessage(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(),task.getException().getLocalizedMessage(),Toast.LENGTH_LONG).show();
                 }
             }
         });

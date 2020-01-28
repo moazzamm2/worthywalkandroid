@@ -55,12 +55,17 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -88,7 +93,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     LocationRequest locationRequest;
     FusedLocationProviderClient fusedLocationProviderClient;
     boolean multiplyer=false;
-    int bonus=1;
+    int bonus=0;
 
     boolean gpspermission=false;
 
@@ -152,11 +157,12 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
 
     double discarddistance;
     Session session;
+
     long dbknubs;
 
 
     double newdistance,newdiscarddistance,newcalculatedknubs, newoldknubs;
-
+    List<LatLng> pathcoordinates;
 
     private static DecimalFormat df2 = new DecimalFormat("#.##");
 
@@ -186,6 +192,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
         calendar=Calendar.getInstance();
         int mon=calendar.get(Calendar.MONTH);
         str= month.get(mon+1)+calendar.get(Calendar.YEAR);
+        pathcoordinates=new ArrayList<>();
 
 
         isServiceRunning = SensorForeground.isServiceRunning;
@@ -201,8 +208,9 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
         Log.d("checking","SAVE ChecK");
            String info= sharedpreferences.getString("Session","");
 
-
+           checksaveddata();
             session=gson.fromJson(info,Session.class);
+
 
 
 
@@ -242,8 +250,8 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
         }
 
         newoldknubs=user.Knubs;
-
-        requestgpspermission();
+//        requestgpspermission();
+        Permission();
         setbuttons();
 
         stepDetector=new StepDetector();
@@ -346,30 +354,28 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
         double timedistratio= (elapsedMillis/1000)/dist;
         Log.d("Timecheck",String.valueOf(elapsedMillis));
 
-        if(stepdistratio<0.6){
+        if(stepdistratio>40){
             bonus=1;
         }
         if(stepdistratio>=0.6 && stepdistratio<0.9){
             bonus=2;
         }else if(stepdistratio>=0.9 && stepdistratio<=1.6){
             bonus=3;
-        }else if(stepdistratio>1.6){
-            bonus=1;
-        }
+        }else if(diststepsratio>150) bonus=4;
 
 
 
 
 
-
-        if(timedistratio<0.5) {
-            bonus = 1;
-
-
-        } if(stepss>15 && dist==0){
-            invalid=3;
-            return false;
-        }
+//
+//        if(timedistratio<0.5) {
+//            bonus = 1;
+//
+//
+//        } if(stepss>15 && dist==0){
+//            invalid=3;
+//            return false;
+//        }
 
 return true;
     }
@@ -397,7 +403,10 @@ return true;
                             }
                             try {
                                 gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                            } catch(Exception ex) {}
+                            } catch(Exception ex)
+                            {
+                                Toast.makeText(getApplicationContext(), ex.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                            }
 
                             if (gps_enabled) {
 
@@ -602,36 +611,13 @@ return true;
 
                         }  else {
 
-                            requestgpspermission();
+                            Permission();
 
                         }
                     }
                     else if(!saved) {
-                       AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-
-                                //Uncomment the below code to Set the message and title from the strings.xml file
-                                builder.setMessage("Session not saved please save it before starting a new one") .setTitle("Session not Saved")
-                                        .setCancelable(false)
-                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int id) {
-                                                saveSessionDetails();
-
-                                            }
-                                        })
-                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int id) {
-                                                //  Action for 'NO' Button
-                                                dialog.cancel();
-                                                Toast.makeText(getApplicationContext(),"you choose no action for alertbox",
-                                                        Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                                //Creating dialog box
-                                AlertDialog alert = builder.create();
-                                //Setting the title manually
-
-                                alert.show();
+                        checksaveddata();
 
 
                     }
@@ -648,9 +634,7 @@ return true;
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        ActivityCompat.requestPermissions(WalkActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MY_PERMISSIONS_REQUEST_LOCATION);
-                        UpdateLocation();
-
+                       Permission();
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
@@ -683,6 +667,36 @@ return true;
     }
 
 
+    private  void Permissiontest() {
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                        , Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new MultiplePermissionsListener() {
+
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+
+                        if (report.areAllPermissionsGranted()) {
+                            UpdateLocation();
+                            gpspermission=true;
+
+                        }
+
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            Toast.makeText(getApplicationContext(), "Permission not granted", Toast.LENGTH_SHORT).show();
+                            gpspermission=false;
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+
+                        token.continuePermissionRequest();
+                    }
+
+                }).onSameThread().check();
+    }
     private void Permission() {
         Dexter.withActivity(this).withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new PermissionListener() {
@@ -700,29 +714,30 @@ return true;
 
                     @Override
                     public void onPermissionRationaleShouldBeShown(com.karumi.dexter.listener.PermissionRequest permission, PermissionToken token) {
-                        new AlertDialog.Builder(WalkActivity.this).setTitle("Permission Needed")
-                                .setMessage("Location is compulsaory to track your Activity")
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        ActivityCompat.requestPermissions(WalkActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MY_PERMISSIONS_REQUEST_LOCATION);
-                                    }
-                                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        }).create().show();
+//                        new AlertDialog.Builder(WalkActivity.this).setTitle("Permission Needed")
+//                                .setMessage("Location is compulsaory to track your Activity")
+//                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialogInterface, int i) {
+//                                        ActivityCompat.requestPermissions(WalkActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MY_PERMISSIONS_REQUEST_LOCATION);
+//                                    }
+//                                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                dialogInterface.dismiss();
+//                            }
+//                        }).create().show();
 
+                        token.continuePermissionRequest();
                     }
 
-                }).check();
+                }).onSameThread().check();
 
     }
 
     private double validdiscardeddistance(){
-        double TotalDistance=0;
-        List<LatLng> points=new ArrayList<LatLng>();
+        List<LatLng> points=new ArrayList<LatLng>();        double TotalDistance=0;
+
         points = SensorForeground.loc;
         if(points.size()>1){
 
@@ -789,6 +804,7 @@ else {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+
             return;
         }
         BuildLocationRequest();
@@ -832,7 +848,7 @@ else {
                 double cal=0;
                 double totaldistance=0;
                 if(bonus==1){
-                     steps= SensorForeground.steps*0.03;
+                     steps= SensorForeground.steps*0.01;
                      cal= calories*0.2;
                      totaldistance=distanceOnMap*0.05;
 
@@ -846,6 +862,14 @@ else {
                     cal= calories*0.7;
                     totaldistance=distanceOnMap*0.06;
 
+                }else if(bonus==4){
+                    steps= SensorForeground.steps*0.05;
+                    cal= calories*0.2;
+                    totaldistance=distanceOnMap*0.02;
+                }else {
+                    steps= SensorForeground.steps*0.04;
+                    cal= calories*0.6;
+                    totaldistance=distanceOnMap*0.06;
                 }
 
                 if(newknubs<0) newknubs=0;
@@ -880,18 +904,27 @@ else {
         final long timeSpent;
         final List<LatLng> pathCoordinates;
         final int knubs;
+        final double discarddist;
 
         if(!saved){
-           distanceCovered = session.distance;
+            String pathjson=sharedpreferences.getString("Path","");
+
+            Type type = new TypeToken<List<LatLng>>() {}.getType();
+            pathcoordinates=gson.fromJson(pathjson, type);
+
+            distanceCovered = session.distance;
             caloriesBurnt = session.caloriesburnt;
             timeSpent = session.timespent;
             knubs=session.Knubs;
-            pathCoordinates = session.pathCoordinates;
+            pathCoordinates = pathcoordinates;
+            discarddist=session.discardeddistance;
+
 
         }else {
 
              distanceCovered = Double.parseDouble(df2.format(MyLocationService.getDistance(SensorForeground.loc)-calculatediscardeddistance()));
              caloriesBurnt = SensorForeground.getCaloriesBurnt();
+             discarddist=calculatediscardeddistance();
              timeSpent = SensorForeground.gettimespent();
              pathCoordinates = SensorForeground.loc;
              knubs=newknubs;
@@ -912,6 +945,7 @@ else {
         docData.put("CalorieBurnt",caloriesBurnt);
         docData.put("Timespent",timeSpent);
         docData.put("PathCordinates",pathCoordinates);
+        docData.put("DiscardedDistance",discarddist);
         docData.put("KnubsEarned",knubs);
         docData.put("Datetime",c);
         docData.put("Steps",SensorForeground.steps);
@@ -924,10 +958,10 @@ else {
          final SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
           saveinpreferences(distanceCovered,caloriesBurnt);
 
-          knubsmon=sharedpreferences.getInt("Totalknubs",0);
-        distancemon=sharedpreferences.getFloat("Totaldistance",0);
-          stepsmon=sharedpreferences.getInt("Totalsteps",0);
-            caloriemon=sharedpreferences.getFloat("Totalcalorie",0);
+//          knubsmon=sharedpreferences.getInt("Totalknubs",0);
+//        distancemon=sharedpreferences.getFloat("Totaldistance",0);
+//          stepsmon=sharedpreferences.getInt("Totalsteps",0);
+//            caloriemon=sharedpreferences.getFloat("Totalcalorie",0);
 
 
     db.runTransaction(new Transaction.Function<Void>() {
@@ -936,24 +970,24 @@ else {
             public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
 
                 DocumentSnapshot snapshot = transaction.get(docRef);
-                DocumentSnapshot snapshot2 = transaction.get(docRef3);
+//                DocumentSnapshot snapshot2 = transaction.get(docRef3);
+
+//
+//                double distancemontemp=snapshot2.getDouble("Totaldistance");
+//                double caloriemontemp=snapshot2.getDouble("Totalcalorie");
+//                long knubsmontemp=snapshot2.getLong("Totalknubs");
+//                long stepsmontemp=snapshot2.getLong("Totalsteps");
 
 
-                double distancemontemp=snapshot2.getDouble("Totaldistance");
-                double caloriemontemp=snapshot2.getDouble("Totalcalorie");
-                long knubsmontemp=snapshot2.getLong("Totalknubs");
-                long stepsmontemp=snapshot2.getLong("Totalsteps");
-
-
-
-                knubsmon=(int)knubsmontemp+knubs;
-                distancemon=(float)distancemontemp+(float)distanceCovered;
-                caloriemon=(float)caloriemontemp+(float)caloriesBurnt;
-                stepsmon=(int)stepsmontemp+SensorForeground.steps;
-                docData3.put("Totalcalorie",caloriemon);
-                docData3.put("Totaldistance",distancemon);
-                docData3.put("Totalsteps",stepsmon);
-                docData3.put("Totalknubs" ,knubsmon);
+//
+//                knubsmon=(int)knubsmontemp+knubs;
+//                distancemon=(float)distancemontemp+(float)distanceCovered;
+//                caloriemon=(float)caloriemontemp+(float)caloriesBurnt;
+//                stepsmon=(int)stepsmontemp+SensorForeground.steps;
+//                docData3.put("Totalcalorie",caloriemon);
+//                docData3.put("Totaldistance",distancemon);
+//                docData3.put("Totalsteps",stepsmon);
+//                docData3.put("Totalknubs" ,knubsmon);
                 Log.d("totalknubs",String.valueOf(dbtotalknubs));
 
                      dbtotalknubs=Integer.parseInt(String.valueOf(snapshot.get("Totalknubs")))+knubs;
@@ -963,7 +997,7 @@ else {
                     transaction.update(docRef,"Totalknubs",dbtotalknubs);
 
                     transaction.set(docRef2,docData );
-                    transaction.update(docRef3,docData3);
+//                    transaction.update(docRef3,docData3);
                     transaction.set(docRef4,docData );
 
 
@@ -977,19 +1011,22 @@ else {
          @Override
          public void onFailure(@NonNull Exception e) {
 
+//             pathcoordinates=pathCoordinates;
 
-             session=new Session(distanceCovered,caloriesBurnt,timeSpent,pathCoordinates,knubs);
+             session=new Session(distanceCovered,caloriesBurnt,timeSpent,knubs,discarddist);
              Gson gson=new Gson();
              Log.d("Kiyascn",e.getMessage());
              String  info=gson.toJson(session);
+             String pathsjson=gson.toJson(pathCoordinates);
              saved=false;
              prefsEditor.putString("Session",info);
+             prefsEditor.putString("Path",pathsjson);
              prefsEditor.putBoolean("Saved",false);
 
 
              prefsEditor.commit();
 
-             Toast.makeText(getApplicationContext(),e.getMessage(),
+             Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),
 
                      Toast.LENGTH_SHORT).show();
          }
@@ -998,27 +1035,20 @@ else {
          public void onSuccess(Object o) {
 
 
-            user.Knubs=(int)dbknubs;
-            user.totalknubs=dbtotalknubs;
+             user.Knubs=(int)dbknubs;
+             user.totalknubs=dbtotalknubs;
              MainActivity.updateuserthroughactivity(user);
              String userjson=gson.toJson(user);
              SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
              prefsEditor.putString("User",userjson);
-
-
-
-
              saved=true;
-                 prefsEditor.putBoolean("Saved", true);
-                 prefsEditor.putFloat("Totaldistance", distancemon);
-                 prefsEditor.putFloat("Totalcalorie", caloriemon);
-                 prefsEditor.putInt("Totalknubs", knubsmon);
-                 prefsEditor.putInt("Totalsteps", stepsmon);
+             prefsEditor.putBoolean("Saved", true);
                  prefsEditor.commit();
              Toast.makeText(getApplicationContext(),"Session Saved Succesfully",
                      Toast.LENGTH_SHORT).show();
              sharedpreferences.edit().remove("Multiplier").commit();
              sharedpreferences.edit().remove("Session").commit();
+             sharedpreferences.edit().remove("Path").commit();
 
 
          }
@@ -1028,6 +1058,8 @@ else {
         //TODO Save above detail in database
 
     }
+
+
 
     private void saveinpreferences(double distanceCovered,double caloriesBurnt) {
 
@@ -1043,6 +1075,71 @@ else {
 
     }
 
+    private void checksaveddata(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+
+        //Uncomment the below code to Set the message and title from the strings.xml file
+        builder.setMessage("Session not saved please save it before starting a new one") .setTitle("Session not Saved")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        saveSessionDetails();
+
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //  Action for 'NO' Button
+                        cleardata();
+                        dialog.dismiss();
+                               }
+                });
+        //Creating dialog box
+        AlertDialog alert = builder.create();
+        //Setting the title manually
+
+        alert.show();
+
+    }
+
+    private void cleardata(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+
+        //Uncomment the below code to Set the message and title from the strings.xml file
+        builder.setMessage("Are you sure you want to remove last session to start new walk ?") .setTitle("Warning")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+                        saved=true;
+                        prefsEditor.putBoolean("Saved", true);
+                        prefsEditor.commit();
+
+                        sharedpreferences.edit().remove("Session").commit();
+                        sharedpreferences.edit().remove("Path").commit();
+
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //  Action for 'NO' Button
+                        dialog.cancel();
+                        Toast.makeText(getApplicationContext(),"you choose no action for alertbox",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+        //Creating dialog box
+        AlertDialog alert = builder.create();
+        //Setting the title manually
+
+        alert.show();
+
+        sharedpreferences.edit().remove("Session").commit();
+        sharedpreferences.edit().remove("Path").commit();
+    }
     private void startNewSession(){
 
 

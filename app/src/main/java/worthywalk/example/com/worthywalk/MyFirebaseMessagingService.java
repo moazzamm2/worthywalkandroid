@@ -97,6 +97,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
         Intent intent = new Intent( this , splash.class );
+        intent.putExtra("notification",1);
         PendingIntent resultIntent = PendingIntent.getActivity( this , 0, intent, 0);
         // Check if message contains a data payload.
 

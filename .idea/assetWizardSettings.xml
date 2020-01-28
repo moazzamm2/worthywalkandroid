@@ -155,7 +155,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/F:/Android-Studio-181.5056338-Windows64/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_exit_to_app_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/F:/Android-Studio-181.5056338-Windows64/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/navigation/ic_arrow_back_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -165,8 +165,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_placeholder" />
+                            <entry key="color" value="ffffff" />
+                            <entry key="outputName" value="ic_arrow_back_black_24dp" />
                             <entry key="sourceFile" value="C:\Users\hp\Downloads\placeholder.svg" />
                           </map>
                         </option>

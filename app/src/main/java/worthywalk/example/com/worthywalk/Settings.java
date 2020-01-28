@@ -25,12 +25,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import worthywalk.example.com.worthywalk.Models.User;
 
 public class Settings extends AppCompatActivity {
 TextView editprofile,leaderboard, suggestions,deleteaccount,Privacy;
 FirebaseAuth mauth;
 FirebaseFirestore db;
+Toolbar mToolbar;
+
 LoginManager loginManager;
     public static final String MyPREFERENCES = "MyPrefs" ;
     SharedPreferences sharedpreferences;
@@ -41,7 +44,7 @@ LoginManager loginManager;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         editprofile=(TextView) findViewById(R.id.editprofile);
         leaderboard=(TextView) findViewById(R.id.removeleaderboard);
         suggestions=(TextView) findViewById(R.id.suggestions);
@@ -62,6 +65,12 @@ LoginManager loginManager;
             }
         });
 
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         leaderboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -22,9 +22,11 @@ import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
 import java.util.Calendar;
@@ -44,7 +46,7 @@ import worthywalk.example.com.worthywalk.login;
 
 
 public class homeFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
-    TextView name,totaldistance,totalcalorie,totalsteps,totalknubs;
+    TextView name,totaldistance,totalcalorie,totalsteps,totalknubs,detailmonth;
     Button startactivity;
     ProgressBar pb1,pb2,pb3,pb4;
     Map<Integer,String> month=new HashMap();
@@ -58,8 +60,9 @@ public class homeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     public static final String MyPREFERENCES = "MyPrefs" ;
     SharedPreferences sharedpreferences;
     FirebaseAuth auth=FirebaseAuth.getInstance();
-    float calorie,distance;
-    int knubs,steps;
+    float calorie=0,distance=0;
+    int knubs=0,steps=0;
+
 ImageButton setting,logout;
 Gson gson;
 FirebaseAuth mAuth;
@@ -84,7 +87,10 @@ FirebaseAuth mAuth;
         Calendar calendar = new GregorianCalendar(2008, 01, 01);
         calendar=Calendar.getInstance();
         int  mon=calendar.get(Calendar.MONTH);
-       str= month.get(mon+1);
+        String strs=month.get(mon+1);
+        str= month.get(mon+1)+calendar.get(Calendar.YEAR);
+
+        detailmonth=(TextView) view.findViewById(R.id.caption);
        setting=(ImageButton) view.findViewById(R.id.logout);
        pb1=(ProgressBar) view.findViewById(R.id.progressBar);
         pb2=(ProgressBar) view.findViewById(R.id.progressBar4);
@@ -99,6 +105,8 @@ FirebaseAuth mAuth;
         totalknubs=(TextView) view.findViewById(R.id.knubsdashboard);
 gson=new Gson();
 
+
+detailmonth.setText("Your workout details for "+strs);
         pb1.setProgress(0);
         pb2.setProgress(0);
         pb3.setProgress(0);
@@ -193,7 +201,8 @@ setting.setOnClickListener(new View.OnClickListener() {
     private void setdetails() {
         FirebaseFirestore db=FirebaseFirestore.getInstance();
         String uid=auth.getUid();
-        final DocumentReference docref1=db.collection("Monthlywalk").document(uid);
+        final CollectionReference docref1=db.collection("Monthlywalk").document(uid).collection(str);
+//        final DocumentReference docref1=db.collection("Monthlywalk").document(uid);
 
 //        final CollectionReference docref=db.collection("Monthlywalk").document(uid).collection("Str");
 //
@@ -218,42 +227,80 @@ setting.setOnClickListener(new View.OnClickListener() {
 //                    }
 //                });
 
-            docref1.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                   @Override
-                   public void onSuccess(DocumentSnapshot documentSnapshot) {
+        docref1.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
-                       calorie=  Float.parseFloat( String.valueOf(documentSnapshot.get("Totalcalorie")));
-                       knubs=Integer.parseInt( String.valueOf(documentSnapshot.get("Totalknubs")));
-                       steps=Integer.parseInt( String.valueOf(documentSnapshot.get("Totalsteps")));
-                       distance=Float.valueOf(String.valueOf(documentSnapshot.get("Totaldistance")));
-
-                       totalcalorie.setText(String.valueOf(calorie));
-                       totaldistance.setText(String.valueOf(distance));
-                       totalknubs.setText(String.valueOf(knubs));
-                       totalsteps.setText(String.valueOf(steps));
+                for (DocumentSnapshot snap:queryDocumentSnapshots
+                     ) {
+                    calorie =calorie+ Float.parseFloat( String.valueOf(snap.get("CalorieBurnt")));
+                    knubs=knubs+Integer.parseInt( String.valueOf(snap.get("KnubsEarned")));
+                    steps=steps+Integer.parseInt( String.valueOf(snap.get("Steps")));
+                    distance=distance+Float.valueOf(String.valueOf(snap.get("DistanceCovered")));
 
 
-                       SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
-                       prefsEditor.putFloat("Totaldistance",distance);
-                       prefsEditor.putFloat("Totalcalorie",calorie);
-                       prefsEditor.putInt("Totalknubs",knubs);
-                       prefsEditor.putInt("Totalsteps",steps);
+                //setviews
+                    totalcalorie.setText(String.valueOf(calorie));
+                    totaldistance.setText(String.valueOf(distance));
+                    totalknubs.setText(String.valueOf(knubs));
+                    totalsteps.setText(String.valueOf(steps));
+
+
+                    //setpreferences
+                    SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+                    prefsEditor.putFloat("Totaldistance",distance);
+                    prefsEditor.putFloat("Totalcalorie",calorie);
+                    prefsEditor.putInt("Totalknubs",knubs);
+                    prefsEditor.putInt("Totalsteps",steps);
 
 
 
-                       prefsEditor.commit();
+                    prefsEditor.commit();
 
 
-                   }
-               }).addOnFailureListener(new OnFailureListener() {
+                }
+            }
+        })
+//            docref1.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                   @Override
+//                   public void onSuccess(DocumentSnapshot documentSnapshot) {
+//
+//                       calorie=  Float.parseFloat( String.valueOf(documentSnapshot.get("Totalcalorie")));
+//                       knubs=Integer.parseInt( String.valueOf(documentSnapshot.get("Totalknubs")));
+//                       steps=Integer.parseInt( String.valueOf(documentSnapshot.get("Totalsteps")));
+//                       distance=Float.valueOf(String.valueOf(documentSnapshot.get("Totaldistance")));
+//
+//                       totalcalorie.setText(String.valueOf(calorie));
+//                       totaldistance.setText(String.valueOf(distance));
+//                       totalknubs.setText(String.valueOf(knubs));
+//                       totalsteps.setText(String.valueOf(steps));
+//
+//
+//                       SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+//                       prefsEditor.putFloat("Totaldistance",distance);
+//                       prefsEditor.putFloat("Totalcalorie",calorie);
+//                       prefsEditor.putInt("Totalknubs",knubs);
+//                       prefsEditor.putInt("Totalsteps",steps);
+//
+//
+//
+//                       prefsEditor.commit();
+//
+//
+//                   }
+//               })
+                    .addOnFailureListener(new OnFailureListener() {
            @Override
 
            public void onFailure(@NonNull Exception e) {
                Log.d("knubcheck",e.getMessage());
-               distance=sharedpreferences.getFloat("Totaldistance",0);
-               knubs=sharedpreferences.getInt("Totalknubs",0);
-               calorie=sharedpreferences.getFloat("Totalcalorie",0);
-               steps=sharedpreferences.getInt("Totalsteps",0);
+//               distance=sharedpreferences.getFloat("Totaldistance",0);
+//               knubs=sharedpreferences.getInt("Totalknubs",0);
+//               calorie=sharedpreferences.getFloat("Totalcalorie",0);
+//               steps=sharedpreferences.getInt("Totalsteps",0);
+
+
+
                totalcalorie.setText(String.valueOf(calorie));
                totaldistance.setText(String.valueOf(distance));
                totalknubs.setText(String.valueOf(knubs));
@@ -294,7 +341,7 @@ return true;
     private void logoutfunc() {
 
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
         alertDialogBuilder.setTitle("Logout");
         alertDialogBuilder.setMessage("Are you sure you want to Logout ? ");
         alertDialogBuilder.setPositiveButton("yes",
@@ -316,12 +363,14 @@ return true;
         alertDialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                getActivity().finish();
+                dialogInterface.dismiss();
             }
         });
 
+
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+
 
 
 

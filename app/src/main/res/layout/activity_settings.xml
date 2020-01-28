@@ -12,6 +12,7 @@
         app:title="SETTINGS"
         app:titleTextColor="@color/colorWhite"
         android:textAlignment="center"
+        app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
         android:id="@+id/toolbar"
         android:background="@drawable/gradient"
 
@@ -26,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Edit Profile"
-            android:textSize="20dp"
+            android:textSize="16dp"
             android:padding="15dp"
             android:id="@+id/editprofile"
             
@@ -39,8 +40,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Remove From Leaderboard"
-            android:textSize="20dp"
+            android:text="I don't want to be on leaderboard"
+            android:textSize="16dp"
             android:padding="15dp"
             android:id="@+id/removeleaderboard"
 
@@ -54,8 +55,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Suggestions"
-            android:textSize="20dp"
+            android:text="FAQ's"
+            android:textSize="16dp"
             android:id="@+id/suggestions"
             android:padding="15dp"
 
@@ -69,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Privacy Policy"
-            android:textSize="20dp"
+            android:textSize="16dp"
             android:id="@+id/Privacy"
             android:padding="15dp"
 

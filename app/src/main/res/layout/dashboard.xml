@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -341,7 +342,7 @@
             android:tint="@color/colorWhite"
 
 
-            />
+            tools:ignore="VectorDrawableCompat" />
 
         <TextView
             android:id="@+id/title"
@@ -367,12 +368,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/namet"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="24dp"
 
         android:minWidth="0dp"
-        android:text="All truly great thoughts are conceived\nwhile walking!"
+        android:text="Your workout details for Month"
         android:textColor="@color/colorAccent"
-        android:textSize="16dp"
+        android:textSize="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/namet" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,20 +10,19 @@ public class Session {
     double distance;
     double caloriesburnt;
     long timespent;
-    List<LatLng> pathCoordinates;
+
+        double discardeddistance;
     int Knubs;
 
 
-    public Session(double distance, double caloriesburnt, long timespent, List<LatLng> pathCoordinates, int knubs) {
+    public Session(double distance, double caloriesburnt, long timespent, int knubs,double calculatediscardeddistance) {
         this.distance = distance;
         this.caloriesburnt = caloriesburnt;
         this.timespent = timespent;
-        this.pathCoordinates = pathCoordinates;
         Knubs = knubs;
+        discardeddistance=calculatediscardeddistance;
 
     }
-
-    public Session(){}
 
 
 

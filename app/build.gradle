@@ -8,9 +8,9 @@ android {
         applicationId "worthywalk.example.com.worthywalk"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 15
+        versionCode 17
         multiDexEnabled true
-        versionName "1.1.1"
+        versionName "1.1.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
