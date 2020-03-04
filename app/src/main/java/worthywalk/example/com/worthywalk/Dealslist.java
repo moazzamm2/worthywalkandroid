@@ -1,6 +1,7 @@
 package worthywalk.example.com.worthywalk;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -69,7 +71,15 @@ public class Dealslist extends Fragment {
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
                 User update = (User) data.getSerializableExtra("result");
+                String method=(String) data.getStringExtra("method");
+                cardInfo card=(cardInfo) data.getSerializableExtra("card");
 
+                if(method.equals("promo")){
+                    String promo=data.getStringExtra("promo");
+                    Alertdialog(promo,card,update);
+                }else if(method.equals("outlet")){
+                    OutletAlertdialog(card,update);
+                }
                 activity = (MainActivity) getActivity();
                 activity.updateuser(update);
             }
@@ -195,4 +205,54 @@ public class Dealslist extends Fragment {
 
 
     }
+
+    private void OutletAlertdialog(cardInfo card, User update) {
+
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setTitle("THANKYOU");
+        alertDialogBuilder.setIcon(R.drawable.tick);
+
+        alertDialogBuilder.setMessage("YOUR KNUBS ARE NOW "+String.valueOf(update.Knubs)+".\n" +"Enjoy Shopping at "+ card.Brand_name+" !" );
+        alertDialogBuilder.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+
+
+
+                    }
+                });
+
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+
+
+    }
+    private void Alertdialog(String promo, cardInfo card, User update) {
+
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setTitle("THANKYOU");
+        alertDialogBuilder.setMessage("YOUR KNUBS ARE NOW " + String.valueOf(update.Knubs) + " !\n Your Promocode for " + card.Brand_name + " is \n  >>>" + promo + "<<<  \nUse it in thier Online store while buying out remember or Screenshot it so you dont lose it . \nHAPPY SHOPPING ! ");
+        alertDialogBuilder.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+
+
+                    }
+                });
+
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+
+    }
+
 }

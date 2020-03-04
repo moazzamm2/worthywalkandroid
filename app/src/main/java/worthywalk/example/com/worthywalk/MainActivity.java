@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.provider.Settings.Secure;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -107,6 +108,8 @@ LoginManager loginManager;
             Toast.makeText(getApplicationContext(),"Login Error !",Toast.LENGTH_LONG).show();
 
         }
+
+
         firebasedb=new Firebasedb();
         mResources=firebasedb.getstoreads();
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment,new homeFragment(usermain)).commit();
@@ -124,6 +127,8 @@ LoginManager loginManager;
                     }
                 });
 
+
+
         setContentView(R.layout.activity_main);
 //        getSupportActionBar().hide();
 
@@ -137,6 +142,13 @@ LoginManager loginManager;
     void checkstart(){
 
 }
+
+    void validlogin(){
+
+
+
+
+    }
 
     @Override
     public void updateuser(User user) {

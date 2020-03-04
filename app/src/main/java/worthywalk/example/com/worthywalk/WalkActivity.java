@@ -81,6 +81,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import worthywalk.example.com.worthywalk.Models.Promocode;
 import worthywalk.example.com.worthywalk.Models.User;
 
 public class WalkActivity extends AppCompatActivity implements Chronometer.OnChronometerTickListener {
@@ -93,7 +94,10 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     LocationRequest locationRequest;
     FusedLocationProviderClient fusedLocationProviderClient;
     boolean multiplyer=false;
+    List<String> promocodes=new ArrayList<>();
+
     int bonus=0;
+    boolean validpromo=false;
 
     boolean gpspermission=false;
 
@@ -108,6 +112,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     int invalid=0;
     int dbtotalknubs=0;
     double discardeddistance;
+    private TextView BonusDialog;
 
     public static WalkActivity getInstance() {
         return Instance;
@@ -122,7 +127,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     Button startbtn;
     RelativeLayout relativeLayout;
     RelativeLayout relativeLayoutprog;
-    ProgressBar progressBar;
+    ProgressBar progressBar , pbloading;
     boolean start =false;
 
     boolean tapped=false,saved;
@@ -136,6 +141,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     double distanceOnMap=0;
     Map<Integer,String> month=new HashMap();
     String str;
+    List<String> userpromos=new ArrayList<>();
 
 
     private boolean isServiceRunning;
@@ -152,9 +158,11 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
     LocationManager lm;
     int bool=0;
 
+    Promocode promoObject;
     Gson gson;
     boolean gps_enabled;
 
+    boolean promoactivated=false;
     double discarddistance;
     Session session;
 
@@ -171,11 +179,13 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_walk);
         context=this;
+        pbloading=(ProgressBar) findViewById(R.id.pbLoading);
         db=FirebaseFirestore.getInstance();
         useruid=FirebaseAuth.getInstance().getUid();
         lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
         gps_enabled = false;
         setviews();
+        final Promocode promocode;
         month.put(1,"January");
         month.put(2,"Feburary");
         month.put(3,"March");
@@ -195,13 +205,24 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
         pathcoordinates=new ArrayList<>();
 
 
+        gson = new Gson();
+
+
         isServiceRunning = SensorForeground.isServiceRunning;
 //        indexOfImage = SensorForeground.index;
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
          saved=sharedpreferences.getBoolean("Saved",true);
-         multiplyer=sharedpreferences.getBoolean("Multiplier",false);
+        promoactivated=sharedpreferences.getBoolean("Promocode",false);
+        String promojson=sharedpreferences.getString("promoClass","a");
+        if(promoactivated && !promojson.equals("a")){
+            promoObject=new Promocode();
+            promoObject=gson.fromJson(promojson,Promocode.class);
+
+        }
+
+
+        multiplyer=sharedpreferences.getBoolean("Multiplier",false);
         String userjson=sharedpreferences.getString("User","a");
-        gson = new Gson();
 
 
         if(!saved){
@@ -217,6 +238,7 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
         }
 
         indexOfImage=sharedpreferences.getInt("Index",0)-1;
+        Log.d("indexOFImage", String.valueOf(indexOfImage));
 
 
         if(isServiceRunning){
@@ -228,12 +250,30 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
             startbtn.getBackground().setColorFilter(ContextCompat.getColor(getApplicationContext(), android.R.color.holo_red_dark), PorterDuff.Mode.MULTIPLY);
 
             // Set Images
-            iconset.setBackgroundResource(icons[indexOfImage]);
-            relativeLayout.setBackgroundResource(circle[indexOfImage]);
-            progressBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(getApplicationContext(),colors[indexOfImage]), PorterDuff.Mode.SRC_IN );;
-            tap.setVisibility(View.GONE);
+          if(indexOfImage<0) {
+              indexOfImage++;
 
-            index = indexOfImage;
+              iconset.setBackgroundResource(icons[indexOfImage]);
+
+              relativeLayout.setBackgroundResource(circle[indexOfImage]);
+              progressBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(getApplicationContext(), colors[indexOfImage]), PorterDuff.Mode.SRC_IN);
+              ;
+
+              tap.setVisibility(View.GONE);
+
+              index = indexOfImage;
+          }else{
+              iconset.setBackgroundResource(icons[indexOfImage]);
+
+              relativeLayout.setBackgroundResource(circle[indexOfImage]);
+              progressBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(getApplicationContext(), colors[indexOfImage]), PorterDuff.Mode.SRC_IN);
+              ;
+
+              tap.setVisibility(View.GONE);
+
+              index = indexOfImage;
+
+          }
 
             chronometer.setBase(SensorForeground.getTime());
             chronometer.start();
@@ -266,7 +306,8 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
                     index= index%2;
                     iconset.setBackgroundResource(icons[index]);
                     relativeLayout.setBackgroundResource(circle[index]);
-                    progressBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(getApplicationContext(),colors[index]), PorterDuff.Mode.SRC_IN );;
+                    progressBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(getApplicationContext(),colors[index]), PorterDuff.Mode.SRC_IN );
+                    indexOfImage=index;
                     index++;
                 }
             }
@@ -286,43 +327,9 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
             public void onClick(View v) {
               final  String x = text.getText().toString().trim();
                 if(x.length()>0){
-                    Log.d("promocheckx",x);
-                    db.collection("Multiplyer").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if(task.isSuccessful()){
 
-
-                                for(QueryDocumentSnapshot doc: task.getResult()){
-                                    Log.d("promocheckp",doc.getString("Promo"));
-
-                                    if(doc.getString("Promo").equals(x)){
-                                        Log.d("promocheckp",doc.getString("Promo"));
-
-                                     multiplyer=true;
-
-                                    }
-                                }
-                                if(multiplyer){
-                                    Toast.makeText(getApplicationContext(),"PromocodeActivated",Toast.LENGTH_LONG).show();
-
-                                    SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
-                                    prefsEditor.putBoolean("Multiplier",multiplyer);
-                                    prefsEditor.commit();
-                                }else{
-                                    Toast.makeText(getApplicationContext(),"Invalid Promocode",Toast.LENGTH_LONG).show();
-
-
-                                }
-
-                            }
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_LONG).show();
-                        }
-                    });
+                    promocodecheck(x);
+//                   if(promocodecheck(x)) ActivatePromo(x);
                 }else{
                     Toast.makeText(getApplicationContext(),"Enter Promocode",Toast.LENGTH_LONG).show();
                 }
@@ -344,6 +351,194 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
 
     }
 
+    public void calculateknubs(){
+        float calories= (float) MyLocationService.getCalories(distanceOnMap);
+
+        if(index<0) index++;
+        double steps=0;
+        double cal=0;
+        double totaldistance=0;
+        if(indexOfImage==1) {
+            steps = SensorForeground.steps * 0.04;
+            cal = calories * 0.06;
+            totaldistance = distanceOnMap * 0.04;
+
+        }else {
+            if (bonus == 1) {
+                steps = SensorForeground.steps * 0.01;
+                cal = calories * 0.2;
+                totaldistance = distanceOnMap * 0.05;
+
+            } else if (bonus == 2) {
+                steps = SensorForeground.steps * 0.04;
+                cal = calories * 0.3;
+                totaldistance = distanceOnMap * 0.06;
+
+            } else if (bonus == 3) {
+                steps = SensorForeground.steps * 0.05;
+                cal = calories * 0.7;
+                totaldistance = distanceOnMap * 0.06;
+
+            } else if (bonus == 4) {
+                steps = SensorForeground.steps * 0.05;
+                cal = calories * 0.2;
+                totaldistance = distanceOnMap * 0.02;
+            } else {
+                steps = SensorForeground.steps * 0.04;
+                cal = calories * 0.6;
+                totaldistance = distanceOnMap * 0.02;
+            }
+
+
+        }
+
+        if(promoactivated && promoObject!=null)        newknubs = (int) Math.round((steps + cal + totaldistance)*promoObject.Boost) ;
+
+        else   newknubs = (int) Math.round(steps + cal + totaldistance);
+        if (newknubs < 0) newknubs = 0;
+
+    }
+    private void ActivatePromo(final String promo){
+        final SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+
+
+
+        final DocumentReference docRef=db.collection("Users").document(useruid);
+        if(!promoObject.Reuseable) {
+            db.runTransaction(new Transaction.Function<Void>() {
+                @Nullable
+                @Override
+                public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+
+                    if (userpromos != null) {
+                        userpromos.add(promo);
+                    }
+
+                    final Map<String, Object> promoarray = new HashMap<>();
+                    promoarray.put("Promocodes", userpromos);
+
+                    transaction.update(docRef, promoarray);
+
+
+                    return null;
+                }
+            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    String promojson = gson.toJson(promoObject);
+                    promoactivated=true;
+                    prefsEditor.putString("promoClass", promojson);
+                    prefsEditor.putBoolean("Promocode", true);
+                    prefsEditor.commit();
+                    Toast.makeText(getApplicationContext(), "Promo Activated", Toast.LENGTH_LONG).show();
+
+                    Toast.makeText(getApplicationContext(), "Your next walk will be boosted by "+ String.valueOf(promoObject.Boost), Toast.LENGTH_LONG).show();
+
+                    pbloading.setVisibility(View.GONE);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    pbloading.setVisibility(View.GONE);
+                    Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG);
+                }
+            });
+
+        }else {
+            String promojson = gson.toJson(promoObject);
+            promoactivated=true;
+
+            prefsEditor.putString("promoClass", promojson);
+            prefsEditor.putBoolean("Promocode", true);
+            prefsEditor.commit();
+            pbloading.setVisibility(View.GONE);
+
+            Toast.makeText(getApplicationContext(), "Your next walk will be boosted by "+ String.valueOf(promoObject.Boost), Toast.LENGTH_LONG).show();
+
+        }
+    }
+
+    private boolean promocodecheck(final String promo){
+
+        pbloading.setVisibility(View.VISIBLE);
+        db.collection("PromocodeWalk").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                boolean validpro;
+                boolean checkpromos=false;
+
+                for (QueryDocumentSnapshot snapshot:queryDocumentSnapshots
+                     ) {
+
+
+                    if(promo.equals(snapshot.getId())){
+                    checkpromos=true;
+                        promoObject= new Promocode(snapshot.getBoolean("Reuseable"),snapshot.getDouble("Boost"));
+
+
+                        db.collection("Users").document(useruid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot snapshot) {
+                                userpromos= (List<String>) snapshot.get("Promocodes");
+                                if(userpromos!=null) {
+                                    if (userpromos.contains(promo)) {
+                                        Toast.makeText(getApplicationContext(), "You have already used this promo" , Toast.LENGTH_LONG).show();
+
+                                        pbloading.setVisibility(View.GONE);
+                                    } else {
+                                    //    Toast.makeText(getApplicationContext(), "Valid promo", Toast.LENGTH_LONG).show();
+
+                                        validpromo=true;
+                                         ActivatePromo(promo);
+
+
+                                    }
+                                }else{
+
+                                    final DocumentReference documentReference=db.collection("Users").document(useruid);
+                                    final Map<String,Object> promoarray=new HashMap<>();
+                                    final List<String> userpromo=new ArrayList<>();
+                                    userpromo.add("firstpromo");
+
+                                    promoarray.put("Promocodes",userpromo);
+                                    db.runTransaction(new Transaction.Function<Void>() {
+                                        @Nullable
+                                        @Override
+                                        public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+
+                                            transaction.update(documentReference,promoarray);
+                                            return null;
+                                        }
+                                    });
+                                    Toast.makeText(getApplicationContext(), "Promo not found", Toast.LENGTH_LONG).show();
+
+                                    validpromo=true;
+
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+
+                            }
+
+                        });
+
+                    }
+                }
+                if(!checkpromos){
+                    Toast.makeText(getApplicationContext(), "Promo Code not found", Toast.LENGTH_LONG).show();
+                    pbloading.setVisibility(View.GONE);
+
+                }
+            }
+        });
+        Log.d("checkbool", String.valueOf(validpromo));
+        return validpromo;
+        }
+
+
 
     private boolean validity(){
         double dist=MyLocationService.getDistance(SensorForeground.loc)-validdiscardeddistance();
@@ -354,14 +549,14 @@ public class WalkActivity extends AppCompatActivity implements Chronometer.OnChr
         double timedistratio= (elapsedMillis/1000)/dist;
         Log.d("Timecheck",String.valueOf(elapsedMillis));
 
-        if(stepdistratio>40){
+        if(stepdistratio>3){
             bonus=1;
         }
         if(stepdistratio>=0.6 && stepdistratio<0.9){
             bonus=2;
         }else if(stepdistratio>=0.9 && stepdistratio<=1.6){
             bonus=3;
-        }else if(diststepsratio>150) bonus=4;
+        }else if(diststepsratio>3) bonus=4;
 
 
 
@@ -414,7 +609,7 @@ return true;
                                 if (start) {
 
 
-                                    distanceOnMap = MyLocationService.getDistance(SensorForeground.loc) - MyLocationService.getDiscardDistance(SensorForeground.loc, indexOfImage);
+                                    distanceOnMap = MyLocationService.getDistance(SensorForeground.loc) - calculatediscardeddistance();
 
                                     calculateknubs();
 
@@ -456,6 +651,8 @@ return true;
                                         distanceDialog = dialog.findViewById(R.id.distancedialog);
                                         discardDialog = dialog.findViewById(R.id.discardeddistance);
                                         knubsDialog = dialog.findViewById(R.id.knubsdialog);
+                                        BonusDialog=dialog.findViewById(R.id.Bonusdialog);
+
 
 
 //
@@ -479,11 +676,15 @@ return true;
                                         //distanceDialog.setText(df2.format(SensorForeground.getDistance()));
 
                                         // Values based on POINTS on Map
-                                        distanceOnMap = MyLocationService.getDistance(SensorForeground.loc) - MyLocationService.getDiscardDistance(SensorForeground.loc, indexOfImage);
+
                                         double discarddistanced = calculatediscardeddistance();
                                         distanceDialog.setText(String.valueOf(distanceOnMap));
                                         caloriesDialog.setText(String.valueOf(MyLocationService.getCalories(distanceOnMap)));
-                                        discardDialog.setText(String.valueOf(MyLocationService.getDiscardDistance(SensorForeground.loc, indexOfImage)));
+                                        discardDialog.setText(String.valueOf(calculatediscardeddistance()));
+
+                                        if(promoactivated && promoObject!=null)
+                                             BonusDialog.setText(String.valueOf(promoObject.Boost));
+//
 
 //                                discardDialog.setText(String.valueOf(MyLocationService.getDiscardDistance(SensorForeground.loc)));
                                         knubsDialog.setText(String.valueOf(newknubs));
@@ -841,43 +1042,7 @@ else {
             }
         });
     }
-    public void calculateknubs(){
-        float calories= (float) MyLocationService.getCalories(distanceOnMap);
 
-                double steps=0;
-                double cal=0;
-                double totaldistance=0;
-                if(bonus==1){
-                     steps= SensorForeground.steps*0.01;
-                     cal= calories*0.2;
-                     totaldistance=distanceOnMap*0.05;
-
-                }else if(bonus==2){
-                    steps= SensorForeground.steps*0.04;
-                    cal= calories*0.3;
-                    totaldistance=distanceOnMap*0.06;
-
-                }else if(bonus==3){
-                    steps= SensorForeground.steps*0.05;
-                    cal= calories*0.7;
-                    totaldistance=distanceOnMap*0.06;
-
-                }else if(bonus==4){
-                    steps= SensorForeground.steps*0.05;
-                    cal= calories*0.2;
-                    totaldistance=distanceOnMap*0.02;
-                }else {
-                    steps= SensorForeground.steps*0.04;
-                    cal= calories*0.6;
-                    totaldistance=distanceOnMap*0.06;
-                }
-
-                if(newknubs<0) newknubs=0;
-                newknubs=(int) Math.round(steps+cal+totaldistance);
-
-
-
-    }
     public void UpdateTextViews(){
 
         // Values based on POINTS on Map
@@ -899,37 +1064,50 @@ else {
     }
 
     private void saveSessionDetails(){
+        final int indexs;
+        final double booster;
         final double distanceCovered;
         final double caloriesBurnt;
         final long timeSpent;
         final List<LatLng> pathCoordinates;
         final int knubs;
+        final int steps;
         final double discarddist;
+        final int bon;
 
         if(!saved){
             String pathjson=sharedpreferences.getString("Path","");
 
             Type type = new TypeToken<List<LatLng>>() {}.getType();
             pathcoordinates=gson.fromJson(pathjson, type);
-
+            indexs=session.index;
             distanceCovered = session.distance;
             caloriesBurnt = session.caloriesburnt;
             timeSpent = session.timespent;
             knubs=session.Knubs;
+            bon=session.bon;
+            steps=session.steps;
             pathCoordinates = pathcoordinates;
             discarddist=session.discardeddistance;
+
+            booster=session.Boost;
 
 
         }else {
 
+            indexs=indexOfImage;
              distanceCovered = Double.parseDouble(df2.format(MyLocationService.getDistance(SensorForeground.loc)-calculatediscardeddistance()));
              caloriesBurnt = SensorForeground.getCaloriesBurnt();
              discarddist=calculatediscardeddistance();
              timeSpent = SensorForeground.gettimespent();
+             steps=SensorForeground.steps;
+             bon=bonus;
              pathCoordinates = SensorForeground.loc;
              knubs=newknubs;
-
+             if(promoactivated)booster=promoObject.Boost;
+             else booster=0;
         }
+        prefin(booster,indexs,bon,steps,distanceCovered,caloriesBurnt,timeSpent,knubs,discarddist,pathCoordinates);
 
         final DocumentReference docRef=db.collection("Users").document(useruid);
         final DocumentReference docRef2=db.collection("Session").document();
@@ -941,14 +1119,17 @@ else {
         final Map<String, Object> docData = new HashMap<>();
         Date c = Calendar.getInstance().getTime();
 
+        docData.put("Index",indexs);
         docData.put("DistanceCovered",distanceCovered);
         docData.put("CalorieBurnt",caloriesBurnt);
         docData.put("Timespent",timeSpent);
+        docData.put("Bonus",bon);
         docData.put("PathCordinates",pathCoordinates);
         docData.put("DiscardedDistance",discarddist);
         docData.put("KnubsEarned",knubs);
         docData.put("Datetime",c);
-        docData.put("Steps",SensorForeground.steps);
+        docData.put("Steps",steps);
+        docData.put("Boost",booster);
 
 
         docData.put("UserId",useruid);
@@ -1013,7 +1194,7 @@ else {
 
 //             pathcoordinates=pathCoordinates;
 
-             session=new Session(distanceCovered,caloriesBurnt,timeSpent,knubs,discarddist);
+             session=new Session(booster,indexs,bon,steps,distanceCovered,caloriesBurnt,timeSpent,knubs,discarddist);
              Gson gson=new Gson();
              Log.d("Kiyascn",e.getMessage());
              String  info=gson.toJson(session);
@@ -1041,6 +1222,9 @@ else {
              String userjson=gson.toJson(user);
              SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
              prefsEditor.putString("User",userjson);
+             prefsEditor.putBoolean("Promocode",false);
+
+             promoactivated=false;
              saved=true;
              prefsEditor.putBoolean("Saved", true);
                  prefsEditor.commit();
@@ -1059,6 +1243,21 @@ else {
 
     }
 
+    private void prefin(double booster, int indexs, int bon, int steps, double distanceCovered, double caloriesBurnt, long timeSpent, int knubs, double discarddist, List<LatLng> pathCoordinates){
+        session=new Session(booster,indexs,bon,steps,distanceCovered,caloriesBurnt,timeSpent,knubs,discarddist);
+        Gson gson=new Gson();
+        SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+
+        String  info=gson.toJson(session);
+        String pathsjson=gson.toJson(pathCoordinates);
+        saved=false;
+        prefsEditor.putString("Session",info);
+        prefsEditor.putString("Path",pathsjson);
+        prefsEditor.putBoolean("Saved",false);
+
+
+        prefsEditor.commit();
+    }
 
 
     private void saveinpreferences(double distanceCovered,double caloriesBurnt) {
@@ -1137,8 +1336,7 @@ else {
 
         alert.show();
 
-        sharedpreferences.edit().remove("Session").commit();
-        sharedpreferences.edit().remove("Path").commit();
+
     }
     private void startNewSession(){
 

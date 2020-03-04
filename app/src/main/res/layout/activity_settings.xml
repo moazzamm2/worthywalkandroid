@@ -55,7 +55,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="FAQ's"
+            android:text="FAQ"
             android:textSize="16dp"
             android:id="@+id/suggestions"
             android:padding="15dp"

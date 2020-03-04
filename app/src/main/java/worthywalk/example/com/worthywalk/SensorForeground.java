@@ -59,6 +59,7 @@ public class SensorForeground extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
+
         user= (User) intent.getSerializableExtra("User");
         //do heavy work on a background thread
         //stopSelf();
@@ -78,7 +79,7 @@ public class SensorForeground extends Service {
 
             WalkActivity.getInstance().UpdateSensorTV(steps);
 
-            Intent notificationIntent = new Intent(this, WalkActivity.class);
+            Intent notificationIntent = new Intent(WalkActivity.getInstance(), WalkActivity.class);
 
             PendingIntent pendingIntent = PendingIntent.getActivity(this,0, notificationIntent, 0);
 
@@ -109,6 +110,7 @@ public class SensorForeground extends Service {
     public void onDestroy() {
 
         super.onDestroy();
+
     }
 
     @Nullable
@@ -158,4 +160,7 @@ public class SensorForeground extends Service {
     public static int getStepCount(){
         return steps;
     }
+
+
+
 }

@@ -40,19 +40,21 @@ public class MyLocationService extends BroadcastReceiver {
 
                 if (result != null) {
                     Location location = result.getLastLocation();
-                    SensorForeground.loc.add(new LatLng(location.getLatitude(),location.getLongitude()));
-                    //Long time= System.currentTimeMillis();
-                    // calculatedistance(SensorForeground.loc,time);
+                    if(location!=null) {
+                        SensorForeground.loc.add(new LatLng(location.getLatitude(), location.getLongitude()));
+                        //Long time= System.currentTimeMillis();
+                        // calculatedistance(SensorForeground.loc,time);
 
 
-                    String location_string = new StringBuilder("" + location.getLatitude())
-                            .append("/")
-                            .append(location.getLongitude())
-                            .toString();
-                    try {
-                        WalkActivity.getInstance().UpdateTextViews();
-                    } catch (Exception ex) {
-                        Toast.makeText(context, location_string, Toast.LENGTH_SHORT).show();
+                        String location_string = new StringBuilder("" + location.getLatitude())
+                                .append("/")
+                                .append(location.getLongitude())
+                                .toString();
+                        try {
+                            WalkActivity.getInstance().UpdateTextViews();
+                        } catch (Exception ex) {
+                            Toast.makeText(context, location_string, Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }

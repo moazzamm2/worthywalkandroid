@@ -20,12 +20,14 @@ public class User implements Serializable {
     public int totalknubs;
     public boolean permission;
     public String token;
+    public String AndroidId;
 
 
-    public User(String Email,String firstname, String lastname, String phone, String gender, float height, float weight, int age, Date dob, int knubs,String  imageurl,int totalknubs,boolean permission,String token) {
+    public User(String AndroidId,String Email,String firstname, String lastname, String phone, String gender, float height, float weight, int age, Date dob, int knubs,String  imageurl,int totalknubs,boolean permission,String token) {
 
         this.Email=Email;
 
+        this.AndroidId=AndroidId;
         Firstname = firstname;
         Lastname = lastname;
         Phone = phone;

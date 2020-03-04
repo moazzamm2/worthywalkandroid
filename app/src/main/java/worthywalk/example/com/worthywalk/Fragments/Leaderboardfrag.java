@@ -54,7 +54,15 @@ import worthywalk.example.com.worthywalk.leaderadapter;
 import worthywalk.example.com.worthywalk.testuser;
 
 public class Leaderboardfrag extends Fragment {
-RecyclerView recyclerView;
+public Leaderboardfrag(){
+
+};
+
+Long stepss= Long.valueOf(0);
+    Long knubss= Long.valueOf(0);
+double calss=0,distancess=0;
+
+    RecyclerView recyclerView;
 List<leaderinfo> data=new ArrayList<>();
 leaderadapter adapter;
 Date endingtime;
@@ -82,6 +90,8 @@ User user;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+
         View view= inflater.inflate(R.layout.activity_leaderboardfrag,container,false);
         db=FirebaseFirestore.getInstance();
         mAuth=FirebaseAuth.getInstance();
@@ -252,7 +262,7 @@ User user;
                                String end=String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)+" " +str+"'"+String.valueOf(calendar.get(Calendar.YEAR)));
 //                            long current= Calendar.getInstance().get(Calendar.MILLISECOND);
 //                            final long millisecond=milli-current;
-                            DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(getActivity());
+//                            DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(getActivity());
                             time.setText(end);
 
                             imageurl=document.getString("Image");
@@ -261,7 +271,12 @@ User user;
                         }
                     }
                 }
-        );
+        ).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();;
+            }
+        });
     }
 
 //    private void loaduserprocess(){
@@ -298,22 +313,75 @@ User user;
 //        vaQawKnTsWckpvwNgPnBeOZa19i2
         final CollectionReference leaders = db.collection("Users");
         final CollectionReference leader = db.collection("User");
+        final CollectionReference monthly= db.collection("MonthlyWalk");
 
+//dataanalyses
+//        monthly.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//            @Override
+//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 //
 //
+//                for (DocumentSnapshot doc :
+//                        queryDocumentSnapshots) {
+//
+//                    db.collection("Monthlywalk").document(doc.getId()).collection("Feburary2020").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//                        @Override
+//                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//
+//                            int count=0 ;
+//                            for (DocumentSnapshot documentSnapshot:queryDocumentSnapshots
+//                                 ) {
+//
+//
+//                                stepss=stepss+documentSnapshot.getLong("Steps");
+//                                distancess=distancess+documentSnapshot.getDouble("DistanceCovered");
+//                                calss=calss+documentSnapshot.getDouble("CalorieBurnt");
+//                                knubss=knubss+documentSnapshot.getLong("KnubsEarned");
+//
+//
+//                                Log.d("count",String.valueOf(count++));
+//                            }
+//                            Toast.makeText(getContext(),String.valueOf(knubss)+" , "+String.valueOf(calss)+" , "+String.valueOf(distancess)+" , "+String.valueOf(stepss)+" , ",Toast.LENGTH_LONG).show();
+//                            Log.d("data",String.valueOf(knubss)+" , "+String.valueOf(calss)+" , "+String.valueOf(distancess)+" , "+String.valueOf(stepss)+" , ");
+//
+//
+//
+//
+//
+//                        }
+//                    });
+//                }
+//
+//
+//
+//
+//
+//
+//            }
+//        }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                if (task.isSuccessful()){
+////                    Toast.makeText(getContext(),String.valueOf(knubss)+" , "+String.valueOf(calss)+" , "+String.valueOf(distancess)+" , "+String.valueOf(stepss)+" , ",Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
+//
+// Refreshin Code
 //        db.collection("Users").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
 //            @Override
 //            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 //            Map<String,Object> ok=new HashMap<>();
 //
 //            int count=0;
+//
+//                final Map<String, Object> finalDocdata = new HashMap<>();
+//                finalDocdata.put("Totalknubs",0);
+//
 //                for (final DocumentSnapshot doc:
 //                     queryDocumentSnapshots) {
 //
 //
-//
-//                    final Map<String, Object> finalDocdata = new HashMap<>();
-//                    finalDocdata.put("Totalknubs",0);
 //
 //                    db.runTransaction(new Transaction.Function<Void>() {
 //                        @Nullable
@@ -429,6 +497,8 @@ User user;
 //
 //
 ////
+//
+//actual code
 
         leaders.orderBy("Totalknubs", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -445,7 +515,8 @@ User user;
 //                        String knubs=String.valueOf(doc.get("KnubsEarned"));
 //                        data.add(new leaderinfo(name,knubs,name));
 
-                if(doc.getBoolean("Permission")){
+
+                if(doc.getBoolean("Permission") ){
                     String name=doc.getString("Firstname")+" "+doc.getString("Lastname");
                     String id=doc.getId();
                     String knubs=String.valueOf(doc.get("Totalknubs"));

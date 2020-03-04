@@ -1,25 +1,38 @@
 package worthywalk.example.com.worthywalk.Utilities;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Transaction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import worthywalk.example.com.worthywalk.Models.cardInfo;
 
 public class Firebasedb {
     FirebaseFirestore db;
+    FirebaseAuth auth;
+    FirebaseUser UserInstance;
+    String deviceid;
 
 
 
@@ -27,6 +40,9 @@ public class Firebasedb {
 
     public  Firebasedb(){
         db=FirebaseFirestore.getInstance();
+        auth=FirebaseAuth.getInstance();
+        UserInstance=auth.getCurrentUser();
+
     }
 
     public ArrayList<String> getstoreads(){
@@ -55,6 +71,79 @@ public class Firebasedb {
         });
 
         return mresources;
+
+
+    }
+    public String getdeviceid(){
+        return deviceid;
+    }
+    public String validlogin(){
+
+        db.collection("Users").document(UserInstance.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot snapshot) {
+         deviceid= snapshot.getString("Deviceid");
+
+
+
+            }
+        });
+
+
+
+        return deviceid;
+
+
+
+
+
+
+
+    }
+
+    public void adddeviceide(String device){
+        final Map<String,Object> devicemap=new HashMap<>();
+        devicemap.put("Deviceid",device);
+        final DocumentReference Docref= db.collection("Users").document(UserInstance.getUid());
+
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+
+                transaction.update(Docref,devicemap);
+
+
+                return null;
+            }
+        });
+
+
+
+
+
+
+    }
+    public boolean validDeviceid(String checkdevice,String device){
+
+
+        if(checkdevice!=null){
+            if(deviceid.equals(device)){
+                return true;
+            }
+            else {
+                return false;
+            }
+        }else {
+
+
+
+            adddeviceide(device);
+            return true;
+        }
+
+
+
 
 
     }

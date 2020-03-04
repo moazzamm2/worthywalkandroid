@@ -39,9 +39,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class storefrag extends Fragment  {
-    private final ArrayList<String> mresources;
+    public  storefrag(){
+
+    };
+    private  ArrayList<String> mresources;
     int currentPage = 0;
     List<cardInfo> alldata = new ArrayList<>();
+
 
     List<cardInfo> fooddata = new ArrayList<>();
     List<cardInfo> clothedata = new ArrayList<>();
@@ -116,6 +120,7 @@ Context context;
                 mViewPager.setCurrentItem(currentPage++, true);
             }
         };
+
 
         timer = new Timer(); // This will create a new Thread
         timer.schedule(new TimerTask() { // task to be scheduled

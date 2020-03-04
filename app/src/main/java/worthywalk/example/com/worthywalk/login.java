@@ -43,8 +43,11 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.NetworkInterface;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class login extends AppCompatActivity {
@@ -349,8 +352,8 @@ forgot.setOnClickListener(new View.OnClickListener() {
 
 
 
-
-                    token = sharedpreferences.getString("Token","");
+            String mac=getMacAddr();
+                                token = sharedpreferences.getString("Token","");
                 db.collection("Monthlywalk").document(id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot snapshot) {
@@ -371,6 +374,7 @@ forgot.setOnClickListener(new View.OnClickListener() {
                         final Map<String, Object> doc = new HashMap<>();
 
                         doc.put("Token",token);
+                        doc.put("Deviceid",mac);
 
 
 
@@ -388,14 +392,19 @@ forgot.setOnClickListener(new View.OnClickListener() {
                                         Void document = task.getResult();
                                     }
 
-                                Intent intent = new Intent(login.this, MainActivity.class);
-                                 intent.putExtra("User", user);
 
-                                startActivity(intent);
-                                  finish();
 
                                 }
 
+                            }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Intent intent = new Intent(login.this, MainActivity.class);
+                                    intent.putExtra("User", user);
+
+                                    startActivity(intent);
+                                    finish();
+                                }
                             });
                         }catch (Exception e){
                             Log.d("errortoken",e.getMessage());
@@ -422,6 +431,32 @@ forgot.setOnClickListener(new View.OnClickListener() {
 
 
 
+    public static String getMacAddr() {
+        try {
+            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface nif : all) {
+                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
+
+                byte[] macBytes = nif.getHardwareAddress();
+                if (macBytes == null) {
+                    return "";
+                }
+
+                StringBuilder res1 = new StringBuilder();
+                for (byte b : macBytes) {
+                    res1.append(Integer.toHexString(b & 0xFF) + ":");
+                }
+
+                if (res1.length() > 0) {
+                    res1.deleteCharAt(res1.length() - 1);
+                }
+                return res1.toString();
+            }
+        } catch (Exception ex) {
+            //handle exception
+        }
+        return "";
+    }
     }
 
 

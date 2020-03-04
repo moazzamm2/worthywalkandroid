@@ -11,10 +11,21 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Transaction;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import worthywalk.example.com.worthywalk.Models.User;
 
@@ -28,12 +39,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     SharedPreferences sharedpreferences;
     private static final String TAG = "MyAndroidFCMService";
     Gson gson;
+    boolean data=false;
     User user;
+    FirebaseAuth auth;
+    String userid="";
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-
-
-
 
         Log.d(TAG, "From: " + remoteMessage.getFrom());
         Log.d(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
@@ -54,10 +65,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(String token) {
         Log.d(TAG, "Refreshed token: " + token);
-        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
-        prefsEditor.putString("Token",token);
-        prefsEditor.commit();
+        auth=FirebaseAuth.getInstance();
+        FirebaseUser useid =auth.getCurrentUser();
+
+            userid = useid.getUid();
+
+
+            sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+            Gson gson = new Gson();
+            String userjson = sharedpreferences.getString("User", "a");
+            if (userjson.equals("a")) {
+                data = false;
+            } else {
+                user = gson.fromJson(userjson, User.class);
+            }
+            SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+            prefsEditor.putString("Token", token);
+            prefsEditor.commit();
+
+            if (userid != null && data && token != null) {
+//                sendtoken(token);
+            }
+
 
 
 
@@ -65,6 +94,24 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // manage this apps subscriptions on the server side, send the
         // Instance ID token to your app server.
 
+    }
+    private void sendtoken(String token){
+        FirebaseFirestore db=FirebaseFirestore.getInstance();
+        final Map<String,Object> tokenmap=new HashMap<>();
+        final DocumentReference documentReference=db.collection("Users").document(userid);
+        tokenmap.put("Token",token);
+        db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+
+                transaction.update(documentReference,tokenmap);
+
+
+
+                return null;
+            }
+        });
     }
 
     private void createNotification(RemoteMessage remoteMessage, Bitmap bitmapfromUrl) {
