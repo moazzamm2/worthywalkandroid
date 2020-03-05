@@ -81,12 +81,14 @@ RelativeLayout permission,leader;
 User user;
     Map<Integer,String> month=new HashMap();
     FirebaseAuth mAuth;
+    int steps=0;
     String imageurl="";
     List<User> userlist=new ArrayList<>();
     public Leaderboardfrag(User usermain) {
         user=usermain;
     }
     boolean newuser=true;
+    List<String> userids=new ArrayList<>();
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -297,6 +299,46 @@ User user;
 //
 //    }
 
+    private void analyse(){
+
+        for (String id :
+                userids) {
+
+            db.collection("Monthlywalk").document(id).collection("Feburary2020").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                    if (task.isSuccessful()){
+
+                       QuerySnapshot snapshot= task.getResult();
+
+                        for (DocumentSnapshot doc:snapshot
+                             ) {
+
+                            Log.d("steososs", String.valueOf(doc.getLong("Steps")));
+
+
+                            steps= (int) (steps+doc.getLong("Steps"));
+
+
+                        }
+
+
+                        Log.d("steps1", String.valueOf(steps));
+
+                    }
+
+
+
+                }
+            });
+        }
+
+
+
+
+    }
+
     private void loaddata() {
 
 
@@ -316,41 +358,20 @@ User user;
         final CollectionReference monthly= db.collection("MonthlyWalk");
 
 //dataanalyses
-//        monthly.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//            @Override
-//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//
-//
-//                for (DocumentSnapshot doc :
-//                        queryDocumentSnapshots) {
-//
-//                    db.collection("Monthlywalk").document(doc.getId()).collection("Feburary2020").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//                        @Override
-//                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//
-//                            int count=0 ;
-//                            for (DocumentSnapshot documentSnapshot:queryDocumentSnapshots
-//                                 ) {
-//
-//
-//                                stepss=stepss+documentSnapshot.getLong("Steps");
-//                                distancess=distancess+documentSnapshot.getDouble("DistanceCovered");
-//                                calss=calss+documentSnapshot.getDouble("CalorieBurnt");
-//                                knubss=knubss+documentSnapshot.getLong("KnubsEarned");
-//
-//
-//                                Log.d("count",String.valueOf(count++));
-//                            }
-//                            Toast.makeText(getContext(),String.valueOf(knubss)+" , "+String.valueOf(calss)+" , "+String.valueOf(distancess)+" , "+String.valueOf(stepss)+" , ",Toast.LENGTH_LONG).show();
-//                            Log.d("data",String.valueOf(knubss)+" , "+String.valueOf(calss)+" , "+String.valueOf(distancess)+" , "+String.valueOf(stepss)+" , ");
-//
-//
-//
-//
-//
-//                        }
-//                    });
-//                }
+        monthly.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                               @Override
+                                               public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+
+                                                   for (DocumentSnapshot doc :
+                                                           queryDocumentSnapshots) {
+
+
+                                                       userids.add(doc.getId());
+                                                   }
+                                                   analyse();
+                                               }
+                                           });
 //
 //
 //
